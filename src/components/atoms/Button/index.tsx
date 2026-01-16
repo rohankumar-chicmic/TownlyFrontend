@@ -1,10 +1,33 @@
-import { View, Text, Pressable } from 'react-native'
-import React from 'react'
+import React from 'react';
+import { TouchableOpacity, Text, ActivityIndicator, Pressable } from 'react-native';
+import useStyles from '@hooks/useStyles';
+import styles from './styles';
 
-export default function Button() {
+interface ButtonProps {
+  title: string;
+  onPress: () => void;
+  loading?: boolean;
+  variant?: 'primary' | 'outline' | 'secondary';
+}
+
+export default function Button({ title, onPress, loading, variant = 'primary' }: ButtonProps) {
+  const { dynamicStyles, Colors } = useStyles(styles);
+
+  // Determine styles based on variant
+  const buttonStyle = variant === 'outline' ? dynamicStyles.outlineButton : dynamicStyles.primaryButton;
+  const textStyle = variant === 'outline' ? dynamicStyles.outlineText : dynamicStyles.primaryText;
+
   return (
-    <Pressable onPress={()=> console.log('nothing')}>
-        <Text></Text>
+    <Pressable 
+      style={buttonStyle} 
+      onPress={onPress} 
+      disabled={loading}
+    >
+      {loading ? (
+        <ActivityIndicator color={variant === 'outline' ? Colors.primary : '#000'} />
+      ) : (
+        <Text style={textStyle}>{title}</Text>
+      )}
     </Pressable>
-  )
+  );
 }

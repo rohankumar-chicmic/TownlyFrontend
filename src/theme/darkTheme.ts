@@ -1,6 +1,6 @@
 export const DarkColors = {
   // Primary Brand Colors
-  primary: '#BECC33',       // Vibrant Lime (Buttons, Active Icons)
+  primary:'#c7ff1f',       // Vibrant Lime (Buttons, Active Icons)
   primaryDark: '#9CAF2A',   // Hover/Pressed state for primary
 
   // Background Colors

@@ -5,24 +5,28 @@ import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import useStyles from '@hooks/useStyles'
 import styles from './styles'
 import { ICONS } from '@utils/icons'
+import useTheme from '@hooks/useTheme'
+import Button from '@components/atoms/Button'
 
 export default function Header({ route, options, navigation }: BottomTabHeaderProps) {
-    const { dynamicStyles, Colors } = useStyles(styles);
+    const { dynamicStyles } = useStyles(styles);
+    const { Colors } = useTheme();
     const insets = useSafeAreaInsets();
 
     return (
         <View style={[
-            dynamicStyles.container, 
-            { 
+            dynamicStyles.container,
+            {
                 paddingTop: insets.top,
                 height: 60 + insets.top, // Standard height + notch
+                width: '100%'
             }
+
         ]}>
-            <View style={dynamicStyles.logoWrapper}>
-                {/* Ensure color is passed if your SVG uses 'currentColor' */}
-                <ICONS.Logo height={40} width={130} color={Colors.primary} />
+            <View style={{ flexDirection: 'row' }}>
+                <ICONS.Logo height={30} width={60} color={Colors.primary} borderColor={Colors.background}/>
                 <Text style={dynamicStyles.primaryText}>Townly</Text>
-            </View>
+            </View>   
         </View>
     )
 }   

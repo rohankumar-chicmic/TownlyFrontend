@@ -1,24 +1,27 @@
 import { StyleSheet } from 'react-native';
 
-const styles = (Colors: any) => StyleSheet.create({
+import { ThemeColors } from '@theme/constants';
+
+const styles = (Colors: ThemeColors) => StyleSheet.create({
     container: {
         width: '100%',
-        backgroundColor: '#0D0D0D',
+        backgroundColor: Colors.background,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#1A1A1A',
+        borderBottomColor: Colors.border,
     },
     logoWrapper: {
-        flexDirection: 'row',
+        
         alignItems: 'center', // Centers icon and text vertically
         gap: 8, // Adds space between icon and "Townly"
+
     },
     primaryText: {
-        color: '#FFFFFF',
-        fontSize: 20,
+        color: Colors.textPrimary       ,
+        fontSize: 30,
         fontWeight: 'bold',
         letterSpacing: -0.5,
     },

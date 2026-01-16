@@ -10,8 +10,10 @@ import { useAppDispatch } from '@redux/store';
 import { FONT } from '@utils/constants';
 import { ICONS } from '@utils/icons';
 import { STRINGS } from '@utils/strings';
+import Button from '@components/atoms/Button';
 
 import { useTranslation } from 'react-i18next';
+import CardContainer from '@components/molecules/CardContainer';
 
 const Home = () => {
   const { i18n } = useTranslation();
@@ -23,18 +25,21 @@ const Home = () => {
   const IMAGES = useImages();
   return (
     <>
-      <View>
+      <View style={dynamicStyles.container}>
+        <View style={{ paddingBottom: 20, paddingTop:10 }}>
+          <Text style={dynamicStyles.heroPrimarytext}>Fractional, Tokenized Real Estate Investing</Text>
+        </View>
+        <View style={{ paddingBottom: 20 }}>
+          <Text style={dynamicStyles.heroText}>Global access to premium real estate.</Text>
+          <Text style={dynamicStyles.heroText}>Own fractions, earn weekly rent distributions, and trade
+            with transparency.
+          </Text>
+        </View>
         
+        <Button title='Toggle theme' onPress={toggleTheme}></Button>
+        <CardContainer></CardContainer>
       </View>
-        {/* <Pressable
-          onPress={() => {
-            console.log(i18n.language);
-            i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en');
-          }}
-        >
-          <Text>Translate</Text>
-        </Pressable> */}
-        
+
     </>
   );
 };
