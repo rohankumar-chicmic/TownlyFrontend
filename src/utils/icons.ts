@@ -1,6 +1,11 @@
 import User from '@assets/svg/user.svg';
+import Home from '@assets/svg/home-svgrepo-com.svg'
+import Search from '@assets/svg/search-svgrepo-com.svg'
+import Portfolio from '@assets/svg/portfolio-suitcase-svgrepo-com.svg'
+import Logo from '@assets/svg/logo.svg'
 
 import { RFValue } from 'react-native-responsive-fontsize';
+
 const iconStyle = ({
   width = 0,
   height = 0,
@@ -12,6 +17,7 @@ const iconStyle = ({
   fill: color,
   stroke: borderColor,
 });
+
 export type iconProps = {
   width: number;
   height: number;
@@ -21,4 +27,8 @@ export type iconProps = {
 
 export const ICONS = {
   User: (params: iconProps) => User({ ...iconStyle({ ...params }) }),
+  Logo: (params: iconProps) => Logo({ ...iconStyle({ ...params }) }),
+  Home: (params: iconProps) => Home({ ...iconStyle({ ...params }) }),
+  Search: (params: iconProps) => Search({ ...iconStyle({ ...params }) }),
+  Portfolio: (params: iconProps) => Portfolio({ ...iconStyle({ ...params }) }),
 };

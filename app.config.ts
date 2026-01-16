@@ -5,12 +5,12 @@ import type { ExpoConfig } from 'expo/config';
 const IS_DEV = process.env.APP_VARIANT === 'development';
 
 const BUNDLE_IDENTIFIER = IS_DEV
-  ? 'com.anonymous.expoboilerplate.dev'
-  : 'com.anonymous.expoboilerplate';
+  ? 'com.anonymous.townly.dev'
+  : 'com.anonymous.townly';
 
 const config: ExpoConfig = {
-  name: IS_DEV ? 'expo-boilerplate-dev' : 'expo-boilerplate',
-  slug: 'expo-boilerplate',
+  name: IS_DEV ? 'townly-dev' : 'townly',
+  slug: 'townly',
   version: packageJson.version,
   orientation: 'portrait',
   icon: './assets/icon.png',

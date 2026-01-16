@@ -14,5 +14,5 @@ services:
     image: postgres:latest
     environment:
       - POSTGRES_USER=sonar
-      - POSTGRES_PASSWORD=sonar
+      - POST  GRES_PASSWORD=sonar
       - POSTGRES_DB=sonar

@@ -1,3 +1,4 @@
+import React from 'react';
 import { Image, Pressable, Text, View } from 'react-native';
 
 import styles from './styles';
@@ -22,29 +23,18 @@ const Home = () => {
   const IMAGES = useImages();
   return (
     <>
-      <View
-        style={[Layout.flex, Layout.center, { borderWidth: 1, height: '100%' }]}
-      >
-        <Text style={[dynamicStyles.button, { fontFamily: FONT.BOLD }]}>
-          {STRINGS.HI}
-        </Text>
-        <Image source={IMAGES.MONEY} style={{ height: 100, width: 100 }} />
-        <ICONS.User width={500} height={50} color="red" />
-        <Pressable
+      <View>
+        
+      </View>
+        {/* <Pressable
           onPress={() => {
             console.log(i18n.language);
             i18n.changeLanguage(i18n.language === 'en' ? 'hi' : 'en');
           }}
         >
           <Text>Translate</Text>
-        </Pressable>
-        <Pressable onPress={toggleTheme}>
-          <Text>Change Theme</Text>
-        </Pressable>
-        <Pressable onPress={logout}>
-          <Text>Logout</Text>
-        </Pressable>
-      </View>
+        </Pressable> */}
+        
     </>
   );
 };
