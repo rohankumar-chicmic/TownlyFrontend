@@ -8,6 +8,7 @@ import OnboardingScreen from '@screens/Onboarding';
 
 import { ROUTES } from '../constants';
 import useTheme from '@hooks/useTheme';
+import Marketplace from '@screens/Marketplace';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -36,10 +37,10 @@ export default function index() {
                         <ICONS.Home width={size} height={size} borderColor={color} />
                     )
                 }} />
-            <Tab.Screen name={ROUTES.ONBOARDING} component={OnboardingScreen}
+            <Tab.Screen name={ROUTES.MARKETPLACE} component={Marketplace}
                 options={{
                     tabBarIcon: ({ color, size }) => (
-                        <ICONS.Search width={size} height={size} borderColor={color}  />
+                        <ICONS.Marketplace width={size} height={size} borderColor={color}  />
                     )
                 }} />
             <Tab.Screen name={ROUTES.PORTFOLIO} component={Home}

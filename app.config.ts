@@ -11,6 +11,7 @@ const BUNDLE_IDENTIFIER = IS_DEV
 const config: ExpoConfig = {
   name: IS_DEV ? 'townly-dev' : 'townly',
   slug: 'townly',
+  scheme: IS_DEV ? 'townly-dev' : 'townly',
   version: packageJson.version,
   orientation: 'portrait',
   icon: './assets/icon.png',
@@ -19,7 +20,7 @@ const config: ExpoConfig = {
   splash: {
     image: './assets/splash-icon.png',
     resizeMode: 'contain',
-    backgroundColor: '#ffffff',
+    backgroundColor: '#000000',
   },
   ios: {
     supportsTablet: true,

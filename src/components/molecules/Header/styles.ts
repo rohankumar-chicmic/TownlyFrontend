@@ -47,7 +47,7 @@ const styles = (Colors: ThemeColors) => StyleSheet.create({
     walletIconText: {
         fontSize: 10,
         fontWeight: 'bold',
-        color: '#000',
+        color: Colors.textSecondary,
     },
     walletAmount: {
         color: Colors.primary,

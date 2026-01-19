@@ -15,18 +15,22 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textPrimary, 
 
     },
-    heroText:{
+    descriptionText:{
       fontSize: 20,
-      color: Colors.textSecondary
+      color: Colors.textSecondary, 
     },
     heading:{ 
       fontSize: 30, 
-      fontWeight: 'bold',
+      fontWeight: '300',
       color: Colors.textPrimary, 
     }, 
     smallText:{
       fontSize: 15,
       color: Colors.textSecondary
+    }, 
+    detailsText: {
+        fontSize: 20, 
+        color: Colors.textPrimary
     }
     
   });

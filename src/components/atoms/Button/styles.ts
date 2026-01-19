@@ -9,7 +9,7 @@ const styles = (Colors: ThemeColors) => StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    width: '45%',
     marginVertical: 10,
   },
   primaryText: {
@@ -20,12 +20,12 @@ const styles = (Colors: ThemeColors) => StyleSheet.create({
   outlineButton: {
     backgroundColor: 'transparent',
     height: 52,
-    borderRadius: 12,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    width: '100%',
+    width: '45%',
     borderWidth: 2,
-    borderColor: Colors.primary,
+    borderColor: Colors.primaryDark,
     marginVertical: 10,
   },
   outlineText: {

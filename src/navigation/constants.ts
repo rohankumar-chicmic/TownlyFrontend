@@ -1,6 +1,6 @@
 export enum ROUTES {
   HOME = 'Home',
   PORTFOLIO = 'Portfolio',
-  ONBOARDING = 'Onboarding',
+  MARKETPLACE = 'Marketplace',
   PROFILE = 'Profile'
 }

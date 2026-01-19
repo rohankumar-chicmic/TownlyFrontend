@@ -1,5 +1,5 @@
 export type RootStackParamList = {
   Home: undefined;
-  Onboarding: undefined;
+  Marketplace: undefined;
   Portfolio: undefined;
 };

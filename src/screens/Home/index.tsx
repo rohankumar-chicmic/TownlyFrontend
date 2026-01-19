@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 
 import styles from './styles';
 
@@ -11,9 +11,12 @@ import { FONT } from '@utils/constants';
 import { ICONS } from '@utils/icons';
 import { STRINGS } from '@utils/strings';
 import Button from '@components/atoms/Button';
+import Container from '@components/atoms/Container';
+import PropertyCardProps from '@components/molecules/CardContainer/PropertyCardProps.type';
 
 import { useTranslation } from 'react-i18next';
 import CardContainer from '@components/molecules/CardContainer';
+import useTheme from '@hooks/useTheme';
 
 const Home = () => {
   const { i18n } = useTranslation();
@@ -22,11 +25,35 @@ const Home = () => {
     dispatch(logoutUser());
   };
   const { dynamicStyles, Layout, toggleTheme } = useStyles(styles);
+  const { Colors } = useTheme();
+
   const IMAGES = useImages();
+
+  const cardData: PropertyCardProps = {
+    title: "Arbit Cottage",
+    location: "South Japan",
+    imageUrl: "https://c.animaapp.com/mkdtyv4xh54UmA/img/mask-group-5.png",
+    isFractional: true,
+    category: "Residential",
+    riskData: {
+      score: 3.4,
+      label: "Low Moderate Risk"
+    },
+    pricing: {
+      pricePerShare: 100,
+      currency: "ETH",
+      availability: 69985
+    },
+    yieldPercentage: 8.4,
+    onViewDetails: () => console.log("Navigating to details..."),
+    onInvest: () => console.log("Initiating investment...")
+  };
+
+
   return (
-    <>
-      <View style={dynamicStyles.container}>
-        <View style={{ paddingBottom: 20, paddingTop:10 }}>
+    <ScrollView bounces={true} style={{ backgroundColor: Colors.background }}>
+      <View style={dynamicStyles.container} >
+        <View style={{ paddingBottom: 20, paddingTop: 10 }}>
           <Text style={dynamicStyles.heroPrimarytext}>Fractional, Tokenized Real Estate Investing</Text>
         </View>
         <View style={{ paddingBottom: 20 }}>
@@ -35,12 +62,55 @@ const Home = () => {
             with transparency.
           </Text>
         </View>
-        
-        <Button title='Toggle theme' onPress={toggleTheme}></Button>
-        <CardContainer></CardContainer>
+        {/* <Button title='Toggle theme' onPress={toggleTheme}></Button> */}
+        <Button title='Explore Marketplace' onPress={()=>console.log('marketPlace')} givenStyle={{width:'100%'}}></Button>
+
+
+        <ScrollView horizontal contentContainerStyle={{ flexDirection: 'row', justifyContent: 'space-evenly', paddingVertical: 10 }}>
+          <Container style={{ padding: 20, marginRight: 15, justifyContent: 'center'}}>
+            <Text style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}>
+              99%
+            </Text>
+            <Text style={[dynamicStyles.smallText, { width: 100, alignSelf: 'flex-start' }]}>
+              Customer Satifaction
+            </Text>
+          </Container>
+          <Container style={{ padding: 20, marginRight: 15, justifyContent: 'center'}}>
+            <Text style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}>
+              50M+
+            </Text>
+            <Text style={[dynamicStyles.smallText, { width: 100, alignSelf: 'flex-start' }]}>
+              In property Sales
+            </Text>
+          </Container>
+          <Container style={{ padding: 20, marginRight: 15, justifyContent: 'center' }}>
+            <Text style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}>
+              2,600+
+            </Text>
+            <Text style={[dynamicStyles.smallText, { width: 100, alignSelf: 'flex-start' }]}>
+              Successful Sales
+            </Text>
+          </Container>
+
+        </ScrollView>
+
+        <View style={{
+          height: '10%',
+          paddingVertical: 15,
+          marginVertical: '5%',
+          borderTopWidth: 1,
+          borderTopColor: Colors.border,
+          borderBottomWidth: 1,
+          borderBottomColor: Colors.border
+        }}>
+          <Text style={dynamicStyles.heading}>Featured Properties</Text>
+          <Text style={dynamicStyles.smallText}>Explore our latest tokenized real estate opportunities</Text>
+        </View>
+
+        <CardContainer {...cardData} ></CardContainer>
       </View>
 
-    </>
+    </ScrollView>
   );
 };
 export default Home;
