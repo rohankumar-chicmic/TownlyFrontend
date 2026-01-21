@@ -6,28 +6,28 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       width: Dimensions.get('screen').width * 0.55,
-      alignSelf: 'stretch',
+      height: '95%',
+      alignSelf: 'flex-start',
       justifyContent: 'space-between',
       padding: 10,
     },
     title: {
       fontSize: 23,
+      marginBottom: 3,
       fontWeight: '400',
-      width: 150,
       color: Colors.textPrimary,
     },
     location: {
-      width: 150,
       fontSize: 15,
       color: Colors.textSecondary,
     },
     titleContainer: {
-      flexDirection: 'row',
+      height:'50%',
       justifyContent: 'space-between',
       alignItems: 'flex-start',
       borderBottomColor: Colors.border,
-      borderBottomWidth: 2,
-      paddingBottom: 10,
+      borderBottomWidth: 1,
+      paddingVertical: 7,
     },
     smallText: {
       fontSize: 12,
@@ -39,15 +39,15 @@ const styles = (Colors: ThemeColors) =>
       justifyContent: 'space-between',
       alignItems: 'baseline',
     },
-    fields:{
+    fields: {
       fontSize: 15,
       color: Colors.textSecondary,
-    }, 
-    values:{
-        fontSize: 20,
+    },
+    values: {
+      fontSize: 15,
       fontWeight: '400',
       color: Colors.primary,
-    }
+    },
   });
 
 export default styles;

@@ -7,28 +7,27 @@ const styles = (Colors: ThemeColors) =>
     container: {
       flex: 1,
       backgroundColor: Colors.background,
-      padding: 20,
+      alignItems: 'center',
+      // padding: 20,
     },
-    heroPrimarytext: { 
-      fontSize: 40, 
+    heroPrimarytext: {
+      fontSize: 40,
       fontWeight: 'bold',
-      color: Colors.textPrimary, 
-
+      color: Colors.textPrimary,
     },
-    heroText:{
+    heroText: {
       fontSize: 20,
-      color: Colors.textSecondary
+      color: Colors.textSecondary,
     },
-    heading:{ 
-      fontSize: 30, 
+    heading: {
+      fontSize: 30,
       fontWeight: 'bold',
-      color: Colors.textPrimary, 
-    }, 
-    smallText:{
+      color: Colors.textPrimary,
+    },
+    smallText: {
       fontSize: 15,
-      color: Colors.textSecondary
-    }
-    
+      color: Colors.textSecondary,
+    },
   });
 
 export default styles;

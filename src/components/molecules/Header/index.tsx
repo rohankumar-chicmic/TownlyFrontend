@@ -1,39 +1,49 @@
-import { View, Text, TouchableOpacity, Pressable } from 'react-native'
-import React from 'react'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import useStyles from '@hooks/useStyles'
-import styles from './styles'
-import { ICONS } from '@utils/icons'
-import useTheme from '@hooks/useTheme'
-import Button from '@components/atoms/Button'
+import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import React from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
+import useStyles from '@hooks/useStyles';
+import styles from './styles';
+import { ICONS } from '@utils/icons';
+import useTheme from '@hooks/useTheme';
+import Button from '@components/atoms/Button';
 
-export default function Header({ route, options, navigation }: BottomTabHeaderProps) {
-    const { dynamicStyles } = useStyles(styles);
-    const { Colors } = useTheme();
-    const insets = useSafeAreaInsets();
+export default function Header({
+  route,
+  options,
+  navigation,
+}: BottomTabHeaderProps) {
+  const { dynamicStyles } = useStyles(styles);
+  const { Colors } = useTheme();
+  const insets = useSafeAreaInsets();
 
-    const connectWallet = () => {
-        console.log('wallet connected')
-    }
+  const connectWallet = () => {
+    console.log('wallet connected');
+  };
 
-    return (
-        <View style={[
-            dynamicStyles.container,
-            {
-                paddingTop: insets.top,
-                height: 60 + insets.top,
-                width: '100%'
-            }
-
-        ]}>
-            <View style={{ flexDirection: 'row' }}>
-                <ICONS.Logo height={30} width={60} color={Colors.primaryDark} borderColor={Colors.background}/>
-                <Text style={dynamicStyles.primaryText}>Townly</Text>
-            </View>     
-            <Pressable onPress={connectWallet} style={dynamicStyles.walletButton}>
-                <Text style = {dynamicStyles.walletIconText}>Connect Wallet</Text>
-            </Pressable>
-        </View> 
-    )
-}   
+  return (
+    <View
+      style={[
+        dynamicStyles.container,
+        {
+          paddingTop: insets.top,
+          height: 60 + insets.top,
+          width: '100%',
+        },
+      ]}
+    >
+      <View style={{ flexDirection: 'row' }}>
+        <ICONS.Logo
+          height={30}
+          width={60}
+          color={Colors.primaryDark}
+          borderColor={Colors.background}
+        />
+        <Text style={dynamicStyles.primaryText}>Townly</Text>
+      </View>
+      <Pressable onPress={connectWallet} style={dynamicStyles.walletButton}>
+        <Text style={dynamicStyles.walletIconText}>Connect Wallet</Text>
+      </Pressable>
+    </View>
+  );
+}

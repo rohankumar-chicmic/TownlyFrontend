@@ -17,12 +17,14 @@ export default function CardContainer(props: PropertyCardProps) {
         flexDirection: 'row',
         borderRadius: 10,
         height: Dimensions.get('screen').height * 0.25,
+        marginBottom: 15,
+        width: Dimensions.get('screen').width * 0.9,
       }}
     >
       <Image
         src={props.imageUrl}
         width={Dimensions.get('screen').width * 0.33}
-        style={{ borderRadius: 8 }}
+        style={{ borderBottomLeftRadius: 7, borderTopLeftRadius: 7 }}
       ></Image>
 
       <View style={dynamicStyles.container}>
@@ -40,51 +42,52 @@ export default function CardContainer(props: PropertyCardProps) {
               {props.location}
             </Text>
           </View>
-          <View style={[]}>
+          <View
+            style={[
+              {
+                width: '70%',
+                flexDirection: 'row',
+                alignItems: 'baseline',
+                justifyContent: 'space-between',
+              },
+            ]}
+          >
             <Text
               style={[
-                dynamicStyles.smallText,
+                dynamicStyles.fields,
                 {
-                  width: 55,
-                  fontSize: 20,
-                  textAlign: 'right',
                   color: Colors.textPrimary,
                 },
               ]}
             >
               {props.riskData.score}
             </Text>
-            <Text
-              style={[
-                dynamicStyles.smallText,
-                { width: 55, textAlign: 'right' },
-              ]}
-            >
+            <Text style={[dynamicStyles.smallText]}>
               {props.riskData.label}
             </Text>
           </View>
         </View>
 
-        <View style={{
-          justifyContent:'space-between', 
-          height:'55%'
-        }}>
+        <View
+          style={{
+            justifyContent: 'space-between',
+            height: '40%',
+          }}
+        >
           <View style={dynamicStyles.column}>
-            <Text style={dynamicStyles.fields}>Price/Share</Text>
-            <Text style={[dynamicStyles.values,]}>
-              {props.pricing.pricePerShare} {props.pricing.currency}
-            </Text>
+            <Text style={dynamicStyles.fields}>Estimated Yield</Text>
+            <Text style={[dynamicStyles.values]}>{props.yieldPercentage}</Text>
           </View>
           <View style={dynamicStyles.column}>
             <Text style={dynamicStyles.fields}>Availability</Text>
-            <Text style={[dynamicStyles.values,]}>
+            <Text style={[dynamicStyles.values]}>
               {props.pricing.availability}
             </Text>
           </View>
           <View style={dynamicStyles.column}>
-            <Text style={dynamicStyles.fields}>Estimated Yield</Text>
-            <Text style={[dynamicStyles.values,]}>
-              {props.yieldPercentage}
+            <Text style={dynamicStyles.fields}>Price/Share</Text>
+            <Text style={[dynamicStyles.values]}>
+              {props.pricing.pricePerShare} {props.pricing.currency}
             </Text>
           </View>
         </View>

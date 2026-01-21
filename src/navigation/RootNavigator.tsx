@@ -1,26 +1,24 @@
-import { useAppSelector } from '@redux/store';
-import Tabs from './Tabs'
+// import { useAppSelector } from '@redux/store';
+import Tabs from './Tabs';
 
 import {
   NavigationContainer,
   useNavigationContainerRef,
 } from '@react-navigation/native';
 
-
 import useTheme from '@hooks/useTheme';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 
-
 const RootNavigator = () => {
   const navigationRef = useNavigationContainerRef();
   useReactNavigationDevTools(navigationRef);
-  const {Colors} = useTheme();
-  const userToken = useAppSelector(state => state.common.userToken);
+  const { Colors } = useTheme();
+  // const userToken = useAppSelector(state => state.common.userToken);
   return (
-    <SafeAreaProvider style={{backgroundColor: Colors.background }} >
-      <NavigationContainer ref={navigationRef} >
-          <Tabs/>
+    <SafeAreaProvider style={{ backgroundColor: Colors.background }}>
+      <NavigationContainer ref={navigationRef}>
+        <Tabs />
       </NavigationContainer>
     </SafeAreaProvider>
   );

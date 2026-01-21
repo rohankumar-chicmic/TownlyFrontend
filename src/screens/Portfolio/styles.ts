@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -10,38 +10,44 @@ const styles = (Colors: ThemeColors) =>
       padding: 20,
     },
     heroPrimarytext: {
-      fontSize: 30,
+      fontSize: 25,
       fontWeight: 'bold',
       color: Colors.textPrimary,
     },
     heroText: {
-      fontSize: 18,
-      marginVertical: 5,
-      color: Colors.textSecondary,
-    },
-    heading: {
-      fontSize: 28,
-      fontWeight: 'bold',
-      color: Colors.textPrimary,
-    },
-    smallText: {
       fontSize: 15,
       color: Colors.textSecondary,
     },
+    heading: {
+      fontSize: 20,
+      fontWeight: '400',
+      color: Colors.textPrimary,
+    },
+    smallText: {
+      fontSize: 12,
+      color: Colors.textSecondary,
+    },
     containerStyle: {
-      padding: 10,
-      marginRight: 10,
-      justifyContent: 'center',
+      padding: 8,
+      justifyContent: 'space-evenly',
       alignItems: 'flex-start',
+      width: '49%',
+      height: '35%',
+      marginBottom: 8,
     },
-    headingSection: {
-      height: 100,
+    dataPanel: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
-      justifyContent: 'center',
-      borderTopColor: Colors.border,
-      borderTopWidth: 1,
-      paddingBottom: 10,
+      justifyContent: 'space-between',
+      width: '100%',
     },
+    headerSection: {
+      height: Dimensions.get('screen').height * 0.1,
+      borderBottomColor: Colors.border,
+      borderBottomWidth: 1,
+    },
+    
   });
 
 export default styles;

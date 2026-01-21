@@ -27,6 +27,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
+          <string>townly</string>
           <string>com.anonymous.townly</string>
         </array>
       </dict>
