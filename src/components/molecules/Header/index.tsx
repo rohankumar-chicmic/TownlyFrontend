@@ -28,7 +28,7 @@ export default function Header({ route, options, navigation }: BottomTabHeaderPr
 
         ]}>
             <View style={{ flexDirection: 'row' }}>
-                <ICONS.Logo height={30} width={60} color={Colors.primary} borderColor={Colors.background}/>
+                <ICONS.Logo height={30} width={60} color={Colors.primaryDark} borderColor={Colors.background}/>
                 <Text style={dynamicStyles.primaryText}>Townly</Text>
             </View>     
             <Pressable onPress={connectWallet} style={dynamicStyles.walletButton}>

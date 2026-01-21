@@ -9,19 +9,13 @@ const styles = (Colors: ThemeColors) =>
       backgroundColor: Colors.background,
       padding: 20,
     },
-    heroPrimarytext: { 
-      fontSize: 40, 
-      fontWeight: 'bold',
-      color: Colors.textPrimary, 
-
-    },
-    descriptionText:{
-      fontSize: 20,
+    locationText:{
+      fontSize: 18,
       color: Colors.textSecondary, 
     },
     heading:{ 
-      fontSize: 30, 
-      fontWeight: '300',
+      fontSize: 25, 
+      fontWeight: '400',
       color: Colors.textPrimary, 
     }, 
     smallText:{
@@ -31,6 +25,14 @@ const styles = (Colors: ThemeColors) =>
     detailsText: {
         fontSize: 20, 
         color: Colors.textPrimary
+    }, 
+    detailContainer:{
+      padding:10
+    }, 
+    titleContainer:{
+      height:'auto', 
+      alignSelf:'baseline',
+      textAlignVertical:'center',
     }
     
   });
