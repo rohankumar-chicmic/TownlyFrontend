@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../types';
-import { ICONS } from '@utils/icons';
+import { Icons } from '@utils/icons';
 import Home from '@screens/Home';
 import Header from '@components/molecules/Header';
 
@@ -12,13 +12,12 @@ import Portfolio from '@screens/Portfolio';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
-export default function index() {
+export default function Tabs() {
   const { Colors } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        // Global Header Style (when shown)
-        header: props => <Header {...props} />,
+        header: (props) => <Header {...props} />,
 
         headerTintColor: Colors.primary,
 
@@ -37,7 +36,7 @@ export default function index() {
         component={Home}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <ICONS.Home width={size} height={size} borderColor={color} />
+            <Icons.Home width={size} height={size} borderColor={color} />
           ),
         }}
       />
@@ -46,7 +45,7 @@ export default function index() {
         component={Marketplace}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <ICONS.Marketplace width={size} height={size} borderColor={color} />
+            <Icons.Marketplace width={size} height={size} borderColor={color} />
           ),
         }}
       />
@@ -55,7 +54,7 @@ export default function index() {
         component={Portfolio}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <ICONS.Portfolio width={size} height={size} borderColor={color} />
+            <Icons.Portfolio width={size} height={size} borderColor={color} />
           ),
         }}
       />

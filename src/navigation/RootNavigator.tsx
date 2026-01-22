@@ -1,4 +1,3 @@
-// import { useAppSelector } from '@redux/store';
 import Tabs from './Tabs';
 
 import {
@@ -14,7 +13,7 @@ const RootNavigator = () => {
   const navigationRef = useNavigationContainerRef();
   useReactNavigationDevTools(navigationRef);
   const { Colors } = useTheme();
-  // const userToken = useAppSelector(state => state.common.userToken);
+
   return (
     <SafeAreaProvider style={{ backgroundColor: Colors.background }}>
       <NavigationContainer ref={navigationRef}>

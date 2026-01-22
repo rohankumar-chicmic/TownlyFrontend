@@ -35,7 +35,8 @@ export default function App() {
   // This ensures that the app is ready to display content without a loading screen
   useEffect(() => {
     (async () => {
-      await Promise.all([preloadImages(), preloadFonts()]);
+      preloadImages();
+      await preloadFonts();
       SplashScreen.hideAsync();
     })();
   }, []);

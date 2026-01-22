@@ -1,4 +1,4 @@
-import { Dimensions, ScrollView, View } from 'react-native';
+import { Dimensions, ScrollView } from 'react-native';
 import React from 'react';
 import CardContainer2 from '../CardContainer2';
 import PropertyCardProps from '../CardContainer/PropertyCardProps.type';

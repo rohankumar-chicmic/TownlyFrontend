@@ -5,4 +5,4 @@ const authApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const {} = authApi;
+export { authApi };

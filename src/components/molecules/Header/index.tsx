@@ -1,18 +1,17 @@
-import { View, Text, TouchableOpacity, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
-import { ICONS } from '@utils/icons';
+import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
-import Button from '@components/atoms/Button';
 
 export default function Header({
   route,
   options,
   navigation,
-}: BottomTabHeaderProps) {
+}: Readonly<BottomTabHeaderProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const insets = useSafeAreaInsets();
@@ -33,7 +32,7 @@ export default function Header({
       ]}
     >
       <View style={{ flexDirection: 'row' }}>
-        <ICONS.Logo
+        <Icons.Logo
           height={30}
           width={60}
           color={Colors.primaryDark}

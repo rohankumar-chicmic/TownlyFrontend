@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, ActivityIndicator, Pressable, View } from 'react-native';
+import { Text, ActivityIndicator, Pressable, View } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 
@@ -12,21 +12,36 @@ interface ButtonProps {
   children?: React.ReactNode;
 }
 
-export default function Button({ title, onPress, loading, variant = 'primary',givenStyle, children }: ButtonProps) {
+export default function Button({
+  title,
+  onPress,
+  loading,
+  variant = 'primary',
+  givenStyle,
+  children,
+}: Readonly<ButtonProps>) {
   const { dynamicStyles, Colors } = useStyles(styles);
 
   // Determine styles based on variant
-  const buttonStyle = variant === 'outline' ? dynamicStyles.outlineButton : dynamicStyles.primaryButton;
-  const textStyle = variant === 'outline' ? dynamicStyles.outlineText : dynamicStyles.primaryText;
+  const buttonStyle =
+    variant === 'outline'
+      ? dynamicStyles.outlineButton
+      : dynamicStyles.primaryButton;
+  const textStyle =
+    variant === 'outline'
+      ? dynamicStyles.outlineText
+      : dynamicStyles.primaryText;
 
   return (
     <Pressable
-      style={[buttonStyle, {...givenStyle}]}
+      style={[buttonStyle, { ...givenStyle }]}
       onPress={onPress}
       disabled={loading}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'outline' ? Colors.primary : '#000'} />
+        <ActivityIndicator
+          color={variant === 'outline' ? Colors.primary : '#000'}
+        />
       ) : (
         <View>
           <Text style={textStyle}>{title}</Text>

@@ -27,7 +27,7 @@ export type iconProps = {
   borderColor?: string;
 };
 
-export const ICONS = {
+export const Icons = {
   User: (params: iconProps) => User({ ...iconStyle({ ...params }) }),
   Logo: (params: iconProps) => Logo({ ...iconStyle({ ...params }) }),
   Home: (params: iconProps) => Home({ ...iconStyle({ ...params }) }),

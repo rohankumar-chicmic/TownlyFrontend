@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from 'react-native';
-import React, { Children } from 'react';
+import { View } from 'react-native';
+import React from 'react';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 
@@ -8,11 +8,9 @@ interface ContainerProps {
   style?: any;
 }
 
-export default function Container(props: ContainerProps) {
-  const { dynamicStyles, Colors } = useStyles(styles);
+export default function Container(props: Readonly<ContainerProps>) {
+  const { dynamicStyles } = useStyles(styles);
   return (
-    <View style={[dynamicStyles.container, { ...props.style }]}>
-      {props.children}
-    </View>
+    <View style={[dynamicStyles.container, props.style]}>{props.children}</View>
   );
 }

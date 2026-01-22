@@ -3,12 +3,12 @@ import React from 'react';
 import Container from '@components/atoms/Container';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
-import { ICONS } from '@utils/icons';
+import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import PropertyCardProps from './PropertyCardProps.type';
 import Button from '@components/atoms/Button';
 
-export default function CardContainer(props: PropertyCardProps) {
+export default function CardContainer(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   return (
@@ -18,7 +18,7 @@ export default function CardContainer(props: PropertyCardProps) {
       <View style={dynamicStyles.detailContainer}>
         <View
           style={{
-            height:80,
+            height: 80,
             flexDirection: 'row',
             justifyContent: 'space-between',
             alignItems: 'baseline',
@@ -29,7 +29,12 @@ export default function CardContainer(props: PropertyCardProps) {
           <View style={dynamicStyles.titleContainer}>
             <Text style={dynamicStyles.heading}>{props.title}</Text>
             <Text style={dynamicStyles.locationText}>
-              <ICONS.Location width={12} height={12} borderColor={Colors.primary}/> {props.location}
+              <Icons.Location
+                width={12}
+                height={12}
+                borderColor={Colors.primary}
+              />{' '}
+              {props.location}
             </Text>
           </View>
           <View
@@ -72,9 +77,19 @@ export default function CardContainer(props: PropertyCardProps) {
           </View>
         </View>
 
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingTop: 20 }}>
-          <Button title='Details' onPress={() => console.log('view details')} variant='outline'></Button>
-          <Button title='Invest' onPress={() => console.log('invest')} ></Button>
+        <View
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            paddingTop: 20,
+          }}
+        >
+          <Button
+            title="Details"
+            onPress={() => console.log('view details')}
+            variant="outline"
+          ></Button>
+          <Button title="Invest" onPress={() => console.log('invest')}></Button>
         </View>
       </View>
     </Container>

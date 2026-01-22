@@ -3,35 +3,23 @@ import { ScrollView, Text, View } from 'react-native';
 
 import styles from './styles';
 
-// import useImages from '@hooks/useImages';
 import useStyles from '@hooks/useStyles';
-// import { logoutUser } from '@redux/CommonReducer';
-// import { useAppDispatch } from '@redux/store';
-// import { FONT } from '@utils/constants';
-// import { ICONS } from '@utils/icons';
-// import { STRINGS } from '@utils/strings';
+
 import Button from '@components/atoms/Button';
 import Container from '@components/atoms/Container';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from 'src/navigation/types';
-// import { useTranslation } from 'react-i18next';
-// import CardContainer from '@components/molecules/CardContainer';
+
 import useTheme from '@hooks/useTheme';
 
 import { ROUTES } from 'src/navigation/constants';
 import Listing from '@components/molecules/Listing';
 
 const Home = () => {
-  // const { i18n } = useTranslation();
-  // const dispatch = useAppDispatch();
-  // const logout = () => {
-  //   dispatch(logoutUser());
-  // };
   const { dynamicStyles } = useStyles(styles);
-  // const { dynamicStyles, Layout, toggleTheme } = useStyles(styles);
+
   const { Colors } = useTheme();
-  // const IMAGES = useImages();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 

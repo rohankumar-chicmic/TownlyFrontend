@@ -5,9 +5,9 @@ import { ThemeColors } from '@theme/constants';
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      backgroundColor: Colors.background,
-      padding: 20,
-      margin: 5,
+      backgroundColor: Colors.surface,
+      padding: 10,
+      marginVertical: 5,
     },
     heroPrimarytext: {
       fontSize: 25,
@@ -19,7 +19,7 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textSecondary,
     },
     heading: {
-      fontSize: 20,
+      fontSize: 15,
       fontWeight: '400',
       color: Colors.textPrimary,
     },

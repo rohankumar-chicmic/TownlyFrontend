@@ -3,12 +3,11 @@ import React from 'react';
 import Container from '@components/atoms/Container';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
-import { ICONS } from '@utils/icons';
+import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import PropertyCardProps from './PropertyCardProps.type';
-import Button from '@components/atoms/Button';
 
-export default function CardContainer(props: PropertyCardProps) {
+export default function CardContainer(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   return (
@@ -18,7 +17,7 @@ export default function CardContainer(props: PropertyCardProps) {
         borderRadius: 10,
         height: Dimensions.get('screen').height * 0.25,
         marginBottom: 15,
-        width: Dimensions.get('screen').width * 0.9,
+        // width: Dimensions.get('screen').width * 0.9,
       }}
     >
       <Image
@@ -34,7 +33,7 @@ export default function CardContainer(props: PropertyCardProps) {
               {props.title}{' '}
             </Text>
             <Text style={dynamicStyles.location} numberOfLines={2}>
-              <ICONS.Location
+              <Icons.Location
                 width={12}
                 height={12}
                 borderColor={Colors.primary}

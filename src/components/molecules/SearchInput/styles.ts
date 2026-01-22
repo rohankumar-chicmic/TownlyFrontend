@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -6,7 +6,6 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       height: 50,
-      width: Dimensions.get('window').width * 0.8,
       marginVertical: 20,
       borderColor: Colors.border,
       borderWidth: 1,
@@ -19,9 +18,7 @@ const styles = (Colors: ThemeColors) =>
     input: {
       height: '80%',
       width: '80%',
-      borderBottomColor: Colors.primary,
       backgroundColor: Colors.surface,
-      borderBottomWidth: 1,
     },
   });
 
