@@ -1,5 +1,6 @@
-import { useEffect } from 'react';
+import "@walletconnect/react-native-compat";
 
+import { useEffect } from 'react';
 import { TextInput, TextStyle } from 'react-native';
 
 import { preloadFonts } from '@utils/constants';
@@ -12,6 +13,16 @@ import './src/localization';
 import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
+
+import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { appKit, wagmiAdapter } from './src/AppkitConfig'; // Your configured AppKit instance
+import { AppKitProvider } from '@reown/appkit-react-native';
+import { WagmiProvider } from 'wagmi';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { AppKit } from '@reown/appkit-react-native'
+
+const queryClient = new QueryClient();
+
 
 SplashScreen.preventAutoHideAsync();
 interface ExtendedText extends Text {
@@ -42,10 +53,21 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <RootNavigator />
-      </PersistGate>
-    </Provider>
+    <SafeAreaProvider>
+
+    <AppKitProvider instance={appKit}>
+      <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+        <QueryClientProvider client={queryClient}>
+          <Provider store={store}>
+            <PersistGate persistor={persistor}>
+              <RootNavigator />
+              <AppKit/>
+            </PersistGate>
+          </Provider>
+        </QueryClientProvider>
+      </WagmiProvider>
+    </AppKitProvider>
+    </SafeAreaProvider>
+
   );
 }

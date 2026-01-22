@@ -6,6 +6,7 @@ import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
+import ConnectButton from '@components/atoms/ConnectButton';
 
 export default function Header({
   route,
@@ -41,7 +42,7 @@ export default function Header({
         <Text style={dynamicStyles.primaryText}>Townly</Text>
       </View>
       <Pressable onPress={connectWallet} style={dynamicStyles.walletButton}>
-        <Text style={dynamicStyles.walletIconText}>Connect Wallet</Text>
+        <Text style={dynamicStyles.walletIconText}><ConnectButton/></Text>
       </Pressable>
     </View>
   );
