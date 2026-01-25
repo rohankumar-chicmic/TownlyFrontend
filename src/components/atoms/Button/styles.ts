@@ -1,38 +1,59 @@
 import { StyleSheet } from 'react-native';
-
 import { ThemeColors } from '@theme/constants';
 
-const styles = (Colors: ThemeColors) => StyleSheet.create({
-  primaryButton: {
-    backgroundColor: Colors.primary,
-    height: 52,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '45%',
-    marginVertical: 10,
-  },
-  primaryText: {
-    color: '#000000', 
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  outlineButton: {
-    backgroundColor: 'transparent',
-    height: 52,
-    borderRadius: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '45%',
-    borderWidth: 2,
-    borderColor: Colors.primaryDark,
-    marginVertical: 10,
-  },
-  outlineText: {
-    color: Colors.primary,
-    fontSize: 16,
-    fontWeight: '700',
-  },
-});
+const styles = (Colors: ThemeColors) =>
+  StyleSheet.create({
+    base: {
+      borderRadius: 5,
+      alignItems: 'center',
+      justifyContent: 'center',
+      flexDirection: 'row',
+    },
+    content: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    icon: {
+      marginHorizontal: 6,
+    },
+
+    sm: {
+      height: 36,
+      paddingHorizontal: 12,
+    },
+    md: {
+      height: 44,
+      paddingHorizontal: 16,
+    },
+    lg: {
+      height: 52,
+      paddingHorizontal: 20,
+    },
+
+    primary: {
+      backgroundColor: Colors.primary,
+    },
+    secondary: {
+      backgroundColor: Colors.background,
+    },
+    outline: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: Colors.primary,
+    },
+    ghost: {
+      backgroundColor: 'transparent',
+    },
+
+    text: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: Colors.background,
+    },
+
+    disabled: {
+      opacity: 0.5,
+    },
+  });
 
 export default styles;

@@ -1,22 +1,45 @@
 // components/ConnectButton.tsx
-import { useAppKit, useAccount } from '@reown/appkit-react-native'
-import { View, Text, Pressable } from 'react-native'
+import useTheme from '@hooks/useTheme';
+import { useAppKit, useAccount } from '@reown/appkit-react-native';
+import { useState } from 'react';
+import { View, Text, Pressable, ViewStyle } from 'react-native';
 
-function ConnectButton() {
-  const { open, disconnect } = useAppKit()
-  const { address, isConnected, chainId } = useAccount()
 
-  if (isConnected) {
-    return (
-      <View>
-        <Text>Connected to: {chainId}</Text>
-        <Text>Address: {address}</Text>
-        <Pressable onPress={() => disconnect()}><Text>Disconnect</Text></Pressable>
-      </View>
-    )
-  }
-
-  return <Pressable onPress={() => open()}><Text>Connect Wallet</Text></Pressable>
+interface ConnectButtonPropsType {
+  style?: ViewStyle;
 }
 
-export default ConnectButton
+function ConnectButton(props: ConnectButtonPropsType) {
+  const {Colors} = useTheme();
+  const { open, disconnect } = useAppKit();
+  const [connected, setConnected] = useState(false);
+  const { address, isConnected, chainId } = useAccount();
+
+  const handleDisconnect = () =>{
+    setConnected(false);
+    disconnect();
+  }
+
+  if (connected) {
+    console.log(address);
+    console.log(chainId);
+    return (
+      <View >
+        <Pressable onPress={handleDisconnect} style={props.style}>
+          <Text style={{color:Colors.textSecondary}}>{address}</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  return (
+    <Pressable style={props.style} onPress={() => {
+      open();
+      setConnected(true);
+      }}>
+      <Text style={{color:Colors.textSecondary}}>Connect Wallet</Text>
+    </Pressable>
+  );
+}
+
+export default ConnectButton;

@@ -5,16 +5,21 @@ import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import LineGraph from '@components/molecules/LineGraph';
+import Button from '@components/atoms/Button';
+import { useAppNavigation } from '@hooks/useNavigation';
 
 export default function Portfolio() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
+  const navigation = useAppNavigation();
+
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       style={{ backgroundColor: Colors.background }}
       contentContainerStyle={dynamicStyles.container}
-    >
+    > 
       <View>
         <View style={[dynamicStyles.headerSection]}>
           <Text style={[dynamicStyles.heroPrimarytext]}>
@@ -58,6 +63,8 @@ export default function Portfolio() {
         </View>
         <DonutGraph></DonutGraph>
         <LineGraph></LineGraph>
+
+        <Button title='Create Property' onPress={() => navigation.navigate('CreateNft')}></Button>
       </View>
     </ScrollView>
   );

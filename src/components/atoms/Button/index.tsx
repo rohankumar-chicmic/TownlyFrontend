@@ -1,51 +1,73 @@
 import React from 'react';
-import { Text, ActivityIndicator, Pressable, View } from 'react-native';
+import {
+  Text,
+  ActivityIndicator,
+  Pressable,
+  View,
+  ViewStyle,
+} from 'react-native';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 
+type ButtonVariant = 'primary' | 'outline' | 'secondary' | 'ghost';
+type ButtonSize = 'sm' | 'md' | 'lg';
+
 interface ButtonProps {
-  title: string;
+  title?: string;
   onPress: () => void;
   loading?: boolean;
-  variant?: 'primary' | 'outline' | 'secondary';
-  givenStyle?: any;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  style?: ViewStyle;
   children?: React.ReactNode;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  disabled?: boolean;
 }
 
 export default function Button({
   title,
   onPress,
-  loading,
+  loading = false,
   variant = 'primary',
-  givenStyle,
+  size = 'md',
+  style,
   children,
+  leftIcon,
+  rightIcon,
+  disabled,
 }: Readonly<ButtonProps>) {
   const { dynamicStyles, Colors } = useStyles(styles);
 
-  // Determine styles based on variant
-  const buttonStyle =
-    variant === 'outline'
-      ? dynamicStyles.outlineButton
-      : dynamicStyles.primaryButton;
-  const textStyle =
-    variant === 'outline'
-      ? dynamicStyles.outlineText
-      : dynamicStyles.primaryText;
-
   return (
     <Pressable
-      style={[buttonStyle, { ...givenStyle }]}
       onPress={onPress}
-      disabled={loading}
+      disabled={loading || disabled}
+      style={[
+        dynamicStyles.base,
+        dynamicStyles[variant],
+        dynamicStyles[size],
+        disabled && dynamicStyles.disabled,
+        style,
+      ]}
     >
       {loading ? (
         <ActivityIndicator
           color={variant === 'outline' ? Colors.primary : '#000'}
         />
       ) : (
-        <View>
-          <Text style={textStyle}>{title}</Text>
+        <View style={dynamicStyles.content}>
+          {leftIcon && <View style={dynamicStyles.icon}>{leftIcon}</View>}
+
+          {title && (
+            <Text style={dynamicStyles.text}>{title}</Text>
+          )}
+
           {children}
+
+          {rightIcon && (
+            <View style={dynamicStyles.icon}>{rightIcon}</View>
+          )}
         </View>
       )}
     </Pressable>

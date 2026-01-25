@@ -5,8 +5,7 @@ import { ThemeColors } from '@theme/constants';
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      height: 50,
-      marginVertical: 20,
+      marginVertical: 15,
       borderColor: Colors.border,
       borderWidth: 1,
       borderRadius: 10,
@@ -16,8 +15,6 @@ const styles = (Colors: ThemeColors) =>
       alignItems: 'center',
     },
     input: {
-      height: '80%',
-      width: '80%',
       backgroundColor: Colors.surface,
     },
   });

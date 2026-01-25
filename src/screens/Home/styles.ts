@@ -5,9 +5,9 @@ import { ThemeColors } from '@theme/constants';
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      flex: 1,
       backgroundColor: Colors.background,
       padding: 20,
+      paddingBottom:0,
     },
     heroPrimarytext: {
       fontSize: 30,
@@ -15,8 +15,10 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textPrimary,
     },
     heroText: {
-      fontSize: 18,
-      marginVertical: 5,
+      fontSize: 15,
+      marginBottom:15,
+      marginTop:10,
+      width: '90%',
       color: Colors.textSecondary,
     },
     heading: {
@@ -39,12 +41,11 @@ const styles = (Colors: ThemeColors) =>
       alignItems: 'flex-start',
     },
     headingSection: {
-      height: 100,
       alignItems: 'center',
       justifyContent: 'center',
       borderTopColor: Colors.border,
       borderTopWidth: 1,
-      paddingBottom: 10,
+      marginBottom: 15,
     },
   });
 

@@ -13,10 +13,11 @@ interface PropertyCardProps {
       pricePerShare: number;
       currency: string;
       availability: number;
+      totalShares: number
     };
     yieldPercentage: number;
-    onViewDetails: () => void;
-    onInvest: () => void;
+    onViewDetails?: () => void;
+    onInvest?: () => void;
   }
 
   export default PropertyCardProps;

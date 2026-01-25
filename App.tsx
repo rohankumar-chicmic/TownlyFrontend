@@ -54,19 +54,18 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-
-    <AppKitProvider instance={appKit}>
-      <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-        <QueryClientProvider client={queryClient}>
-          <Provider store={store}>
-            <PersistGate persistor={persistor}>
-              <RootNavigator />
-              <AppKit/>
-            </PersistGate>
-          </Provider>
-        </QueryClientProvider>
-      </WagmiProvider>
-    </AppKitProvider>
+      <AppKitProvider instance={appKit}>
+        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+          <QueryClientProvider client={queryClient}>
+            <Provider store={store}>
+              <PersistGate persistor={persistor}>
+                <RootNavigator />
+                <AppKit />
+              </PersistGate>
+            </Provider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </AppKitProvider>
     </SafeAreaProvider>
 
   );

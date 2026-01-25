@@ -5,23 +5,26 @@ import useTheme from '@hooks/useTheme';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
+import Button from '@components/atoms/Button';
+
 export default function SearchInput() {
   const { dynamicStyles } = useStyles(styles);
-  const [text, setText] = React.useState('');
+  const [text, setText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const ref = useRef<TextInput>(null);
   const { Colors } = useTheme();
+
   useEffect(() => {
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
       ref.current?.blur();
     });
-
     return () => {
       hideSubscription.remove();
     };
   }, []);
+
   return (
-    <View>
+    <View >
       <View
         style={
           isFocused
@@ -47,8 +50,16 @@ export default function SearchInput() {
           value={text}
           style={dynamicStyles.input}
         />
-        <Pressable onPress={() => console.log('filter')}>
-          <Text>filter</Text>
+        <Pressable
+          onPress={() => console.log('filter')}
+          style={{
+            backgroundColor: Colors.primaryDark,
+            padding: 4,
+            borderRadius: 5,
+            marginHorizontal: 4
+          }}
+        >
+          <Text style={{ color: Colors.background }}>Search</Text>
         </Pressable>
       </View>
     </View>
