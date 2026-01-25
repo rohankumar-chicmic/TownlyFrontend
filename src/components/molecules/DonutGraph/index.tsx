@@ -1,6 +1,5 @@
 import { Text, View, Pressable } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
-import Container from '@components/atoms/Container';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
@@ -36,7 +35,7 @@ export default function DonutGraph() {
 
   return (
     <Pressable onPress={clearFocus}>
-      <Container style={dynamicStyles.container}>
+      <View style={dynamicStyles.container}>
         <Text style={dynamicStyles.heading}>Holdings By Category</Text>
         <Text style={dynamicStyles.smallText}>
           Distribution across property types
@@ -98,7 +97,7 @@ export default function DonutGraph() {
             />
           </View>
         </View>
-      </Container>
+      </View>
     </Pressable>
   );
 }

@@ -1,6 +1,5 @@
 import { Text, View, Pressable } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
-import Container from '@components/atoms/Container';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
@@ -23,7 +22,7 @@ export default function LineGraph() {
  
   return (
     <Pressable>
-      <Container style={dynamicStyles.container}>
+      <View style={dynamicStyles.container}>
         <Text style={dynamicStyles.heading}>Portfolio Growth</Text>
         <Text style={[dynamicStyles.smallText, { paddingBottom: 10 }]}>
           Value over time
@@ -55,7 +54,7 @@ export default function LineGraph() {
             // onPress={(item, index) => setSelectedIndex(index)}
           />
         </View>
-      </Container>
+      </View>
     </Pressable>
   );
 }

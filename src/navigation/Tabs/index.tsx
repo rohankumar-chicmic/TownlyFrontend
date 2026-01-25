@@ -2,11 +2,12 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../types';
 import { Icons } from '@utils/icons';
-import Home from '@screens/Home';
 import Header from '@components/molecules/Header';
 
 import { ROUTES } from '../constants';
 import useTheme from '@hooks/useTheme';
+
+import Home from '@screens/Home';
 import Marketplace from '@screens/Marketplace';
 import Portfolio from '@screens/Portfolio';
 

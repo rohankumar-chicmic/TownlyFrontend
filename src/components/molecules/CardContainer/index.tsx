@@ -1,6 +1,5 @@
 import { View, Text, Image } from 'react-native';
 import React from 'react';
-import Container from '@components/atoms/Container';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
@@ -12,7 +11,7 @@ export default function CardContainer(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   return (
-    <Container>
+    <View>
       <Image src={props.imageUrl} height={250}></Image>
 
       <View style={dynamicStyles.detailContainer}>
@@ -92,6 +91,6 @@ export default function CardContainer(props: Readonly<PropertyCardProps>) {
           <Button title="Invest" onPress={() => console.log('invest')}></Button>
         </View>
       </View>
-    </Container>
+    </View>
   );
 }

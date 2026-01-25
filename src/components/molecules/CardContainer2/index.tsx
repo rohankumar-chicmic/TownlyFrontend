@@ -1,78 +1,54 @@
-import { View, Text, Image, Dimensions } from 'react-native';
+import { View, Text, Image, Dimensions, Pressable } from 'react-native';
 import React from 'react';
-import Container from '@components/atoms/Container';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import PropertyCardProps from './PropertyCardProps.type';
+import { useAppNavigation } from '@hooks/useNavigation';
+import { ROUTES } from 'src/navigation/constants';
 
-export default function CardContainer(props: Readonly<PropertyCardProps>) {
+export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  return (
-    <Container
-      style={{
-        flexDirection: 'row',
-        borderRadius: 10,
-        height: Dimensions.get('screen').height * 0.25,
-        marginBottom: 15,
-        // width: Dimensions.get('screen').width * 0.9,
-      }}
-    >
-      <Image
-        src={props.imageUrl}
-        width={Dimensions.get('screen').width * 0.33}
-        style={{ borderBottomLeftRadius: 7, borderTopLeftRadius: 7 }}
-      ></Image>
+  const navigation = useAppNavigation();
 
+  return (
+    <Pressable onPress={() => navigation.navigate(ROUTES.PROPERTY_DETAILS)}>
       <View style={dynamicStyles.container}>
-        <View style={dynamicStyles.titleContainer}>
-          <View style={[]}>
-            <Text numberOfLines={3} style={dynamicStyles.title}>
-              {props.title}{' '}
-            </Text>
-            <Text style={dynamicStyles.location} numberOfLines={2}>
-              <Icons.Location
-                width={12}
-                height={12}
-                borderColor={Colors.primary}
-              />{' '}
-              {props.location}
-            </Text>
-          </View>
-          <View
+        <Image
+          src={props.imageUrl}
+          width={Dimensions.get('screen').width * 0.4}
+          style={{ borderBottomLeftRadius: 7, borderTopLeftRadius: 7 }}
+        ></Image>
+
+        <View style={dynamicStyles.detailsContainer}>
+          <Text numberOfLines={3} style={dynamicStyles.title}>
+            {props.title}{' '}
+          </Text>
+          <Text style={dynamicStyles.location} numberOfLines={2}>
+            <Icons.Location
+              width={10}
+              height={10}
+              borderColor={Colors.primary}
+            />{' '}
+            {props.location}
+          </Text>
+
+          <Text
             style={[
+              dynamicStyles.smallText,
               {
-                width: '70%',
-                flexDirection: 'row',
-                alignItems: 'baseline',
-                justifyContent: 'space-between',
+                color: Colors.textPrimary,
               },
             ]}
           >
-            <Text
-              style={[
-                dynamicStyles.fields,
-                {
-                  color: Colors.textPrimary,
-                },
-              ]}
-            >
-              {props.riskData.score}
-            </Text>
+            {props.riskData.score}{'/10 '}
             <Text style={[dynamicStyles.smallText]}>
               {props.riskData.label}
             </Text>
-          </View>
-        </View>
+          </Text>
 
-        <View
-          style={{
-            justifyContent: 'space-between',
-            height: '40%',
-          }}
-        >
           <View style={dynamicStyles.column}>
             <Text style={dynamicStyles.fields}>Estimated Yield</Text>
             <Text style={[dynamicStyles.values]}>{props.yieldPercentage}</Text>
@@ -91,6 +67,7 @@ export default function CardContainer(props: Readonly<PropertyCardProps>) {
           </View>
         </View>
       </View>
-    </Container>
+    </Pressable>
+
   );
 }

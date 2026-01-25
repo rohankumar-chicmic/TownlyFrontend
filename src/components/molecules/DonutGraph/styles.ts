@@ -1,10 +1,13 @@
-import {  StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
+      borderRadius: 4,
+      borderWidth: 1,
+      borderColor: Colors.border,
       backgroundColor: Colors.surface,
       padding: 10,
       marginVertical: 5,

@@ -28,6 +28,10 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textSecondary,
     },
     containerStyle: {
+        borderRadius: 4,
+        borderWidth: 1,
+        backgroundColor: Colors.surface,
+        borderColor: Colors.border,
       padding: 8,
       justifyContent: 'space-evenly',
       alignItems: 'flex-start',

@@ -29,6 +29,10 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textSecondary,
     },
     containerStyle: {
+      borderRadius: 4,
+      borderWidth: 1,
+      backgroundColor: Colors.surface,
+      borderColor: Colors.border,
       padding: 10,
       marginRight: 10,
       justifyContent: 'center',

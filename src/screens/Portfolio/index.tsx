@@ -1,5 +1,4 @@
 import { View, Text, ScrollView } from 'react-native';
-import Container from '@components/atoms/Container';
 import DonutGraph from '@components/molecules/DonutGraph';
 import React from 'react';
 import useStyles from '@hooks/useStyles';
@@ -27,14 +26,14 @@ export default function Portfolio() {
         </View>
         <View>
           <View style={dynamicStyles.dataPanel}>
-            <Container style={dynamicStyles.containerStyle}>
+            <View style={dynamicStyles.containerStyle}>
               <Text style={dynamicStyles.heroText}>Total Invested</Text>
               <Text style={dynamicStyles.heading}>2.1245 ETH</Text>
               <Text style={dynamicStyles.smallText}>
                 4 Properties <Text>120 Tokens</Text>
               </Text>
-            </Container>
-            <Container style={dynamicStyles.containerStyle}>
+            </View>
+            <View style={dynamicStyles.containerStyle}>
               <Text style={dynamicStyles.heroText}>Current Value</Text>
               <Text style={dynamicStyles.heading}>2.1245 ETH</Text>
               <Text
@@ -42,19 +41,19 @@ export default function Portfolio() {
               >
                 +2.04% overall return
               </Text>
-            </Container>
-            <Container style={dynamicStyles.containerStyle}>
+            </View>
+            <View style={dynamicStyles.containerStyle}>
               <Text style={dynamicStyles.heroText}>Total Returns</Text>
               <Text style={dynamicStyles.heading}>+0.04 ETH</Text>
               <Text style={dynamicStyles.smallText}>Income: 0.0357 ETH</Text>
-            </Container>
-            <Container style={dynamicStyles.containerStyle}>
+            </View>
+            <View style={dynamicStyles.containerStyle}>
               <Text style={dynamicStyles.heroText}>Total Returns</Text>
               <Text style={dynamicStyles.heading}>2.1245 ETH</Text>
               <Text style={dynamicStyles.smallText}>
                 Next payment: Feb 1, 2025
               </Text>
-            </Container>
+            </View>
           </View>
         </View>
         <DonutGraph></DonutGraph>

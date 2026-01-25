@@ -6,22 +6,38 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
 import Button from '@components/atoms/Button';
-import Container from '@components/atoms/Container';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from 'src/navigation/types';
 
 import useTheme from '@hooks/useTheme';
-
+import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
 import { ROUTES } from 'src/navigation/constants';
-import Listing from '@components/molecules/Listing';
+import CardContainer2 from '@components/molecules/CardContainer2';
+import { useAppNavigation } from '@hooks/useNavigation';
+
+const cardData: PropertyCardProps = {
+  title: 'Arbit Cottage',
+  location: 'South Japan',
+  imageUrl: 'https://c.animaapp.com/mkdtyv4xh54UmA/img/mask-group-5.png',
+  isFractional: true,
+  category: 'Residential',
+  riskData: {
+    score: 3.4,
+    label: 'Low Moderate Risk',
+  },
+  pricing: {
+    pricePerShare: 100,
+    currency: 'ETH',
+    availability: 69985,
+  },
+  yieldPercentage: 8.4,
+  onViewDetails: () => console.log('Navigating to details...'),
+  onInvest: () => console.log('Initiating investment...'),
+};
 
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
-
+  const navigation = useAppNavigation();
   const { Colors } = useTheme();
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
 
   return (
     <ScrollView bounces={false} style={{ backgroundColor: Colors.background }}>
@@ -59,7 +75,7 @@ const Home = () => {
             paddingVertical: 10,
           }}
         >
-          <Container style={dynamicStyles.containerStyle}>
+          <View style={dynamicStyles.containerStyle}>
             <Text
               style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
             >
@@ -68,8 +84,8 @@ const Home = () => {
             <Text style={[dynamicStyles.smallText, { width: 80 }]}>
               Customer Satifaction
             </Text>
-          </Container>
-          <Container style={dynamicStyles.containerStyle}>
+          </View>
+          <View style={dynamicStyles.containerStyle}>
             <Text
               style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
             >
@@ -78,8 +94,8 @@ const Home = () => {
             <Text style={[dynamicStyles.smallText, { width: 90 }]}>
               In property Sales
             </Text>
-          </Container>
-          <Container style={dynamicStyles.containerStyle}>
+          </View>
+          <View style={dynamicStyles.containerStyle}>
             <Text
               style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
             >
@@ -88,7 +104,7 @@ const Home = () => {
             <Text style={[dynamicStyles.smallText, { width: 100 }]}>
               Successful Sales
             </Text>
-          </Container>
+          </View>
         </View>
 
         <View style={dynamicStyles.headingSection}>
@@ -97,8 +113,9 @@ const Home = () => {
             Explore our latest tokenized real estate opportunities
           </Text>
         </View>
+
+        <CardContainer2 {...cardData}></CardContainer2>
       </View>
-      <Listing />
     </ScrollView>
   );
 };
