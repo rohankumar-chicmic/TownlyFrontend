@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   ActivityIndicator,
   Pressable,
   View,
   ViewStyle,
+  TextStyle,
 } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -15,61 +16,46 @@ type ButtonSize = 'sm' | 'md' | 'lg';
 interface ButtonProps {
   title?: string;
   onPress: () => void;
-  loading?: boolean;
   variant?: ButtonVariant;
   size?: ButtonSize;
   style?: ViewStyle;
   children?: React.ReactNode;
-  leftIcon?: React.ReactNode;
-  rightIcon?: React.ReactNode;
   disabled?: boolean;
+  textStyle?: TextStyle;
 }
 
 export default function Button({
   title,
   onPress,
-  loading = false,
   variant = 'primary',
   size = 'md',
   style,
   children,
-  leftIcon,
-  rightIcon,
   disabled,
+  textStyle
 }: Readonly<ButtonProps>) {
   const { dynamicStyles, Colors } = useStyles(styles);
+  const [isPressed , setIsPressed] = useState(false);
 
   return (
     <Pressable
       onPress={onPress}
-      disabled={loading || disabled}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      disabled={disabled}
       style={[
         dynamicStyles.base,
         dynamicStyles[variant],
         dynamicStyles[size],
         disabled && dynamicStyles.disabled,
         style,
+        {backgroundColor: isPressed? Colors.primaryDark : Colors.primary}
       ]}
     >
-      {loading ? (
-        <ActivityIndicator
-          color={variant === 'outline' ? Colors.primary : '#000'}
-        />
-      ) : (
-        <View style={dynamicStyles.content}>
-          {leftIcon && <View style={dynamicStyles.icon}>{leftIcon}</View>}
-
           {title && (
-            <Text style={dynamicStyles.text}>{title}</Text>
+            <Text style={[dynamicStyles.text, textStyle]}>{title}</Text>
           )}
-
           {children}
-
-          {rightIcon && (
-            <View style={dynamicStyles.icon}>{rightIcon}</View>
-          )}
-        </View>
-      )}
     </Pressable>
   );
 }

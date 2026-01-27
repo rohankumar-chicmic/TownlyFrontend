@@ -20,9 +20,9 @@ const styles = (Colors: ThemeColors) =>
     },
     primaryText: {
       color: Colors.textPrimary,
-      fontSize: 30,
+      fontSize: 25,
       fontWeight: 'bold',
-      letterSpacing: -0.5,
+      letterSpacing: -2,
     },
     walletButton: {
       flexDirection: 'row',

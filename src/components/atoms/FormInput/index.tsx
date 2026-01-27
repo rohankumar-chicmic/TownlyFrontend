@@ -3,69 +3,71 @@ import { View, Text, TextInput, StyleSheet } from 'react-native';
 import useTheme from '@hooks/useTheme';
 
 type AppInputProps = {
-    label: string;
-    value: string;
-    onChangeText: (text: string) => void;
-    placeholder?: string;
-    required?: boolean;
-    multiline?: boolean;
-    maxLength?: number;
+  label: string;
+  value: string;
+  onChangeText: (text: string) => void;
+  placeholder?: string;
+  required?: boolean;
+  multiline?: boolean;
+  maxLength?: number;
 };
 
 export default function AppInput({
-    label,
-    value,
-    onChangeText,
-    placeholder,
-    required,
-    multiline,
-    maxLength,
+  label,
+  value,
+  onChangeText,
+  placeholder,
+  required,
+  multiline,
+  maxLength,
 }: AppInputProps) {
-    const { Colors } = useTheme();
+  const { Colors } = useTheme();
 
-    return (
-        <View style={{ marginBottom: 16 }}>
-            <Text style={[styles.label, { color: Colors.textPrimary }]}>
-                {label}
-                {required && <Text style={{ color: Colors.primary }}> *</Text>}
-            </Text>
+  return (
+    <View style={{ marginBottom: 16 }}>
+      <Text style={[styles.label, { color: Colors.textPrimary }]}>
+        {label}
+        {required && <Text style={{ color: Colors.primary }}> *</Text>}
+      </Text>
 
-            <TextInput
-                value={value}
-                onChangeText={onChangeText}
-                placeholder={placeholder}
-                placeholderTextColor={Colors.textSecondary}
-                multiline={multiline}
-                maxLength={maxLength}
-                style={[
-                    styles.input,
-                ]}
-            />
+      <TextInput
+        value={value}
+        onChangeText={onChangeText}
+        placeholder={placeholder}
+        placeholderTextColor={Colors.textSecondary}
+        multiline={multiline}
+        maxLength={maxLength}
+        style={[
+          styles.input,
+          { borderColor: Colors.border, backgroundColor: Colors.background },
+        ]}
+      />
 
-            {maxLength && (
-                <Text style={styles.counter}>
-                    {value.length}/{maxLength}
-                </Text>
-            )}
-        </View>
-    );
+      {maxLength && (
+        <Text style={styles.counter}>
+          {value.length}/{maxLength}
+        </Text>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-    label: {
-        marginBottom: 6,
-        fontSize: 14,
-    },
-    input: {
-        borderRadius: 10,
-        paddingHorizontal: 14,
-        paddingVertical: 12,
-        fontSize: 15,
-    },
-    counter: {
-        alignSelf: 'flex-end',
-        fontSize: 11,
-        opacity: 0.6,
-        marginTop: 4,
-    },
+  label: {
+    marginBottom: 6,
+    fontSize: 14,
+    paddingHorizontal: 5
+  },
+  input: {
+    borderRadius: 10,
+    padding: 12,
+    fontSize: 15,
+    borderWidth: 1,
+  },
+  counter: {
+    alignSelf: 'flex-end',
+    fontSize: 11,
+    opacity: 0.6,
+    marginTop: 4,
+  },
 });

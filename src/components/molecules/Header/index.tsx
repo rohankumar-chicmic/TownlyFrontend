@@ -18,10 +18,7 @@ export default function Header({
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const insets = useSafeAreaInsets();
-
-  const connectWallet = () => {
-    console.log('wallet connected');
-  };
+  const userToken = 10;
 
   return (
     <View
@@ -41,9 +38,11 @@ export default function Header({
           color={Colors.primaryDark}
           borderColor={Colors.background}
         />
+
         <Text style={dynamicStyles.primaryText}>Townly</Text>
       </View>
-      <ConnectButton style={dynamicStyles.walletButton}/>
-    </View>
+      {userToken ?<ConnectButton style={dynamicStyles.walletButton}/>
+        : <></>} 
+          </View>
   );
 }

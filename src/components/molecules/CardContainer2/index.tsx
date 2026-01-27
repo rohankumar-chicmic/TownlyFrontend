@@ -1,5 +1,5 @@
 import { View, Text, Image, Dimensions, Pressable } from 'react-native';
-import React from 'react';
+import React, { useState } from 'react';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
@@ -12,10 +12,22 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+  const [isPressed, setIsPressed] = useState(false);
+
+  const handlePressed = () => {
+    navigation.navigate(ROUTES.PROPERTY_DETAILS);
+  };
 
   return (
-    <Pressable onPress={() => navigation.navigate(ROUTES.PROPERTY_DETAILS)}>
-      <View style={dynamicStyles.container}>
+    <Pressable
+      onPress={handlePressed}
+      onPressIn={() => setIsPressed(true)}
+      onPressOut={() => setIsPressed(false)}
+      style={[dynamicStyles.container, {
+        
+        backgroundColor: isPressed ? Colors.background : Colors.surface,
+      }]}
+    >
         <Image
           src={props.imageUrl}
           width={Dimensions.get('screen').width * 0.4}
@@ -43,7 +55,8 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
               },
             ]}
           >
-            {props.riskData.score}{'/10 '}
+            {props.riskData.score}
+            {'/10 '}
             <Text style={[dynamicStyles.smallText]}>
               {props.riskData.label}
             </Text>
@@ -66,8 +79,6 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
             </Text>
           </View>
         </View>
-      </View>
     </Pressable>
-
   );
 }

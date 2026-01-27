@@ -1,57 +1,60 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import useTheme from '@hooks/useTheme';
+import { View, Text} from 'react-native';
+import styles from './styles';
 
-const steps = ['Property Details', 'Financial Info', 'Upload Image', 'Review'];
+type Step = {
+  label: string;
+};
 
-export default function StepIndicator({ currentStep = 0 }) {
-  const { Colors } = useTheme();
+interface StepIndicatorProps {
+  steps: Step[];
+  currentStep: number; // zero-based
+}
 
+export default function StepIndicator({
+  steps,
+  currentStep,
+}: StepIndicatorProps) {
   return (
     <View style={styles.container}>
       {steps.map((step, index) => {
-        const active = index === currentStep;
+        const isActive = index === currentStep;
+        const isCompleted = index < currentStep;
 
         return (
-          <View key={step} style={styles.step}>
-            <View
-              style={[
-                styles.circle,
-                
-              ]}
-            />
-            <Text
-              style={[
-                styles.label,
-                { color: active ? Colors.primary : Colors.textSecondary },
-              ]}
-            >
-              Step {index + 1}
-            </Text>
-          </View>
+          <React.Fragment key={step.label}>
+            <View style={styles.stepWrapper}>
+              <View
+                style={[
+                  styles.dot,
+                  isActive && styles.activeDot,
+                  isCompleted && styles.completedDot,
+                ]}
+              />
+
+              <Text
+                style={[
+                  styles.stepLabel,
+                  isActive && styles.activeLabel,
+                ]}
+              >
+                Step {index + 1}
+              </Text>
+
+              <Text style={styles.subLabel}>{step.label}</Text>
+            </View>
+
+            {index !== steps.length - 1 && (
+              <View
+                style={[
+                  styles.line,
+                  isCompleted && styles.completedLine,
+                ]}
+              />
+            )}
+          </React.Fragment>
         );
       })}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 24,
-  },
-  step: {
-    alignItems: 'center',
-    flex: 1,
-  },
-  circle: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    marginBottom: 6,
-  },
-  label: {
-    fontSize: 11,
-  },
-});

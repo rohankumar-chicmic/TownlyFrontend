@@ -24,7 +24,7 @@ export default function SearchInput() {
   }, []);
 
   return (
-    <View >
+    <View>
       <View
         style={
           isFocused
@@ -50,17 +50,23 @@ export default function SearchInput() {
           value={text}
           style={dynamicStyles.input}
         />
-        <Pressable
+        <Button
           onPress={() => console.log('filter')}
+          size="sm"
           style={{
-            backgroundColor: Colors.primaryDark,
-            padding: 4,
-            borderRadius: 5,
-            marginHorizontal: 4
+            marginHorizontal: 4,
           }}
         >
-          <Text style={{ color: Colors.background }}>Search</Text>
-        </Pressable>
+          <Text
+            style={{
+              color: Colors.background,
+              fontWeight: '600',
+              fontSize: 12,
+            }}
+          >
+            Search
+          </Text>
+        </Button>
       </View>
     </View>
   );

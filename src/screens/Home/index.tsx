@@ -9,6 +9,7 @@ import Button from '@components/atoms/Button';
 
 import useTheme from '@hooks/useTheme';
 import { ROUTES } from 'src/navigation/constants';
+import { Icons } from '@utils/icons';
 import { useAppNavigation } from '@hooks/useNavigation';
 import PropertyListing from '@components/molecules/PropertyListing';
 
@@ -24,7 +25,7 @@ const Home = () => {
           Fractional, Tokenized
         </Text>
         <Text
-          style={[dynamicStyles.heroPrimarytext, { color: Colors.primaryDark }]}
+          style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
         >
           Real Estate Investing
         </Text>
@@ -38,9 +39,13 @@ const Home = () => {
       {/* <Button title="Toggle theme" onPress={toggleTheme}></Button> */}
       <Button
         title="Explore Marketplace"
-        style={{marginBottom:5}}
+        style={{ marginBottom: 5 }}
+        textStyle={{ margin: 10 }}
+        size="lg"
         onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
-      ></Button>
+      >
+        {<Icons.Arrow height={12} width={12} borderColor={Colors.background} />}
+      </Button>
 
       <View
         style={{
@@ -52,7 +57,10 @@ const Home = () => {
       >
         <View style={dynamicStyles.containerStyle}>
           <Text
-            style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
+            style={[
+              dynamicStyles.heroPrimarytext,
+              { fontSize: 25, color: Colors.primary },
+            ]}
           >
             99%
           </Text>
@@ -62,7 +70,10 @@ const Home = () => {
         </View>
         <View style={dynamicStyles.containerStyle}>
           <Text
-            style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
+            style={[
+              dynamicStyles.heroPrimarytext,
+              { fontSize: 25, color: Colors.primary },
+            ]}
           >
             50M+
           </Text>
@@ -72,7 +83,10 @@ const Home = () => {
         </View>
         <View style={[dynamicStyles.containerStyle]}>
           <Text
-            style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
+            style={[
+              dynamicStyles.heroPrimarytext,
+              { fontSize: 25, color: Colors.primary },
+            ]}
           >
             2,600+
           </Text>

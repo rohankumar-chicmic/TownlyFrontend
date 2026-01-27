@@ -6,11 +6,10 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       borderWidth: 1,
-      backgroundColor: Colors.surface,
       borderColor: Colors.border,
       flexDirection: 'row',
+      margin: 5,
       borderRadius: 10,
-      marginBottom: 10,
     },
     detailsContainer: {
       padding: 10,

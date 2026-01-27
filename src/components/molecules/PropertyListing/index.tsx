@@ -6,13 +6,15 @@ import CardContainer2 from '../CardContainer2'
 interface ListingProp {
   header?: React.ReactElement;
   contentContainerStyle?: ViewStyle, 
-  style?: ViewStyle
+  style?: ViewStyle, 
+  horizontal? : boolean
 }
 
 export default function PropertyListing(props: ListingProp) {
   return (
     <FlatList
-    data={DUMMY_PROPERTIES}
+      horizontal = {props.horizontal}
+      data={DUMMY_PROPERTIES}
       contentContainerStyle={props.contentContainerStyle}
       style={props.style}
       showsVerticalScrollIndicator={false}

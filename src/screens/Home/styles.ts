@@ -22,7 +22,7 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textSecondary,
     },
     heading: {
-      fontSize: 28,
+      fontSize: 25,
       fontWeight: 'bold',
       color: Colors.textPrimary,
     },
@@ -45,7 +45,10 @@ const styles = (Colors: ThemeColors) =>
       justifyContent: 'center',
       borderTopColor: Colors.border,
       borderTopWidth: 1,
-      marginBottom: 15,
+      borderBottomColor: Colors.border, 
+      borderBottomWidth: 1,
+      paddingVertical: 10, 
+      marginBottom: 10,
     },
   });
 

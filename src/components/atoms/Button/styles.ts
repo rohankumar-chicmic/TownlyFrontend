@@ -18,8 +18,8 @@ const styles = (Colors: ThemeColors) =>
     },
 
     sm: {
-      height: 36,
-      paddingHorizontal: 12,
+      height: 30,
+      paddingHorizontal: 10,
     },
     md: {
       height: 44,

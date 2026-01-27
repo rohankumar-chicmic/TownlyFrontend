@@ -5,6 +5,7 @@ import Portfolio from '@assets/svg/portfolio-suitcase-svgrepo-com.svg';
 import Logo from '@assets/svg/logo.svg';
 import Location from '@assets/svg/location.svg';
 import Search from '@assets/svg/search.svg';
+import Arrow from '@assets/svg/arrow.svg'
 
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -36,4 +37,5 @@ export const Icons = {
   Portfolio: (params: iconProps) => Portfolio({ ...iconStyle({ ...params }) }),
   Location: (params: iconProps) => Location({ ...iconStyle({ ...params }) }),
   Search: (params: iconProps) => Search({ ...iconStyle({ ...params }) }),
+  Arrow: (params: iconProps) => Arrow({...iconStyle({...params})})
 };

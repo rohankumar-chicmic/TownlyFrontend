@@ -13,15 +13,16 @@ const styles = (Colors: ThemeColors) =>
     heroImage: {
       width: '100%',
       height: 240,
+      zIndex: 0
     },
 
     section: {
-      paddingHorizontal: 16,
+      paddingHorizontal: 20,
       paddingTop: 16,
     },
-
+    
     title: {
-      fontSize: 22,
+      fontSize: 25,
       fontWeight: '500',
       color: Colors.textPrimary,
     },
@@ -35,14 +36,14 @@ const styles = (Colors: ThemeColors) =>
     tag: {
       marginTop: 10,
       alignSelf: 'flex-start',
-      backgroundColor: Colors.primary,
+      backgroundColor: Colors.outline,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 6,
     },
 
     tagText: {
-      color: Colors.background,
+      color: Colors.primary,
       fontSize: 12,
     },
 
@@ -62,9 +63,13 @@ const styles = (Colors: ThemeColors) =>
     },
 
     cardTitle: {
-      fontSize: 18,
-      color: Colors.textPrimary,
+      fontSize: 20,
+      color: Colors.primary,
+      fontWeight: '600',
       marginBottom: 12,
+      alignSelf: 'center',
+      borderBottomColor: Colors.border, 
+      borderBottomWidth:1
     },
 
     inputRow: {
@@ -88,25 +93,22 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 16,
       fontWeight: '500',
     },
-
-    cta: {
-      marginTop: 16,
-      backgroundColor: Colors.primary,
-      paddingVertical: 14,
-      borderRadius: 10,
-      alignItems: 'center',
-    },
-
-    ctaText: {
-      color: Colors.background,
-      fontSize: 16,
-      fontWeight: '500',
-    },
-
     sectionTitle: {
       fontSize: 18,
+      fontWeight:'500',
       color: Colors.textPrimary,
       marginBottom: 10,
+    },
+    containerStyle: {
+      flex: 1, 
+      borderRadius: 4,
+      borderWidth: 1,
+      backgroundColor: Colors.surface,
+      borderColor: Colors.border,
+      padding: 10,
+      marginRight: 10,
+      justifyContent: 'center',
+      alignItems: 'flex-start',
     },
   });
 
