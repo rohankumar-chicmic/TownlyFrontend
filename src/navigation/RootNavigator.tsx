@@ -12,7 +12,7 @@ import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 
 import Tabs from './Tabs';
 import PropertyDetails from '@screens/PropertyDetails';
-// import CreateNFTScreen from '@screens/CreateNFT';
+import CreateNFTScreen from '@screens/CreateNFT';
 
 const Stack = createNativeStackNavigator();
 
@@ -37,10 +37,10 @@ const RootNavigator = () => {
           name="PropertyDetails"
           component={PropertyDetails}
         />
-        {/* <Stack.Screen
+        <Stack.Screen
           name="CreateNft"
           component={CreateNFTScreen}
-        /> */}
+        />
       </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>

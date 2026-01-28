@@ -27,6 +27,19 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 15,
       color: Colors.textSecondary,
     },
+     tag:{
+      margin: 10,
+      alignSelf: 'flex-start',
+      backgroundColor: Colors.outline,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 6,
+    },
+
+    tagText: {
+      color: Colors.textSecondary,
+      fontSize: 12,
+    },
   });
 
 export default styles;

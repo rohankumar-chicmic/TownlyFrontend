@@ -15,7 +15,9 @@ const styles = (Colors: ThemeColors) =>
       alignItems: 'center',
     },
     input: {
-      backgroundColor: Colors.surface,
+      width:'70%', 
+      backgroundColor: 'transparent',
+      color:Colors.textSecondary,
     },
   });
 

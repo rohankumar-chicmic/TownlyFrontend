@@ -1,23 +1,16 @@
 
 interface PropertyCardProps {
-    title: string;
-    location: string;
-    imageUrl: string;
-    isFractional: boolean;
-    category: 'Residential' | 'Commercial' | 'Industrial';
-    riskData: {
-      score: number;
-      label: string;
-    };
-    pricing: {
-      pricePerShare: number;
-      currency: string;
-      availability: number;
-      totalShares: number
-    };
-    yieldPercentage: number;
-    onViewDetails?: () => void;
-    onInvest?: () => void;
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  propertyType: string;
+  annualYieldPercent: number;
+  approvedValuation: number;
+  availableUnits: number;
+  totalUnits: number;
+  riskScore: number;
+  description?: string;
   }
 
   export default PropertyCardProps;

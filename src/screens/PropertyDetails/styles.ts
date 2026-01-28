@@ -47,14 +47,7 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 12,
     },
 
-    metrics: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      justifyContent: 'space-between',
-      paddingHorizontal: 16,
-      marginTop: 16,
-    },
-
+    
     investCard: {
       margin: 16,
       padding: 16,

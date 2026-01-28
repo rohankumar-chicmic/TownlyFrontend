@@ -11,8 +11,8 @@ import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import PropertyListing from '@components/molecules/PropertyListing';
 import { Icons } from '@utils/icons';
-import { findLastIndex } from 'eslint.config';
-
+import { useGetPropertyDetailsQuery } from '@redux/PropertyApiReducer';
+import { DUMMY_PROPERTIES } from './dummyData';
 export default function PropertyDetails() {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
@@ -20,6 +20,31 @@ export default function PropertyDetails() {
   const params = route.params;
   const insets = useSafeAreaInsets();
   const [showModal, setShowModal] = useState(false);
+  const { data, isLoading, error, refetch } = useGetPropertyDetailsQuery(
+    params.id,
+  );
+
+  if (isLoading) {
+    <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Loading</Text>;
+  }
+
+  if(error){
+    return (<ScrollView
+      style={[
+        dynamicStyles.screen,
+        {
+          paddingTop: insets.top,
+        },
+      ]}
+      contentContainerStyle={{ padding: 5, paddingBottom: 20 }}
+      showsVerticalScrollIndicator={false}
+    >
+      <BackButton />
+
+      <Text style={[dynamicStyles.title, {alignSelf:'center', justifyContent:'center'}]}> Property Not Available</Text>
+
+    </ScrollView>)
+  }
 
   return (
     <ScrollView
@@ -37,12 +62,12 @@ export default function PropertyDetails() {
       <PagerView style={dynamicStyles.heroImage} pageMargin={10}>
         <Image
           source={{
-            uri: 'https://c.animaapp.com/mkdtyv4xh54UmA/img/mask-group-5.png',
+            uri: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80',
           }}
         />
         <Image
           source={{
-            uri: 'https://c.animaapp.com/mkdtyv4xh54UmA/img/mask-group-5.png',
+            uri: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80',
           }}
         />
         <Image
@@ -53,13 +78,12 @@ export default function PropertyDetails() {
       </PagerView>
 
       <View style={dynamicStyles.section}>
-        <Text style={dynamicStyles.title}>Suburban Family Home</Text>
+        <Text style={dynamicStyles.title}>{data?.name}</Text>
         <Text style={dynamicStyles.location}>
-          {<Icons.Location height={10} width={10} />} 5943 Marlow St, Detroit,
-          MI
+          {<Icons.Location height={10} width={10} />} {data?.location}
         </Text>
         <View style={dynamicStyles.tag}>
-          <Text style={dynamicStyles.tagText}>Available</Text>
+          <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
         </View>
       </View>
 
@@ -88,7 +112,8 @@ export default function PropertyDetails() {
               fontWeight: '500',
             }}
           >
-            $409,700
+            {'$'}
+            {data?.totalValue}
           </Text>
         </View>
         <View style={dynamicStyles.containerStyle}>
@@ -102,7 +127,8 @@ export default function PropertyDetails() {
               fontWeight: '500',
             }}
           >
-            10 ETH
+            {Math.round(data?.pricePerUnit ?? 10)}
+            {' ETH'}
           </Text>
         </View>
         <View style={[dynamicStyles.containerStyle]}>
@@ -112,7 +138,8 @@ export default function PropertyDetails() {
           <Text
             style={{ color: Colors.primary, fontSize: 18, fontWeight: '500' }}
           >
-            9.2%
+            {data?.annualYieldPercent}
+            {'%'}
           </Text>
         </View>
         <View style={[dynamicStyles.containerStyle]}>
@@ -126,7 +153,9 @@ export default function PropertyDetails() {
               fontWeight: '500',
             }}
           >
-            1000/10000
+            {data?.availableUnits}
+            {'/'}
+            {data?.totalUnits}
           </Text>
         </View>
       </ScrollView>
@@ -134,19 +163,7 @@ export default function PropertyDetails() {
       <View style={[dynamicStyles.section, { paddingTop: 5 }]}>
         <Text style={dynamicStyles.sectionTitle}>Property Highlights</Text>
         <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
-          • Single Family property in Detroit, MI
-        </Text>
-        <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
-          • Total 10,000 shares available
-        </Text>
-        <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
-          • Monthly rent: $3,145
-        </Text>
-        <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
-          • Current occupancy: 100%
-        </Text>
-        <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
-          • Deployed on Polygon blockchain
+          {data?.description}
         </Text>
       </View>
 
@@ -157,9 +174,9 @@ export default function PropertyDetails() {
         style={{ margin: 15 }}
       ></Button>
 
-      <View style={[dynamicStyles.section, {paddingBottom: 40}]}>
-        <Text style={dynamicStyles.sectionTitle}>Related Properties</Text>
-        <PropertyListing horizontal style={{}}></PropertyListing>
+      <View style={[dynamicStyles.section, { paddingHorizontal:15  }]}>
+        <Text style={[dynamicStyles.sectionTitle, {paddingHorizontal: 10}]}>Related Properties</Text>
+        <PropertyListing horizontal data={DUMMY_PROPERTIES}></PropertyListing>
       </View>
     </ScrollView>
   );

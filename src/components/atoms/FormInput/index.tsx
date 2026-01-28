@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ViewStyle } from 'react-native';
 import useTheme from '@hooks/useTheme';
 
 type AppInputProps = {
@@ -10,9 +10,10 @@ type AppInputProps = {
   required?: boolean;
   multiline?: boolean;
   maxLength?: number;
+  style? : ViewStyle
 };
 
-export default function AppInput({
+export default function FormInput({
   label,
   value,
   onChangeText,
@@ -20,6 +21,7 @@ export default function AppInput({
   required,
   multiline,
   maxLength,
+  
 }: AppInputProps) {
   const { Colors } = useTheme();
 
@@ -61,7 +63,7 @@ const styles = StyleSheet.create({
   input: {
     borderRadius: 10,
     padding: 12,
-    fontSize: 15,
+    fontSize: 13,
     borderWidth: 1,
   },
   counter: {

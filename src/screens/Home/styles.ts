@@ -39,6 +39,7 @@ const styles = (Colors: ThemeColors) =>
       marginRight: 10,
       justifyContent: 'center',
       alignItems: 'flex-start',
+      flex:1
     },
     headingSection: {
       alignItems: 'center',

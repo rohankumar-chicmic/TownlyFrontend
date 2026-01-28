@@ -2,6 +2,6 @@ export type RootStackParamList = {
   Home: undefined;
   Marketplace: undefined;
   Portfolio: undefined;
-  PropertyDetails: undefined
+  PropertyDetails: { id: string}
   CreateNft: undefined
 };

@@ -21,7 +21,9 @@ export default function Tabs() {
         header: (props) => <Header {...props} />,
 
         headerTintColor: Colors.primary,
-
+        sceneStyle: {
+          backgroundColor: Colors.background
+        },
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,

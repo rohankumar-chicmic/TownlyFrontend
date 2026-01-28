@@ -4,6 +4,9 @@ import { useAppKit, useAccount } from '@reown/appkit-react-native';
 import { View, Text, Pressable, ViewStyle } from 'react-native';
 import Button from '../Button';
 
+import { useGenerateNonceMutation, useVerifySignatureMutation } from '@redux/ApiReducer';
+import { useEffect } from 'react';
+
 interface ConnectButtonPropsType {
   style?: ViewStyle;
 }
@@ -12,6 +15,7 @@ function ConnectButton(props: ConnectButtonPropsType) {
   const { Colors } = useTheme();
   const { open, disconnect } = useAppKit();
   const { address, isConnected, chainId } = useAccount();
+  const [generateNonce, {isLoading, error, data}] = useGenerateNonceMutation();
 
   if (isConnected) {
     return (

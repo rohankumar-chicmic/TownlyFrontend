@@ -1,5 +1,5 @@
 import { View, TextInput, Text, Pressable, Keyboard } from 'react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import styles from './styles';
@@ -7,9 +7,14 @@ import useStyles from '@hooks/useStyles';
 
 import Button from '@components/atoms/Button';
 
-export default function SearchInput() {
+interface searchPropsType{
+  text: string;
+  setText: Dispatch<SetStateAction<string>>;
+  onPress: () => void;
+}
+
+export default function SearchInput(props: searchPropsType) {
   const { dynamicStyles } = useStyles(styles);
-  const [text, setText] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const ref = useRef<TextInput>(null);
   const { Colors } = useTheme();
@@ -44,14 +49,14 @@ export default function SearchInput() {
           ref={ref}
           placeholder="Search by location or property name..."
           placeholderTextColor={Colors.textMuted}
-          onChangeText={setText}
+          onChangeText={props.setText}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          value={text}
+          value={props.text}
           style={dynamicStyles.input}
         />
         <Button
-          onPress={() => console.log('filter')}
+          onPress={props.onPress}
           size="sm"
           style={{
             marginHorizontal: 4,

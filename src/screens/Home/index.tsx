@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Dimensions, ScrollView, Text, View } from 'react-native';
 
 import styles from './styles';
 
@@ -12,11 +12,14 @@ import { ROUTES } from 'src/navigation/constants';
 import { Icons } from '@utils/icons';
 import { useAppNavigation } from '@hooks/useNavigation';
 import PropertyListing from '@components/molecules/PropertyListing';
-
+import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
   const navigation = useAppNavigation();
   const { Colors } = useTheme();
+  const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery();
+
+  console.log(data);
 
   const header = (
     <>
@@ -105,9 +108,36 @@ const Home = () => {
     </>
   );
 
+  if (isLoading) {
+    return (
+      <ScrollView style={[dynamicStyles.container]}>
+        {header}
+        <Text style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}>
+          Loading Properties...
+        </Text>
+      </ScrollView>
+    );
+  }
+
+  if (error) {
+    return (
+      <ScrollView style={[dynamicStyles.container]}>
+        {header}
+        <Text
+          style={[
+            dynamicStyles.heroPrimarytext,
+            { alignSelf: 'center'},
+          ]}>
+          Sorry, could not fetch the proeprties
+        </Text>
+      </ScrollView>
+    );
+  }
+
   return (
     <PropertyListing
       header={header}
+      data={data}
       contentContainerStyle={dynamicStyles.container}
       style={{ backgroundColor: Colors.background }}
     />

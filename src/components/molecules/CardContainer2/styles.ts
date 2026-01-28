@@ -6,6 +6,7 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       borderWidth: 1,
+      minWidth:Dimensions.get('screen').width * 0.86,
       borderColor: Colors.border,
       flexDirection: 'row',
       margin: 5,
