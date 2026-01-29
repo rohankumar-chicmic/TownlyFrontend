@@ -1,9 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Text,
-  ActivityIndicator,
   Pressable,
-  View,
   ViewStyle,
   TextStyle,
 } from 'react-native';
@@ -18,7 +16,7 @@ interface ButtonProps {
   onPress: () => void;
   variant?: ButtonVariant;
   size?: ButtonSize;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   children?: React.ReactNode;
   disabled?: boolean;
   textStyle?: TextStyle;
@@ -31,31 +29,37 @@ export default function Button({
   size = 'md',
   style,
   children,
-  disabled,
-  textStyle
+  disabled = false,
+  textStyle,
 }: Readonly<ButtonProps>) {
-  const { dynamicStyles, Colors } = useStyles(styles);
-  const [isPressed , setIsPressed] = useState(false);
+  const { dynamicStyles } = useStyles(styles);
+
+  const pressedStyleMap: Record<ButtonVariant, ViewStyle> = {
+    primary: dynamicStyles.pressedPrimary,
+    secondary: dynamicStyles.pressedSecondary,
+    outline: dynamicStyles.pressedOutline,
+    ghost: dynamicStyles.pressedGhost,
+  };
 
   return (
     <Pressable
       onPress={onPress}
-      onPressIn={() => setIsPressed(true)}
-      onPressOut={() => setIsPressed(false)}
       disabled={disabled}
-      style={[
+      style={({ pressed }) => [
         dynamicStyles.base,
-        dynamicStyles[variant],
         dynamicStyles[size],
+        dynamicStyles[variant],
         disabled && dynamicStyles.disabled,
+        pressed && !disabled && pressedStyleMap[variant],
         style,
-        {backgroundColor: isPressed? Colors.primaryDark : Colors.primary}
       ]}
     >
-          {title && (
-            <Text style={[dynamicStyles.text, textStyle]}>{title}</Text>
-          )}
-          {children}
+      {title && (
+        <Text style={[dynamicStyles.text, textStyle]}>
+          {title}
+        </Text>
+      )}
+      {children}
     </Pressable>
   );
 }

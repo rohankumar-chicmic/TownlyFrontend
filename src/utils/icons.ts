@@ -6,13 +6,16 @@ import Logo from '@assets/svg/logo.svg';
 import Location from '@assets/svg/location.svg';
 import Search from '@assets/svg/search.svg';
 import Arrow from '@assets/svg/arrow.svg'
-
+import Step1Icon from '@assets/svg/Step1Icon.svg'
+import Step2Icon from '@assets/svg/Step2Icon.svg'
+import Step3Icon from '@assets/svg/Step3Icon.svg'
+import Step4Icon from '@assets/svg/Step4Icon.svg'
 import { RFValue } from 'react-native-responsive-fontsize';
 
 const iconStyle = ({
   width = 0,
   height = 0,
-  color = 'black',
+  color = 'none',
   borderColor = 'none',
 }) => ({
   width: RFValue(width),
@@ -37,5 +40,9 @@ export const Icons = {
   Portfolio: (params: iconProps) => Portfolio({ ...iconStyle({ ...params }) }),
   Location: (params: iconProps) => Location({ ...iconStyle({ ...params }) }),
   Search: (params: iconProps) => Search({ ...iconStyle({ ...params }) }),
-  Arrow: (params: iconProps) => Arrow({...iconStyle({...params})})
+  Arrow: (params: iconProps) => Arrow({...iconStyle({...params})}),
+  Step1Icon: (params: iconProps) => Step1Icon({...iconStyle({...params})}),
+  Step2Icon: (params: iconProps) => Step2Icon({...iconStyle({...params})}),
+  Step3Icon: (params: iconProps) => Step3Icon({...iconStyle({...params})}),
+  Step4Icon: (params: iconProps) => Step4Icon({...iconStyle({...params})}),
 };

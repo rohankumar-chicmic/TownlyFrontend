@@ -3,20 +3,15 @@ import { ThemeColors } from '@theme/constants';
 
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
+    /* ---------- Base ---------- */
     base: {
-      borderRadius: 5,
+      borderRadius: 6,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
     },
-    content: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    icon: {
-      marginHorizontal: 6,
-    },
 
+    /* ---------- Sizes ---------- */
     sm: {
       height: 30,
       paddingHorizontal: 10,
@@ -30,6 +25,7 @@ const styles = (Colors: ThemeColors) =>
       paddingHorizontal: 20,
     },
 
+    /* ---------- Variants ---------- */
     primary: {
       backgroundColor: Colors.primary,
     },
@@ -45,12 +41,28 @@ const styles = (Colors: ThemeColors) =>
       backgroundColor: 'transparent',
     },
 
+    /* ---------- Pressed States ---------- */
+    pressedPrimary: {
+      opacity: 0.85,
+    },
+    pressedSecondary: {
+      opacity: 0.85,
+    },
+    pressedOutline: {
+      backgroundColor: Colors.primary + '10',
+    },
+    pressedGhost: {
+      backgroundColor: Colors.primary + '10',
+    },
+
+    /* ---------- Text ---------- */
     text: {
       fontSize: 15,
       fontWeight: '600',
       color: Colors.background,
     },
 
+    /* ---------- Disabled ---------- */
     disabled: {
       opacity: 0.5,
     },

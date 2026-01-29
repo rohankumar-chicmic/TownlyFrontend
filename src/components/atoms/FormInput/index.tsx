@@ -1,75 +1,49 @@
+import {
+  View,
+  Text,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+  ViewStyle,
+} from 'react-native';
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, ViewStyle } from 'react-native';
 import useTheme from '@hooks/useTheme';
+import useStyles from '@hooks/useStyles';
+import styles from './styles';
 
-type AppInputProps = {
-  label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
+interface FormInputType extends TextInputProps {
+  label?: string;
   required?: boolean;
-  multiline?: boolean;
-  maxLength?: number;
-  style? : ViewStyle
-};
+  labelStyle?: TextStyle;
+  style?: ViewStyle;
+  placeholder?: string;
+  hintText?: string;
+}
 
-export default function FormInput({
-  label,
-  value,
-  onChangeText,
-  placeholder,
-  required,
-  multiline,
-  maxLength,
-  
-}: AppInputProps) {
+export default function FormInput(props: FormInputType) {
   const { Colors } = useTheme();
-
+  const { dynamicStyles } = useStyles(styles);
   return (
-    <View style={{ marginBottom: 16 }}>
-      <Text style={[styles.label, { color: Colors.textPrimary }]}>
-        {label}
-        {required && <Text style={{ color: Colors.primary }}> *</Text>}
+    <View style={{padding: 5}}>
+      <Text style={[dynamicStyles.label, props.labelStyle]}>
+        {props.label}{' '}
+        {props.required && <Text style={{ color: Colors.primary }}>*</Text>}
       </Text>
-
       <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={Colors.textSecondary}
-        multiline={multiline}
-        maxLength={maxLength}
+        placeholder={props.placeholder}
+        placeholderTextColor={Colors.textMuted}
         style={[
-          styles.input,
+          dynamicStyles.input,
           { borderColor: Colors.border, backgroundColor: Colors.background },
+          props.style,
         ]}
+        {...props}
       />
-
-      {maxLength && (
-        <Text style={styles.counter}>
-          {value.length}/{maxLength}
+      {props.hintText && (
+        <Text style={{ color: Colors.textSecondary, fontSize: 10, marginLeft:5, marginBottom: 4}}>
+          {props.hintText}
         </Text>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  label: {
-    marginBottom: 6,
-    fontSize: 14,
-    paddingHorizontal: 5
-  },
-  input: {
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 13,
-    borderWidth: 1,
-  },
-  counter: {
-    alignSelf: 'flex-end',
-    fontSize: 11,
-    opacity: 0.6,
-    marginTop: 4,
-  },
-});
