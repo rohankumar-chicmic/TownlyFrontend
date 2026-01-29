@@ -31,9 +31,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
       ]}
     >
       <Image
-        src={
-          'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80'
-        }
+        src={props.imageUrl}
         width={Dimensions.get('screen').width * 0.4}
         style={{ borderBottomLeftRadius: 7, borderTopLeftRadius: 7 }}
       ></Image>
@@ -55,7 +53,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
             },
           ]}
         >
-          {props.riskScore??0}
+          {props.riskScore ?? 0}
           {'/10 '}
           {/* <Text style={[dynamicStyles.smallText]}>
               {props.riskData.label}
@@ -73,10 +71,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Price/Share</Text>
           <Text style={[dynamicStyles.values]}>
-            {props.approvedValuation
-              ? Math.round(props.approvedValuation / props.totalUnits / 1000)
-              : 0 }{' '}
-            {'ETH'}
+            {Number(props.pricePerUnitEth ?? 1.5 ).toFixed(2)} {'ETH'}
           </Text>
         </View>
       </View>

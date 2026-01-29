@@ -1,7 +1,7 @@
-import "@walletconnect/react-native-compat";
+import '@walletconnect/react-native-compat';
 
 import { useEffect } from 'react';
-import { TextInput, TextStyle } from 'react-native';
+import { TextInput, TextStyle, PermissionsAndroid } from 'react-native';
 
 import { preloadFonts } from '@utils/constants';
 import { preloadImages } from '@utils/images';
@@ -14,15 +14,26 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
-import { SafeAreaProvider } from 'react-native-safe-area-context'
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { appKit, wagmiAdapter } from './src/AppkitConfig'; // Your configured AppKit instance
-import { AppKitProvider } from '@reown/appkit-react-native';
+import { AppKitProvider, AppKit } from '@reown/appkit-react-native';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AppKit } from '@reown/appkit-react-native'
+import messaging from '@react-native-firebase/messaging';
 
 const queryClient = new QueryClient();
 
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  const token = await messaging().getToken();
+  console.log(token,'dskfnskdjbfdjksbfjk')
+  if (enabled) {
+    console.log('Authorization status:', authStatus);
+  }
+}
 
 SplashScreen.preventAutoHideAsync();
 interface ExtendedText extends Text {
@@ -52,6 +63,13 @@ export default function App() {
     })();
   }, []);
 
+  useEffect(() => {
+    requestUserPermission();
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    );
+  }, []);
+
   return (
     <SafeAreaProvider>
       <AppKitProvider instance={appKit}>
@@ -67,6 +85,5 @@ export default function App() {
         </WagmiProvider>
       </AppKitProvider>
     </SafeAreaProvider>
-
   );
 }

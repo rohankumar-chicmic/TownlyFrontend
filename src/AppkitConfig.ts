@@ -6,13 +6,12 @@ import storage from './storage';
 
 const IS_DEV = process.env.APP_VARIANT === 'development';
 
-
 const projectId = '9e773ea4be62417831636eb61b17c107';
 
 const APP_NAME = IS_DEV ? 'townly-dev' : 'townly';
 const APP_SCHEME = IS_DEV ? 'townly-dev' : 'townly';
 const APP_URL = 'https://townly.app'; // replace if different
-const UNIVERSAL_LINK = 'townly.app';  // must match Expo universal links config
+const UNIVERSAL_LINK = 'townly.app'; // must match Expo universal links config
 
 export const wagmiAdapter = new WagmiAdapter({
   projectId,
@@ -23,8 +22,8 @@ export const appKit = createAppKit({
   projectId,
   networks: [mainnet, sepolia],
   adapters: [wagmiAdapter],
-    storage,
-    // siwx: siwxConfig, 
+  storage,
+  // siwx: siwxConfig,
   metadata: {
     name: APP_NAME,
     description: 'Townly decentralized application',

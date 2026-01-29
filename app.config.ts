@@ -4,9 +4,7 @@ import type { ExpoConfig } from 'expo/config';
 
 const IS_DEV = process.env.APP_VARIANT === 'development';
 
-const BUNDLE_IDENTIFIER = IS_DEV
-  ? 'com.anonymous.townly.dev'
-  : 'com.anonymous.townly';
+const BUNDLE_IDENTIFIER = 'com.townly.townly';
 
 const config: ExpoConfig = {
   name: IS_DEV ? 'townly-dev' : 'townly',
@@ -25,6 +23,13 @@ const config: ExpoConfig = {
   ios: {
     supportsTablet: true,
     bundleIdentifier: BUNDLE_IDENTIFIER,
+    googleServicesFile: './GoogleService-Info.plist',
+    infoPlist: {
+      UIBackgroundModes: ['remote-notification'],
+    },
+    entitlements: {
+      'aps-environment': 'production',
+    },
   },
   android: {
     adaptiveIcon: {
@@ -32,6 +37,8 @@ const config: ExpoConfig = {
       backgroundColor: '#ffffff',
     },
     package: BUNDLE_IDENTIFIER,
+    googleServicesFile: './google-services.json',
+    permissions: ['RECEIVE_BOOT_COMPLETED'],
   },
   extra: {
     APP_VARIANT: process.env.APP_VARIANT,
@@ -47,9 +54,19 @@ const config: ExpoConfig = {
         launchMode: 'most-recent',
       },
     ],
-    'expo-build-properties',
     'expo-asset',
     'expo-font',
+    [
+      'expo-build-properties',
+      {
+        ios: {
+          useFrameworks: 'static',
+          forceStaticLinking: ["RNFBApp"],
+        },
+      },
+    ],
+    '@react-native-firebase/app',
+    '@react-native-firebase/messaging',
   ],
 };
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, Image, ScrollView } from 'react-native';
 
 import PagerView from 'react-native-pager-view';
 import useTheme from '@hooks/useTheme';
@@ -28,22 +28,31 @@ export default function PropertyDetails() {
     <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Loading</Text>;
   }
 
-  if(error){
-    return (<ScrollView
-      style={[
-        dynamicStyles.screen,
-        {
-          paddingTop: insets.top,
-        },
-      ]}
-      contentContainerStyle={{ padding: 5, paddingBottom: 20 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <BackButton />
+  if (error) {
+    return (
+      <ScrollView
+        style={[
+          dynamicStyles.screen,
+          {
+            paddingTop: insets.top,
+          },
+        ]}
+        contentContainerStyle={{ padding: 5, paddingBottom: 20 }}
+        showsVerticalScrollIndicator={false}
+      >
+        <BackButton />
 
-      <Text style={[dynamicStyles.title, {alignSelf:'center', justifyContent:'center'}]}> Property Not Available</Text>
-
-    </ScrollView>)
+        <Text
+          style={[
+            dynamicStyles.title,
+            { alignSelf: 'center', justifyContent: 'center' },
+          ]}
+        >
+          {' '}
+          Property Not Available
+        </Text>
+      </ScrollView>
+    );
   }
 
   return (
@@ -62,17 +71,7 @@ export default function PropertyDetails() {
       <PagerView style={dynamicStyles.heroImage} pageMargin={10}>
         <Image
           source={{
-            uri: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80',
-          }}
-        />
-        <Image
-          source={{
-            uri: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80',
-          }}
-        />
-        <Image
-          source={{
-            uri: 'https://c.animaapp.com/mkdtyv4xh54UmA/img/mask-group-5.png',
+            uri: data?.imageUrl,
           }}
         />
       </PagerView>
@@ -127,7 +126,7 @@ export default function PropertyDetails() {
               fontWeight: '500',
             }}
           >
-            {Math.round(data?.pricePerUnit ?? 10)}
+            {Number(data?.pricePerUnitEth ?? 10).toFixed(5)}
             {' ETH'}
           </Text>
         </View>
@@ -174,8 +173,10 @@ export default function PropertyDetails() {
         style={{ margin: 15 }}
       ></Button>
 
-      <View style={[dynamicStyles.section, { paddingHorizontal:15  }]}>
-        <Text style={[dynamicStyles.sectionTitle, {paddingHorizontal: 10}]}>Related Properties</Text>
+      <View style={[dynamicStyles.section, { paddingHorizontal: 15 }]}>
+        <Text style={[dynamicStyles.sectionTitle, { paddingHorizontal: 10 }]}>
+          Related Properties
+        </Text>
         <PropertyListing horizontal data={DUMMY_PROPERTIES}></PropertyListing>
       </View>
     </ScrollView>

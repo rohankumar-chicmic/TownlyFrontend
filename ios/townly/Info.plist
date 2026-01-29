@@ -28,7 +28,7 @@
         <key>CFBundleURLSchemes</key>
         <array>
           <string>townly</string>
-          <string>com.anonymous.townly</string>
+          <string>com.townly.townly</string>
         </array>
       </dict>
       <dict>
@@ -53,6 +53,10 @@
     </dict>
     <key>RCTNewArchEnabled</key>
     <true/>
+    <key>UIBackgroundModes</key>
+    <array>
+      <string>remote-notification</string>
+    </array>
     <key>UILaunchStoryboardName</key>
     <string>SplashScreen</string>
     <key>UIRequiredDeviceCapabilities</key>

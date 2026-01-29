@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1079026585615",
+    "project_id": "townly-33d20",
+    "storage_bucket": "townly-33d20.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079026585615:android:177fa98aa20b86dae7d37a",
+        "android_client_info": {
+          "package_name": "com.townly.townly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmhdhbvyFO5PneFcgsQfwGrA6PZV7aZ4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

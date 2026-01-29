@@ -1,4 +1,3 @@
-
 interface PropertyCardProps {
   id: string;
   name: string;
@@ -10,7 +9,8 @@ interface PropertyCardProps {
   availableUnits: number;
   totalUnits: number;
   riskScore: number;
+  pricePerUnitEth: number;
   description?: string;
-  }
+}
 
-  export default PropertyCardProps;
+export default PropertyCardProps;
