@@ -11,7 +11,7 @@ interface ListingProp {
   data?: PropertyCardProps[];
 }
 
-export default function PropertyListing(props: ListingProp) {
+export default function PropertyListing(props: Readonly<ListingProp>) {
   console.log(props.data);
   return (
     <FlatList

@@ -11,7 +11,10 @@ import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import PropertyListing from '@components/molecules/PropertyListing';
 import { Icons } from '@utils/icons';
-import { useGetPropertyDetailsQuery } from '@redux/PropertyApiReducer';
+import {
+  useGetPropertyDetailsQuery,
+  useGetRelatedPropertiesQuery,
+} from '@redux/PropertyApiReducer';
 import { DUMMY_PROPERTIES } from './dummyData';
 export default function PropertyDetails() {
   const { Colors } = useTheme();
@@ -23,12 +26,16 @@ export default function PropertyDetails() {
   const { data, isLoading, error, refetch } = useGetPropertyDetailsQuery(
     params.id,
   );
+  const relatedProperties = useGetRelatedPropertiesQuery(params.id);
 
   if (isLoading) {
-    <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Loading</Text>;
+    return (
+      <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Loading</Text>
+    );
   }
 
   if (error) {
+    console.log(JSON.stringify(relatedProperties.error));
     return (
       <ScrollView
         style={[
@@ -48,8 +55,7 @@ export default function PropertyDetails() {
             { alignSelf: 'center', justifyContent: 'center' },
           ]}
         >
-          {' '}
-          Property Not Available
+          {JSON.stringify(error)}
         </Text>
       </ScrollView>
     );
@@ -177,7 +183,10 @@ export default function PropertyDetails() {
         <Text style={[dynamicStyles.sectionTitle, { paddingHorizontal: 10 }]}>
           Related Properties
         </Text>
-        <PropertyListing horizontal data={DUMMY_PROPERTIES}></PropertyListing>
+        <PropertyListing
+          horizontal
+          data={relatedProperties.data}
+        ></PropertyListing>
       </View>
     </ScrollView>
   );

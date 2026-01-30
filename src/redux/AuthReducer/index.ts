@@ -2,14 +2,19 @@ import { THEME } from '@theme/constants';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-const initialState = {
+interface InitialStateType {
+  userToken: string | undefined;
+  userData: any;
+  theme: THEME;
+}
+const initialState: InitialStateType = {
   userToken: undefined,
   userData: undefined,
   theme: THEME.DEVICE,
 };
 
-const common = createSlice({
-  name: 'common',
+const authReducer = createSlice({
+  name: 'auth',
   initialState,
   reducers: {
     loginUser(state, action) {
@@ -26,6 +31,6 @@ const common = createSlice({
   },
 });
 
-export const { loginUser, logoutUser, setTheme } = common.actions;
+export const { loginUser, logoutUser, setTheme } = authReducer.actions;
 
-export default common.reducer;
+export default authReducer.reducer;

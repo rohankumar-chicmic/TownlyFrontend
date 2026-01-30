@@ -1,6 +1,6 @@
 import { useColorScheme } from 'react-native';
 
-import { setTheme } from '@redux/CommonReducer';
+import { setTheme } from '@redux/AuthReducer';
 import { useAppDispatch, useAppSelector } from '@redux/store';
 import { THEME, ThemeColors } from '@theme/constants';
 import { DarkColors } from '@theme/darkTheme';
@@ -17,7 +17,7 @@ import { LightColors } from '@theme/lightTheme';
 const useTheme = () => {
   let currentTheme: THEME = THEME.DEVICE;
   let Colors: ThemeColors;
-  const theme = useAppSelector(state => state?.common?.theme);
+  const theme = useAppSelector(state => state?.auth?.theme);
   const deviceScheme = useColorScheme();
   if (theme === THEME.DEVICE || theme === undefined) {
     currentTheme = deviceScheme === 'dark' ? THEME.DARK : THEME.LIGHT;

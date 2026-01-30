@@ -71,7 +71,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Price/Share</Text>
           <Text style={[dynamicStyles.values]}>
-            {Number(props.pricePerUnitEth ?? 1.5 ).toFixed(2)} {'ETH'}
+            {Number(props.pricePerUnitEth ?? 1.5).toFixed(2)} {'ETH'}
           </Text>
         </View>
       </View>

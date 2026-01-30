@@ -1,77 +1,106 @@
-// // siwx.config.ts
-// import {
-//   createAppKit,
-//   type SIWXConfig,
-//   type SIWXSession,
-// } from '@reown/appkit-react-native';
-// import store  from '@redux/store';
-// import { authApi } from '@redux/ApiReducer';
-// import { loginUser, logoutUser } from '@redux/CommonReducer'; 
+// siwx.config.ts
+import { type SIWXConfig, type SIWXSession } from '@reown/appkit-react-native';
+import store from '@redux/store';
+import { SIWXMessage } from '@reown/appkit-react-native';
+import { authApi } from '@redux/ApiReducer';
+import { loginUser, logoutUser } from '@redux/AuthReducer';
 
-// export const siwx: SIWXConfig = {
-//   createMessage: async input => {
-//     const result = await store
-//       .dispatch(
-//         authApi.endpoints.generateNonce.initiate({
-//           walletAddress: input.address,
-//         }),
-//       )
-//       .unwrap();
+const IS_DEV = process.env.APP_VARIANT === 'development';
+const SIWX_DOMAIN = 'com.townly.townly';
+const SIWX_URI = IS_DEV ? 'townly-dev' : 'townly';
 
-//     return {
-//       message: result.nonceMessage ?? result.message,
-//       nonce: result.nonce,
-//       accountAddress: input.address,
-//       chainId: input.chainId,
-//       domain: 'realestateinvesting.app',
-//       uri: 'https://realestateinvesting.app',
-//       version: '1',
-//     };
-//   },
+export const siwx: SIWXConfig = {
+  createMessage: async (input): Promise<SIWXMessage> => {
+    console.log(
+      ' ===============================',
+      input.chainId,
+      input.accountAddress,
+    );
+    const chainId = Number(input.chainId.split(':')[1]);
+    console.log(' ===============================', chainId);
 
-//   addSession: async session => {
-//     const chainId = Number(session.chainId.split(':')[1]);
+    const result = await store
+      .dispatch(
+        authApi.endpoints.generateNonce.initiate({
+          walletAddress: input.accountAddress,
+          chainId: chainId,
+        }),
+      )
+      .unwrap();
 
-//     const result = await store
-//       .dispatch(
-//         authApi.endpoints.verifySignature.initiate({
-//           walletAddress: session.address,
-//           signature: session.signature,
-//           chainId,
-//         }),
-//       )
-//       .unwrap();
+    const issuedAt = new Date().toISOString();
 
-//     store.dispatch(
-//       loginUser({
-//         token: result.token,
-//         walletAddress: session.address,
-//         // Add any other fields your backend returns
-//       }),
-//     );
-//   },
+    const message: SIWXMessage = {
+      accountAddress: input.accountAddress,
+      chainId: input.chainId,
 
-//   getSessions: async () => {
-//     const state = store.getState();
+      domain: SIWX_DOMAIN,
+      uri: SIWX_URI,
+      version: '1',
+      nonce: result.data.nonce,
+      statement: 'Sign in with Ethereum to Townly',
+      issuedAt,
 
-//     // Check if user is authenticated
-//     if (!state.common.userToken || !state.common.userData) {
-//       return [];
-//     }
+      toString() {
+        return (
+          `${this.domain} wants you to sign in with your Ethereum account:\n` +
+          `${this.accountAddress}\n\n` +
+          `${this.statement}\n\n` +
+          `URI: ${this.uri}\n` +
+          `Version: ${this.version}\n` +
+          `Chain ID: ${this.chainId}\n` +
+          `Nonce: ${this.nonce}\n` +
+          `Issued At: ${this.issuedAt}`
+        );
+      },
+    };
 
-//     // Return a session with the wallet address
-//     return [
-//       {
-//         address: state.common.userData,
-//       } as SIWXSession,
-//     ];
-//   },
+    return message;
+  },
 
-//   revokeSession: async () => {
-//     store.dispatch(logoutUser());
-//   },
+  addSession: async session => {
+    const chainId = Number(session.data.chainId.split(':')[1]);
 
-//   getRequired: () => true,
+    await store
+      .dispatch(
+        authApi.endpoints.verifySignature.initiate({
+          walletAddress: session.data.accountAddress,
+          signature: session.signature,
+          message: session.message,
+          chainId,
+        }),
+      )
+      .unwrap();
 
-//   signOutOnDisconnect: true,
-// };
+    store.dispatch(
+      loginUser({
+        walletAddress: session.data.accountAddress,
+      }),
+    );
+  },
+
+  getSessions: async () => {
+    return [];
+  },
+
+  revokeSession: async () => {
+    store.dispatch(logoutUser());
+  },
+
+  setSessions: async (sessions: SIWXSession[]) => {
+    if (!sessions.length) {
+      store.dispatch(logoutUser());
+      return;
+    }
+
+    store.dispatch(
+      loginUser({
+        walletAddress: sessions[0].data.accountAddress,
+      }),
+    );
+  },
+
+  getRequired: () => true,
+
+  signOutOnDisconnect: true,
+};

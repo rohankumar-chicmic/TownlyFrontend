@@ -8,8 +8,6 @@ import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import ConnectButton from '@components/atoms/ConnectButton';
 
-
-
 export default function Header({
   route,
   options,
@@ -35,14 +33,13 @@ export default function Header({
         <Icons.Logo
           height={30}
           width={60}
-          color={Colors.primaryDark}
-          borderColor={Colors.background}
+          color={Colors.primary}
+          borderColor={Colors.border}
         />
 
         <Text style={dynamicStyles.primaryText}>Townly</Text>
       </View>
-      {userToken ?<ConnectButton style={dynamicStyles.walletButton}/>
-        : <></>} 
-          </View>
+      {userToken ? <ConnectButton style={dynamicStyles.walletButton} /> : <></>}
+    </View>
   );
 }

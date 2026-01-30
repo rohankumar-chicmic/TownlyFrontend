@@ -4,7 +4,9 @@ import { useAppKit, useAccount } from '@reown/appkit-react-native';
 import { View, Text, Pressable, ViewStyle } from 'react-native';
 import Button from '../Button';
 
-import { useGenerateNonceMutation, useVerifySignatureMutation } from '@redux/ApiReducer';
+// import {
+//   useGenerateNonceMutation,
+// } from '@redux/ApiReducer';
 import { useEffect } from 'react';
 
 interface ConnectButtonPropsType {
@@ -15,7 +17,6 @@ function ConnectButton(props: ConnectButtonPropsType) {
   const { Colors } = useTheme();
   const { open, disconnect } = useAppKit();
   const { address, isConnected, chainId } = useAccount();
-  const [generateNonce, {isLoading, error, data}] = useGenerateNonceMutation();
 
   if (isConnected) {
     return (
@@ -32,7 +33,7 @@ function ConnectButton(props: ConnectButtonPropsType) {
       onPress={open}
       title="Connect Wallet"
       size="sm"
-      textStyle={{ fontSize: 12, fontWeight:"bold" }}
+      textStyle={{ fontSize: 12, fontWeight: 'bold' }}
     ></Button>
   );
 }

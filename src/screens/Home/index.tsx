@@ -120,14 +120,12 @@ const Home = () => {
   }
 
   if (error) {
+    console.warn(error);
+
     return (
       <ScrollView style={[dynamicStyles.container]}>
         {header}
-        <Text
-          style={[
-            dynamicStyles.heroPrimarytext,
-            { alignSelf: 'center'},
-          ]}>
+        <Text style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}>
           Sorry, could not fetch the proeprties
         </Text>
       </ScrollView>

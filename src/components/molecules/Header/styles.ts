@@ -6,7 +6,7 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       width: '100%',
-      backgroundColor: Colors.background,
+      backgroundColor: Colors.elevated,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',

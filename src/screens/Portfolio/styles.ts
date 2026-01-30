@@ -1,4 +1,4 @@
-import {  StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -28,10 +28,10 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textSecondary,
     },
     containerStyle: {
-        borderRadius: 4,
-        borderWidth: 1,
-        backgroundColor: Colors.surface,
-        borderColor: Colors.border,
+      borderRadius: 4,
+      borderWidth: 1,
+      backgroundColor: Colors.surface,
+      borderColor: Colors.border,
       padding: 8,
       justifyContent: 'space-evenly',
       alignItems: 'flex-start',
@@ -46,7 +46,7 @@ const styles = (Colors: ThemeColors) =>
       width: '100%',
     },
     headerSection: {
-      paddingBottom: 16,
+      paddingBottom: 5,
       marginBottom: 12,
     },
   });

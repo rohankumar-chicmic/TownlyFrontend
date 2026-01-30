@@ -2,7 +2,7 @@ import { createAppKit } from '@reown/appkit-react-native';
 import { WagmiAdapter } from '@reown/appkit-wagmi-react-native';
 import { mainnet, sepolia } from 'wagmi/chains';
 import storage from './storage';
-// import { siwxConfig } from './siwxConfig';
+import { siwx } from './siwxConfig';
 
 const IS_DEV = process.env.APP_VARIANT === 'development';
 
@@ -23,7 +23,7 @@ export const appKit = createAppKit({
   networks: [mainnet, sepolia],
   adapters: [wagmiAdapter],
   storage,
-  // siwx: siwxConfig,
+  siwx,
   metadata: {
     name: APP_NAME,
     description: 'Townly decentralized application',

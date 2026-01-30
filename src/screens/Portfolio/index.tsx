@@ -13,13 +13,12 @@ export default function Portfolio() {
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
 
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
       style={{ backgroundColor: Colors.background }}
       contentContainerStyle={dynamicStyles.container}
-    > 
+    >
       <View>
         <View style={[dynamicStyles.headerSection]}>
           <Text style={[dynamicStyles.heroPrimarytext]}>
@@ -64,7 +63,10 @@ export default function Portfolio() {
         <DonutGraph></DonutGraph>
         <LineGraph></LineGraph>
 
-        <Button title='Create Property' onPress={() => navigation.navigate('CreateNft')}></Button>
+        <Button
+          title="Create Property"
+          onPress={() => navigation.navigate('CreateNft')}
+        ></Button>
       </View>
     </ScrollView>
   );

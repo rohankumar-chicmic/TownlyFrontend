@@ -3,16 +3,16 @@ import api from '@redux/store/api';
 const authApi = api.injectEndpoints({
   endpoints: builder => ({
     generateNonce: builder.mutation({
-      query: address => ({
+      query: body => ({
         url: '/v1/auth/wallet/nonce',
         method: 'POST',
-        body: { walletAddress: address },
+        body,
       }),
     }),
 
     verifySignature: builder.mutation({
-      query: (body) => ({
-        url: 'v1/auth/wallet/verify',
+      query: body => ({
+        url: '/v1/auth/wallet/verify',
         method: 'POST',
         body,
       }),
@@ -22,9 +22,6 @@ const authApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const {
-  useGenerateNonceMutation,
-  useVerifySignatureMutation,
-} = authApi;
+export const { useGenerateNonceMutation, useVerifySignatureMutation } = authApi;
 
-export { authApi}
+export { authApi };

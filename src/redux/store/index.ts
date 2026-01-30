@@ -1,4 +1,4 @@
-import CommonReducer from '../CommonReducer';
+import authReducer from '../AuthReducer';
 import api from './api';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,14 +8,14 @@ import { persistReducer, persistStore } from 'redux-persist';
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 
 const reducers = combineReducers({
-  common: CommonReducer,
+  auth: authReducer,
   [api.reducerPath]: api.reducer,
 });
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['common'],
+  whitelist: ['auth'],
 };
 
 const persistedReducer = persistReducer(persistConfig, reducers);

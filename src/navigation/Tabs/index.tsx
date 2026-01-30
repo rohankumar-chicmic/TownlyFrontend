@@ -18,16 +18,20 @@ export default function Tabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        header: (props) => <Header {...props} />,
+        header: props => <Header {...props} />,
 
         headerTintColor: Colors.primary,
         sceneStyle: {
-          backgroundColor: Colors.background
+          backgroundColor: Colors.background,
         },
         tabBarStyle: {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
           height: 60,
+          paddingTop: 10,
+        },
+        tabBarItemStyle:{
+          height: 10, width:10
         },
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textMuted,

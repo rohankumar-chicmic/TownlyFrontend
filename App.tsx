@@ -1,4 +1,6 @@
 import '@walletconnect/react-native-compat';
+import 'react-native-get-random-values';
+import { Buffer } from 'buffer';
 
 import { useEffect } from 'react';
 import { TextInput, TextStyle, PermissionsAndroid } from 'react-native';
@@ -20,6 +22,7 @@ import { AppKitProvider, AppKit } from '@reown/appkit-react-native';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import messaging from '@react-native-firebase/messaging';
+globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
 
@@ -29,7 +32,7 @@ async function requestUserPermission() {
     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
   const token = await messaging().getToken();
-  console.log(token,'dskfnskdjbfdjksbfjk')
+  console.log(token, 'dskfnskdjbfdjksbfjk');
   if (enabled) {
     console.log('Authorization status:', authStatus);
   }

@@ -24,6 +24,12 @@ const propertyApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+    getRelatedProperties: builder.query({
+      query: propertyId => ({
+        url: '/properties/' + propertyId + '/related',
+        method: 'GET',
+      }),
+    }),
   }),
 
   overrideExisting: false,
@@ -33,6 +39,7 @@ export const {
   useGetFeaturedPropertiesQuery,
   useGetPropertyDetailsQuery,
   useLazySearchPropertiesQuery,
+  useGetRelatedPropertiesQuery,
 } = propertyApi;
 
 export { propertyApi };
