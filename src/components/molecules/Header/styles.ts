@@ -48,7 +48,6 @@ const styles = (Colors: ThemeColors) =>
     walletIconText: {
       fontSize: 10,
       fontWeight: 'bold',
-      
       color: Colors.textSecondary,
     },
     walletAmount: {

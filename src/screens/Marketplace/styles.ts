@@ -27,7 +27,7 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 15,
       color: Colors.textSecondary,
     },
-     tag:{
+    tag:{
       margin: 10,
       alignSelf: 'flex-start',
       backgroundColor: Colors.outline,

@@ -15,7 +15,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   const [isPressed, setIsPressed] = useState(false);
 
   const handlePressed = () => {
-    navigation.navigate(ROUTES.PROPERTY_DETAILS, { id: props.id });
+    navigation.push(ROUTES.PROPERTY_DETAILS, { id: props.id });
   };
 
   return (

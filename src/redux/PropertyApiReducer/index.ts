@@ -1,6 +1,7 @@
 import api from '@redux/store/api';
 import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
 import { PropertyDetailsType } from '@utils/types';
+
 const propertyApi = api.injectEndpoints({
   endpoints: builder => ({
     getFeaturedProperties: builder.query<PropertyCardProps[], void>({
@@ -17,10 +18,10 @@ const propertyApi = api.injectEndpoints({
     }),
     searchProperties: builder.query<
       { hasMore: boolean; items: PropertyCardProps[] },
-      { search: string; propertyType: string }
+      { search: string; propertyType: string; page: number; pageSize: number }
     >({
-      query: ({ search, propertyType }) => ({
-        url: `/properties/marketplace?page=1&pageSize=9&search=${search}&propertyType=${propertyType}`,
+      query: ({ search, propertyType, page, pageSize }) => ({
+        url: `/properties/marketplace?page=${page}&pageSize=${pageSize}&search=${search}&propertyType=${propertyType}`,
         method: 'GET',
       }),
     }),

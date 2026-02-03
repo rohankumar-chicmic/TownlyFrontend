@@ -16,7 +16,11 @@ import {
   useGetRelatedPropertiesQuery,
 } from '@redux/PropertyApiReducer';
 import InvestPropertyModal from '@components/molecules/InvestmentModal';
-import { DUMMY_PROPERTIES } from './dummyData';
+
+import { useAppSelector } from '@redux/store';
+import KYCStatusModal from '@components/molecules/KYCModal';
+import { KYC_STATUS } from '@redux/KYCReducer';
+import { useAppNavigation } from '@hooks/useNavigation';
 
 export default function PropertyDetails() {
   const { Colors } = useTheme();
@@ -28,40 +32,10 @@ export default function PropertyDetails() {
   const { data, isLoading, error, refetch } = useGetPropertyDetailsQuery(
     params.id,
   );
+  const userToken = useAppSelector(state => state.auth.userToken);
+  const kycStatus = useAppSelector(state => state.kyc.status);
+  const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
-
-  // if (isLoading) {
-  //   return (
-  //     <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Loading</Text>
-  //   );
-  // }
-
-  // if (error) {
-  //   console.log(JSON.stringify(relatedProperties.error));
-  //   return (
-  //     <ScrollView
-  //       style={[
-  //         dynamicStyles.screen,
-  //         {
-  //           paddingTop: insets.top,
-  //         },
-  //       ]}
-  //       contentContainerStyle={{ padding: 5, paddingBottom: 20 }}
-  //       showsVerticalScrollIndicator={false}
-  //     >
-  //       <BackButton />
-
-  //       <Text
-  //         style={[
-  //           dynamicStyles.title,
-  //           { alignSelf: 'center', justifyContent: 'center' },
-  //         ]}
-  //       >
-  //         {JSON.stringify(error)}
-  //       </Text>
-  //     </ScrollView>
-  //   );
-  // }
 
   return (
     <ScrollView
@@ -87,7 +61,8 @@ export default function PropertyDetails() {
       <View style={dynamicStyles.section}>
         <Text style={dynamicStyles.title}>{data?.name}</Text>
         <Text style={dynamicStyles.location}>
-          {<Icons.Location height={10} width={10} color={Colors.primary} />} {data?.location}
+          {<Icons.Location height={10} width={10} color={Colors.primary} />}{' '}
+          {data?.location}
         </Text>
         <View style={dynamicStyles.tag}>
           <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
@@ -176,6 +151,7 @@ export default function PropertyDetails() {
 
       <Button
         title="Invest"
+        disabled={!userToken}
         onPress={() => setShowModal(true)}
         size="lg"
         style={{ margin: 15 }}
@@ -190,8 +166,18 @@ export default function PropertyDetails() {
           data={relatedProperties.data}
         ></PropertyListing>
       </View>
-      <InvestPropertyModal visible={showModal} onClose={()=>setShowModal(false)}/>
+      {kycStatus === 2 ? (
+        <InvestPropertyModal
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+        />
+      ) : (
+        <KYCStatusModal
+          visible={showModal}
+          onClose={() => setShowModal(false)}
+          onStartKYC={()=> navigation.navigate('KycScreen')}
+        />
+      )}
     </ScrollView>
-    
   );
 }

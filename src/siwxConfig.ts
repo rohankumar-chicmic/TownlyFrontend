@@ -4,33 +4,27 @@ import store from '@redux/store';
 import { SIWXMessage } from '@reown/appkit-react-native';
 import { authApi } from '@redux/ApiReducer';
 import { loginUser, logoutUser } from '@redux/AuthReducer';
-import { dataTagErrorSymbol } from '@tanstack/react-query';
+
+import {
+  saveSiwxSession,
+  getSiwxSession,
+  clearSiwxSession,
+} from '@utils/siwxSessionStorage';
+import { connectWallet } from '@redux/WalletReducer';
+
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const SIWX_DOMAIN = 'com.townly.townly';
-const SIWX_URI = IS_DEV ? 'townly-dev' : 'townly';
+const SIWX_URI = IS_DEV ? 'townly-dev://login' : 'https://townly.app';
 
 export const siwx: SIWXConfig = {
   createMessage: async (input): Promise<SIWXMessage> => {
-    // if (!input?.accountAddress || !input?.chainId) {
-    //   // Let AppKit handle wallet connection
-    //   throw new Error('SIWX_WAIT_FOR_WALLET');
-    // }
-    // console.log(input);
-    // console.log(
-    //   ' ===============================',
-    //   input.chainId,
-    //   input.accountAddress,
-    // );
-    // const chainId = Number(input.chainId.split(':')[1]);
-    // console.log(' ===============================', chainId);
-
     const result = await store
       .dispatch(authApi.endpoints.generateNonce.initiate(undefined))
       .unwrap();
 
     const nonce = result.data?.nonce;
     const issuedAt = new Date().toISOString();
-    console.log(nonce)
+    console.log(nonce);
 
     const message: SIWXMessage = {
       accountAddress: input.accountAddress,
@@ -56,8 +50,6 @@ export const siwx: SIWXConfig = {
       },
     };
 
-    // message.nonce = result.nonce;
-
     return message;
   },
 
@@ -65,7 +57,7 @@ export const siwx: SIWXConfig = {
     const chainId = Number(session.data.chainId.split(':')[1]);
     console.log(session);
 
-    await store
+    const result = await store
       .dispatch(
         authApi.endpoints.verifySignature.initiate({
           walletAddress: session.data.accountAddress,
@@ -76,18 +68,30 @@ export const siwx: SIWXConfig = {
       )
       .unwrap();
 
+    await saveSiwxSession(session);
+
     store.dispatch(
       loginUser({
+        token: result.data.accessToken,
         walletAddress: session.data.accountAddress,
+      }),
+      connectWallet({
+        address: session.data.accountAddress,
+        chainId: session.data.chainId,
       }),
     );
   },
 
   getSessions: async () => {
-    return [];
+    const wcConnected = store.getState().wallet.connected;
+    if (!wcConnected) return [];
+
+    const session = await getSiwxSession();
+    return session ? [session] : [];
   },
 
   revokeSession: async () => {
+    await clearSiwxSession();
     store.dispatch(logoutUser());
   },
 
@@ -96,6 +100,7 @@ export const siwx: SIWXConfig = {
       store.dispatch(logoutUser());
       return;
     }
+    await saveSiwxSession(sessions[0]);
 
     store.dispatch(
       loginUser({

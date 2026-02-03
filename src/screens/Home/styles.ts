@@ -7,7 +7,7 @@ const styles = (Colors: ThemeColors) =>
     container: {
       backgroundColor: Colors.background,
       padding: 20,
-      paddingBottom:0,
+      paddingBottom: 0,
     },
     heroPrimarytext: {
       fontSize: 30,
@@ -16,8 +16,8 @@ const styles = (Colors: ThemeColors) =>
     },
     heroText: {
       fontSize: 15,
-      marginBottom:15,
-      marginTop:10,
+      marginBottom: 15,
+      marginTop: 10,
       width: '90%',
       color: Colors.textSecondary,
     },
@@ -39,16 +39,16 @@ const styles = (Colors: ThemeColors) =>
       marginRight: 10,
       justifyContent: 'center',
       alignItems: 'flex-start',
-      flex:1
+      flex: 1,
     },
     headingSection: {
       alignItems: 'center',
       justifyContent: 'center',
       borderTopColor: Colors.border,
       borderTopWidth: 1,
-      borderBottomColor: Colors.border, 
+      borderBottomColor: Colors.border,
       borderBottomWidth: 1,
-      paddingVertical: 10, 
+      paddingVertical: 10,
       marginBottom: 10,
     },
   });

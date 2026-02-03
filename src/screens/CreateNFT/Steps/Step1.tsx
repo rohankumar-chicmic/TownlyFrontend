@@ -5,17 +5,25 @@ import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import Button from '@components/atoms/Button';
 import FormInput from '@components/atoms/FormInput';
+
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+
 import { Icons } from '@utils/icons';
 import { Dropdown } from 'react-native-element-dropdown';
 import { step1Schema } from '../validationSchemas';
+import { NFTFormData } from '../types';
 
-import { DocumentPickerResponse, pick,   types,
- } from '@react-native-documents/picker';
+import {
+  DocumentPickerResponse,
+  pick,
+  types,
+} from '@react-native-documents/picker';
 
-interface stepProps {
+interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
-  formData: any;
-  setFormData: () => void;
+  formData: NFTFormData;
+  setFormData: Dispatch<SetStateAction<NFTFormData>>;
 }
 
 const propertyTypeOptions = [
@@ -24,22 +32,71 @@ const propertyTypeOptions = [
   { label: 'Commercial', value: '3' },
 ];
 
-export default function Step1(props: stepProps) {
+export default function Step1(props: StepProps) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const [propertyType, setPropertyType] = useState('');
-  const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(null);
+  const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(
+    null,
+  );
+
+  const handleContinue = async () => {
+    if (!pickedFile) {
+      return;
+    }
+
+    try {
+      const uploadedFile = await uploadDocument(pickedFile);
+
+      props.setFormData(prev => ({
+        ...prev,
+        document: uploadedFile,
+      }));
+
+      props.setStep(prev => prev + 1);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const handlePickFile = async () => {
-  try {
-    const [pickResult] = await pick(
-      {type: [types.pdf, types.docx]}
-    );
-    setPickedFile(pickResult);
-  } catch (err: unknown) {
-    console.log(err);
-  }
-};
+    try {
+      const [pickResult] = await pick({ type: [types.pdf, types.docx] });
+
+      const file = {
+        name: pickResult.name,
+        uri: pickResult.uri,
+        type: pickResult.type,
+        size: pickResult.size,
+      };
+
+      setPickedFile(pickResult);
+
+      setValue('documents.0.file', file, {
+        shouldValidate: true,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm<NFTFormData>({
+    resolver: yupResolver(step1Schema),
+    mode: 'onSubmit',
+    defaultValues: {
+      documents: [
+        {
+          documentName: '',
+          file: null,
+        },
+      ],
+    },
+  });
 
   return (
     <View style={dynamicStyles.containerSurface}>
@@ -55,19 +112,39 @@ export default function Step1(props: stepProps) {
         Let's start with the basic information about your property
       </Text>
 
-      <FormInput
-        label="Property Name"
-        required
-        placeholder="e.g., Sunset Villa, Downtown Loft"
-        hintText="0/100 characters"
-      ></FormInput>
-      <FormInput
-        label="Property Description "
-        required
-        multiline
-        hintText="0/500 characters"
-        placeholder="Decribe the Property"
-      ></FormInput>
+      <Controller
+        control={control}
+        name="propertyName"
+        render={({ field: { onChange, value } }) => (
+          <FormInput
+            label="Property Name"
+            required
+            placeholder="e.g., Sunset Villa, Downtown Loft"
+            hintText="0/100 characters"
+            value={value}
+            onChangeText={onChange}
+            error={errors.propertyName?.message}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="description"
+        render={({ field: { onChange, value } }) => (
+          <FormInput
+            label="Property Description"
+            required
+            multiline
+            hintText="0/500 characters"
+            placeholder="Describe the Property"
+            value={value}
+            onChangeText={onChange}
+            error={errors.description?.message}
+          />
+        )}
+      />
+
       <View
         style={{
           flexDirection: 'row',
@@ -76,30 +153,48 @@ export default function Step1(props: stepProps) {
         }}
       >
         <View style={{ flex: 1 }}>
-          <FormInput
-            label="Location"
-            required
-            placeholder="e.g., Miami, Florida"
-            style={dynamicStyles.input}
-          ></FormInput>
+          <Controller
+            control={control}
+            name="location"
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                label="Location"
+                required
+                placeholder="e.g., Miami, Florida"
+                value={value}
+                onChangeText={onChange}
+                style={dynamicStyles.input}
+                error={errors.location?.message}
+              />
+            )}
+          />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={dynamicStyles.label}>
             Property Type
             <Text style={{ color: Colors.primary }}> *</Text>
           </Text>
-          <Dropdown
-            data={propertyTypeOptions}
-            labelField="label"
-            valueField="value"
-            placeholder="Select Type"
-            value={propertyTypeOptions}
-            onChange={item => setPropertyType(item.value)}
-            style={dynamicStyles.input}
-            placeholderStyle={dynamicStyles.dropdownPlaceholder}
-            selectedTextStyle={dynamicStyles.dropdownSelectedText}
-            containerStyle={dynamicStyles.dropdownContainer}
-            itemTextStyle={dynamicStyles.dropdownItemText}
+          <Controller
+            control={control}
+            name="propertyType"
+            render={({ field: { onChange, value } }) => (
+              <Dropdown
+                data={propertyTypeOptions}
+                labelField="label"
+                valueField="value"
+                placeholder="Select Type"
+                value={value}
+                onChange={item => {
+                  setPropertyType(item.value);
+                  onChange(item.value);
+                }}
+                style={dynamicStyles.input}
+                placeholderStyle={dynamicStyles.dropdownPlaceholder}
+                selectedTextStyle={dynamicStyles.dropdownSelectedText}
+                containerStyle={dynamicStyles.dropdownContainer}
+                itemTextStyle={dynamicStyles.dropdownItemText}
+              />
+            )}
           />
         </View>
       </View>
@@ -109,25 +204,36 @@ export default function Step1(props: stepProps) {
         }}
       >
         <View style={{ flex: 1 }}>
-          <FormInput
-            label="Document Name "
-            required
-            placeholder="e.g., Property Deed"
-          ></FormInput>
+          <Controller
+            control={control}
+            name="documents.0.documentName"
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                label="Document Name"
+                required
+                placeholder="e.g., Property Deed"
+                value={value}
+                onChangeText={onChange}
+                error={errors.documents?.[0]?.documentName?.message}
+              />
+            )}
+          />
         </View>
-        <View style={{ flex: 1, marginTop: 6}}>
+        <View style={{ flex: 1, marginTop: 6 }}>
           <Text style={dynamicStyles.label}>
             Upload Document <Text style={{ color: Colors.primary }}> *</Text>
           </Text>
-          <Button style={[dynamicStyles.input, {marginBottom: 2}]} onPress={handlePickFile}>
+          <Button
+            style={[dynamicStyles.input, { marginBottom: 2 }]}
+            onPress={handlePickFile}
+          >
             <Text
               style={{
                 color: pickedFile ? Colors.primary : Colors.textMuted,
                 fontSize: 13,
               }}
-              >
-              {pickedFile? pickedFile?.name : "Select Document"}
-              
+            >
+              {pickedFile ? pickedFile?.name : 'Select Document'}
             </Text>
           </Button>
           <Text
@@ -144,7 +250,7 @@ export default function Step1(props: stepProps) {
       </View>
       <Button
         title="Continue"
-        onPress={() => props.setStep(prev => prev + 1)}
+        onPress={handleSubmit(handleContinue)}
         style={{ alignSelf: 'flex-end', marginTop: 20 }}
         textStyle={{ marginHorizontal: 10 }}
       >

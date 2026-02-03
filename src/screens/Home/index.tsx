@@ -6,7 +6,6 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
 import Button from '@components/atoms/Button';
-import BaseModal from '@components/molecules/BaseModal';
 
 import useTheme from '@hooks/useTheme';
 import { ROUTES } from 'src/navigation/constants';
@@ -25,6 +24,7 @@ const Home = () => {
   const header = (
     <>
       <View>
+
         <Text style={[dynamicStyles.heroPrimarytext]}>
           Fractional, Tokenized
         </Text>
@@ -136,7 +136,10 @@ const Home = () => {
         <Text
           style={[
             dynamicStyles.heroPrimarytext,
-            { alignSelf: 'center', height: Dimensions.get('screen').height * 0.3},
+            {
+              alignSelf: 'center',
+              height: Dimensions.get('screen').height * 0.3,
+            },
           ]}
         >
           Sorry, could not fetch the properties

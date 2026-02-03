@@ -8,13 +8,13 @@ import LineGraph from '@components/molecules/LineGraph';
 import Button from '@components/atoms/Button';
 import { useAppNavigation } from '@hooks/useNavigation';
 import InvestedPropertyCard from '@components/molecules/InvestedPropertyCard';
+import { useAppSelector } from '@redux/store';
 
 const InvestPorpertyData = {
   id: 'property-001',
   imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
   name: 'Suburban Family Home',
   location: '9943 Marlowe St, Detroit, MI',
-  
 
   tokensOwned: 501,
   totalInvestedEth: 0.8203,
@@ -32,6 +32,7 @@ export default function Portfolio() {
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
 
+  const address = useAppSelector(state => state.auth.userData?.walletAddress);
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -45,6 +46,9 @@ export default function Portfolio() {
           </Text>
           <Text style={[dynamicStyles.heroText]}>
             Track and manage your real-world asset investments
+          </Text>
+          <Text style={[dynamicStyles.smallText, { marginTop: 10 }]}>
+            wallet :<Text style={{ color: Colors.primary }}>{address}</Text>
           </Text>
         </View>
         <ScrollView
@@ -100,7 +104,7 @@ export default function Portfolio() {
             marginVertical: 5,
             padding: 10,
             borderWidth: 1,
-            backgroundColor: Colors.surface, 
+            backgroundColor: Colors.surface,
             borderColor: Colors.border,
           }}
         >

@@ -6,7 +6,11 @@ import styles from './styles';
 import Button from '@components/atoms/Button';
 import FormInput from '@components/atoms/FormInput';
 import { Icons } from '@utils/icons';
-import { pick } from '@react-native-documents/picker';
+import {
+  DocumentPickerResponse,
+  pick,
+  types,
+} from '@react-native-documents/picker';
 
 interface stepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -15,12 +19,14 @@ interface stepProps {
 }
 
 const handlePickFile = async () => {
+  const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(
+    null,
+  );
   try {
-    const [pickResult] = await pick();
-    // const [pickResult] = await pick({mode:'import'}) // equivalent
-    // do something with the picked file
+    const [pickResult] = await pick({ type: [types.pdf, types.docx] });
+    setPickedFile(pickResult);
   } catch (err: unknown) {
-    // see error handling
+    console.log(err);
   }
 };
 
@@ -41,7 +47,6 @@ export default function Step3(props: stepProps) {
         Add a high-quality image to showcase your property
       </Text>
 
-
       <View style={{ flex: 1, marginTop: 6 }}>
         <Text style={dynamicStyles.label}>
           Upload Image <Text style={{ color: Colors.primary }}> *</Text>
@@ -58,8 +63,6 @@ export default function Step3(props: stepProps) {
         </Button>
       </View>
 
-      
-
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <Button
           title="Back"
@@ -75,9 +78,16 @@ export default function Step3(props: stepProps) {
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
           textStyle={{ marginHorizontal: 10 }}
         >
-          <Icons.Arrow height={15} width={15} borderColor={Colors.background}></Icons.Arrow>
+          <Icons.Arrow
+            height={15}
+            width={15}
+            borderColor={Colors.background}
+          ></Icons.Arrow>
         </Button>
       </View>
     </View>
   );
+}
+function useState<T>(): [any, any] {
+  throw new Error('Function not implemented.');
 }

@@ -11,9 +11,10 @@ export interface NFTFormData {
   description: string;
   location: string;
   propertyType: string;
-  documents: Array<{
+
+  documents: Array  <{
     documentName: string;
-    file: DocumentFile | null;
+    file: DocumentFile;
   }>;
 
   // Step 2: Financial Info
@@ -23,5 +24,5 @@ export interface NFTFormData {
   expectedAnnualYield: string;
 
   // Step 3: Upload Image
-  propertyImage: DocumentFile | null;
+  propertyImage: DocumentFile;
 }

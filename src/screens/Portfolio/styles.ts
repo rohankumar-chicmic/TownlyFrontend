@@ -47,7 +47,7 @@ const styles = (Colors: ThemeColors) =>
     },
     headerSection: {
       paddingBottom: 5,
-      marginBottom: 12,
+      marginBottom: 5,
     },
   });
 

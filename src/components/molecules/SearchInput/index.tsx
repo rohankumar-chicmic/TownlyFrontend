@@ -1,5 +1,11 @@
 import { View, TextInput, Text, Pressable, Keyboard } from 'react-native';
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import styles from './styles';
@@ -7,7 +13,7 @@ import useStyles from '@hooks/useStyles';
 
 import Button from '@components/atoms/Button';
 
-interface searchPropsType{
+interface searchPropsType {
   text: string;
   setText: Dispatch<SetStateAction<string>>;
   onPress: () => void;

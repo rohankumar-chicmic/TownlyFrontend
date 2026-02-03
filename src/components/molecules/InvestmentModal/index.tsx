@@ -23,7 +23,7 @@ interface Props {
 
 export default function InvestPropertyModal({ visible, onClose }: Props) {
   const [shares, setShares] = useState('10');
-  const {Colors} = useTheme();
+  const { Colors } = useTheme();
   const pricePerShare = 10;
   const totalCost = Number(shares || 0) * pricePerShare;
 
@@ -52,7 +52,7 @@ export default function InvestPropertyModal({ visible, onClose }: Props) {
             {/* Header */}
             <View style={dynamicStyles.header}>
               <Text style={dynamicStyles.title}>Invest in Property</Text>
-              <Pressable onPress={onClose} style={{height:25, width:25}}>
+              <Pressable onPress={onClose} style={{ height: 25, width: 25 }}>
                 <Text style={dynamicStyles.close}>✕</Text>
               </Pressable>
             </View>
@@ -98,7 +98,7 @@ export default function InvestPropertyModal({ visible, onClose }: Props) {
                 title="Cancel"
                 onPress={onClose}
                 variant="outline"
-              textStyle={{color: Colors.primary}}
+                textStyle={{ color: Colors.primary }}
               ></Button>
 
               <Button
