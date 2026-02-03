@@ -1,4 +1,4 @@
-import {  StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -30,10 +30,10 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textSecondary,
     },
     containerStyle: {
-        borderRadius: 4,
-        borderWidth: 1,
-        backgroundColor: Colors.surface,
-        borderColor: Colors.border,
+      borderRadius: 4,
+      borderWidth: 1,
+      backgroundColor: Colors.surface,
+      borderColor: Colors.border,
       padding: 8,
       justifyContent: 'space-evenly',
       alignItems: 'flex-start',
@@ -52,22 +52,22 @@ const styles = (Colors: ThemeColors) =>
       marginBottom: 12,
     },
     label: {
-    marginBottom: 6,
-    fontSize: 14,
-    paddingHorizontal: 5,
-  },
-  input: {
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 13,
-    borderWidth: 1,
-  },
-  counter: {
-    alignSelf: 'flex-end',
-    fontSize: 11,
-    opacity: 0.6,
-    marginTop: 4,
-  },
+      marginBottom: 6,
+      fontSize: 14,
+      paddingHorizontal: 5,
+    },
+    input: {
+      borderRadius: 10,
+      padding: 12,
+      fontSize: 13,
+      borderWidth: 1,
+    },
+    counter: {
+      alignSelf: 'flex-end',
+      fontSize: 11,
+      opacity: 0.6,
+      marginTop: 4,
+    },
   });
 
 export default styles;

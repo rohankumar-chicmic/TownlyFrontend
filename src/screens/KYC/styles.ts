@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -7,87 +7,50 @@ const styles = (Colors: ThemeColors) =>
     container: {
       backgroundColor: Colors.background,
       padding: 20,
-      paddingBottom: 0,
+      margin: 5,
     },
     heroPrimarytext: {
       fontSize: 30,
       fontWeight: 'bold',
+      margin: 30,
+      marginBottom: 10,
       color: Colors.textPrimary,
     },
     heroText: {
       fontSize: 15,
-      marginBottom: 25,
-      marginTop: 10,
-      width: '90%',
       color: Colors.textSecondary,
     },
-    formSection: {
-      marginTop: 10,
+    smallText: {
+      fontSize: 12,
+      color: Colors.textSecondary,
     },
-    inputGroup: {
-      marginBottom: 20,
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: Colors.textPrimary,
+    containerStyle: {
+      borderRadius: 4,
+      borderWidth: 1,
+      backgroundColor: Colors.surface,
+      borderColor: Colors.border,
+      padding: 8,
+      justifyContent: 'space-evenly',
+      alignItems: 'flex-start',
+      width: '49%',
       marginBottom: 8,
     },
-    input: {
-      backgroundColor: Colors.surface,
-      borderWidth: 1,
-      borderColor: Colors.border,
-      borderRadius: 8,
-      padding: 12,
-      fontSize: 15,
-      color: Colors.textPrimary,
-    },
-    textArea: {
-      height: 80,
-      textAlignVertical: 'top',
-    },
-    documentTypeContainer: {
+    dataPanel: {
       flexDirection: 'row',
-      gap: 10,
-    },
-    documentTypeButton: {
-      flex: 1,
-      backgroundColor: Colors.surface,
-      borderWidth: 1,
-      borderColor: Colors.border,
-      borderRadius: 8,
-      padding: 12,
+      flexWrap: 'wrap',
       alignItems: 'center',
+      justifyContent: 'space-between',
+      width: '100%',
     },
-    documentTypeButtonActive: {
-      backgroundColor: Colors.primary,
-      borderColor: Colors.primary,
+    headerSection: {
+      paddingBottom: 16,
+      marginBottom: 12,
     },
-    documentTypeText: {
-      fontSize: 14,
-      color: Colors.textSecondary,
-      fontWeight: '500',
-    },
-    documentTypeTextActive: {
-      color: Colors.background,
-    },
-    uploadButton: {
-      backgroundColor: Colors.surface,
-      borderWidth: 1,
-      borderColor: Colors.border,
-      borderRadius: 8,
-      padding: 15,
-      alignItems: 'center',
-    },
-    uploadButtonText: {
-      fontSize: 15,
-      color: Colors.primary,
-      fontWeight: '600',
-    },
-    helperText: {
-      fontSize: 13,
-      color: Colors.textSecondary,
-      marginTop: 6,
+    counter: {
+      alignSelf: 'flex-end',
+      fontSize: 11,
+      opacity: 0.6,
+      marginTop: 4,
     },
     containerSurface: {
       padding: 15,
@@ -99,6 +62,21 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 20,
       fontWeight: 'bold',
       color: Colors.textPrimary,
+    },
+    label: {
+      marginBottom: 6,
+      fontSize: 14,
+      paddingHorizontal: 5,
+      color: Colors.textPrimary,
+    },
+    input: {
+      borderRadius: 10,
+      padding: 12,
+      borderWidth: 1,
+      marginBottom: 15,
+      height: Dimensions.get('screen').height * 0.047,
+      backgroundColor: Colors.background,
+      borderColor: Colors.border,
     },
     dropdownPlaceholder: {
       fontSize: 13,
@@ -129,6 +107,3 @@ const styles = (Colors: ThemeColors) =>
   });
 
 export default styles;
-
-
-

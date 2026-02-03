@@ -18,7 +18,7 @@ export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const [step, setStep] = useState(0);
-  
+
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
@@ -62,40 +62,36 @@ export default function CreateNFTScreen() {
               <Icons.Step1Icon
                 height={20}
                 width={20}
-                borderColor={step < 0 ? Colors.textSecondary : Colors.background}
+                borderColor={
+                  step < 0 ? Colors.textSecondary : Colors.background
+                }
               />
             </StepIndicator>
-            <StepIndicator
-              step={1}
-              currentStep={step}
-              text="Financial info"
-            >
+            <StepIndicator step={1} currentStep={step} text="Financial info">
               <Icons.Step2Icon
                 height={20}
                 width={20}
-                borderColor={step < 1 ? Colors.textSecondary : Colors.background}
+                borderColor={
+                  step < 1 ? Colors.textSecondary : Colors.background
+                }
               />
             </StepIndicator>
-            <StepIndicator
-              step={2}
-              currentStep={step}
-              text="Upload Image"
-            >
+            <StepIndicator step={2} currentStep={step} text="Upload Image">
               <Icons.Step3Icon
                 height={20}
                 width={20}
-                borderColor={step < 2 ? Colors.textSecondary : Colors.background}
+                borderColor={
+                  step < 2 ? Colors.textSecondary : Colors.background
+                }
               />
             </StepIndicator>
-            <StepIndicator
-              step={3}
-              currentStep={step}
-              text="Review"
-            >
+            <StepIndicator step={3} currentStep={step} text="Review">
               <Icons.Step4Icon
                 height={20}
                 width={20}
-                borderColor={step < 3 ? Colors.textSecondary : Colors.background}
+                borderColor={
+                  step < 3 ? Colors.textSecondary : Colors.background
+                }
               />
             </StepIndicator>
           </View>

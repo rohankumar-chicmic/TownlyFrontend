@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Dimensions, ScrollView, Text, View } from 'react-native';
 
 import styles from './styles';
@@ -13,18 +13,19 @@ import { Icons } from '@utils/icons';
 import { useAppNavigation } from '@hooks/useNavigation';
 import PropertyListing from '@components/molecules/PropertyListing';
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
+import KYCStatusModal from '@components/molecules/KYCModal';
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
   const navigation = useAppNavigation();
   const { Colors } = useTheme();
   const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery();
+  const [showModal, setShowModal] = useState(false);
 
   console.log(data);
 
   const header = (
     <>
       <View>
-
         <Text style={[dynamicStyles.heroPrimarytext]}>
           Fractional, Tokenized
         </Text>

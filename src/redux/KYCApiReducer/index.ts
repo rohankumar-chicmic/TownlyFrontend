@@ -1,18 +1,8 @@
-// KYCApiReducer.ts
-// Add this to your existing API reducer or create a new one
 
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_BASE_URL } from '@utils/constants';
 import { KYC_STATUS } from '@redux/KYCReducer';
 
-interface KYCSubmitRequest {
-  FullName: string;
-  DateOfBirth: string; // ISO string format
-  FullAddress: string;
-  DocumentType: string;
-  DocumentUrl: string;
-  SelfieUrl: string;
-}
 
 interface KYCSubmitResponse {
   success: boolean;
@@ -32,8 +22,7 @@ export const kycApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.API_BASE_URL || API_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
-      // Add auth token if needed
-      const token = (getState() as any).auth?.token;
+      const token = (getState() as any)?.auth?.token;
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -42,17 +31,17 @@ export const kycApi = createApi({
   }),
   tagTypes: ['KYC'],
   endpoints: builder => ({
-    submitKYC: builder.mutation<KYCSubmitResponse, KYCSubmitRequest>({
-      query: body => ({
+    submitKYC: builder.mutation<KYCSubmitResponse, FormData>({
+      query: (formData: FormData) => ({
         url: '/kyc/submit',
         method: 'POST',
-        body,
+        body: formData,
       }),
       invalidatesTags: ['KYC'],
     }),
 
     getKYCStatus: builder.query<GetKYCStatusResponse, void>({
-      query: () => '/api/kyc/me/status',
+      query: () => '/kyc/me/status',
       providesTags: ['KYC'],
     }),
   }),

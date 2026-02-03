@@ -19,7 +19,6 @@ import InvestPropertyModal from '@components/molecules/InvestmentModal';
 
 import { useAppSelector } from '@redux/store';
 import KYCStatusModal from '@components/molecules/KYCModal';
-import { KYC_STATUS } from '@redux/KYCReducer';
 import { useAppNavigation } from '@hooks/useNavigation';
 
 export default function PropertyDetails() {
@@ -175,7 +174,7 @@ export default function PropertyDetails() {
         <KYCStatusModal
           visible={showModal}
           onClose={() => setShowModal(false)}
-          onStartKYC={()=> navigation.navigate('KycScreen')}
+          onStartKYC={() => navigation.navigate('KycScreen')}
         />
       )}
     </ScrollView>

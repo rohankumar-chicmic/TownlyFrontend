@@ -12,9 +12,9 @@ export interface NFTFormData {
   location: string;
   propertyType: string;
 
-  documents: Array  <{
+  documents: Array<{
     documentName: string;
-    file: DocumentFile;
+    file: DocumentFile | null;
   }>;
 
   // Step 2: Financial Info
