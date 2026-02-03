@@ -1,6 +1,7 @@
 import { THEME } from '@theme/constants';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import store from '@redux/store';
 
 interface InitialStateType {
   userToken: string | undefined;
@@ -32,5 +33,5 @@ const authReducer = createSlice({
 });
 
 export const { loginUser, logoutUser, setTheme } = authReducer.actions;
-
+// export const useDataSelector = () => 
 export default authReducer.reducer;

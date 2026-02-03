@@ -6,6 +6,7 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
 import Button from '@components/atoms/Button';
+import BaseModal from '@components/molecules/BaseModal';
 
 import useTheme from '@hooks/useTheme';
 import { ROUTES } from 'src/navigation/constants';
@@ -47,7 +48,14 @@ const Home = () => {
         size="lg"
         onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
       >
-        {<Icons.Arrow height={12} width={12} borderColor={Colors.background} />}
+        {
+          <Icons.Arrow
+            height={12}
+            width={12}
+            borderColor={Colors.background}
+            color={Colors.background}
+          />
+        }
       </Button>
 
       <View
@@ -125,8 +133,13 @@ const Home = () => {
     return (
       <ScrollView style={[dynamicStyles.container]}>
         {header}
-        <Text style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}>
-          Sorry, could not fetch the proeprties
+        <Text
+          style={[
+            dynamicStyles.heroPrimarytext,
+            { alignSelf: 'center', height: Dimensions.get('screen').height * 0.3},
+          ]}
+        >
+          Sorry, could not fetch the properties
         </Text>
       </ScrollView>
     );
@@ -141,4 +154,5 @@ const Home = () => {
     />
   );
 };
+
 export default Home;

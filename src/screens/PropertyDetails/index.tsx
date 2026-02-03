@@ -15,7 +15,9 @@ import {
   useGetPropertyDetailsQuery,
   useGetRelatedPropertiesQuery,
 } from '@redux/PropertyApiReducer';
+import InvestPropertyModal from '@components/molecules/InvestmentModal';
 import { DUMMY_PROPERTIES } from './dummyData';
+
 export default function PropertyDetails() {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
@@ -28,38 +30,38 @@ export default function PropertyDetails() {
   );
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
 
-  if (isLoading) {
-    return (
-      <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Loading</Text>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Loading</Text>
+  //   );
+  // }
 
-  if (error) {
-    console.log(JSON.stringify(relatedProperties.error));
-    return (
-      <ScrollView
-        style={[
-          dynamicStyles.screen,
-          {
-            paddingTop: insets.top,
-          },
-        ]}
-        contentContainerStyle={{ padding: 5, paddingBottom: 20 }}
-        showsVerticalScrollIndicator={false}
-      >
-        <BackButton />
+  // if (error) {
+  //   console.log(JSON.stringify(relatedProperties.error));
+  //   return (
+  //     <ScrollView
+  //       style={[
+  //         dynamicStyles.screen,
+  //         {
+  //           paddingTop: insets.top,
+  //         },
+  //       ]}
+  //       contentContainerStyle={{ padding: 5, paddingBottom: 20 }}
+  //       showsVerticalScrollIndicator={false}
+  //     >
+  //       <BackButton />
 
-        <Text
-          style={[
-            dynamicStyles.title,
-            { alignSelf: 'center', justifyContent: 'center' },
-          ]}
-        >
-          {JSON.stringify(error)}
-        </Text>
-      </ScrollView>
-    );
-  }
+  //       <Text
+  //         style={[
+  //           dynamicStyles.title,
+  //           { alignSelf: 'center', justifyContent: 'center' },
+  //         ]}
+  //       >
+  //         {JSON.stringify(error)}
+  //       </Text>
+  //     </ScrollView>
+  //   );
+  // }
 
   return (
     <ScrollView
@@ -85,7 +87,7 @@ export default function PropertyDetails() {
       <View style={dynamicStyles.section}>
         <Text style={dynamicStyles.title}>{data?.name}</Text>
         <Text style={dynamicStyles.location}>
-          {<Icons.Location height={10} width={10} />} {data?.location}
+          {<Icons.Location height={10} width={10} color={Colors.primary} />} {data?.location}
         </Text>
         <View style={dynamicStyles.tag}>
           <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
@@ -188,6 +190,8 @@ export default function PropertyDetails() {
           data={relatedProperties.data}
         ></PropertyListing>
       </View>
+      <InvestPropertyModal visible={showModal} onClose={()=>setShowModal(false)}/>
     </ScrollView>
+    
   );
 }

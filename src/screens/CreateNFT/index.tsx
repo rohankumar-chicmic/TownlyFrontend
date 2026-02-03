@@ -18,7 +18,7 @@ export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const [step, setStep] = useState(0);
-
+  
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>

@@ -32,6 +32,8 @@ export default function LineGraph() {
             data={lineData}
             height={140}
             thickness={2}
+            isAnimated
+            onDataChangeAnimationDuration={0.5}
             spacing={45}
             initialSpacing={10}
             endSpacing={0}

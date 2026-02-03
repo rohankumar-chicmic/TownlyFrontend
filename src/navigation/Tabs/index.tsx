@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../types';
 import { Icons } from '@utils/icons';
@@ -15,10 +15,17 @@ const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export default function Tabs() {
   const { Colors } = useTheme();
+  const [drawerOpened, setDrawerOpened] = useState(false);
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        header: props => <Header {...props} />,
+        header: props => (
+          <Header
+            {...props}
+            setDrawerOpened={setDrawerOpened}
+            drawerOpened={drawerOpened}
+          />
+        ),
 
         headerTintColor: Colors.primary,
         sceneStyle: {
@@ -30,8 +37,9 @@ export default function Tabs() {
           height: 60,
           paddingTop: 10,
         },
-        tabBarItemStyle:{
-          height: 10, width:10
+        tabBarItemStyle: {
+          height: 10,
+          width: 10,
         },
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textMuted,

@@ -75,7 +75,7 @@ export default function Step3(props: stepProps) {
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
           textStyle={{ marginHorizontal: 10 }}
         >
-          <Icons.Arrow height={15} width={15}></Icons.Arrow>
+          <Icons.Arrow height={15} width={15} borderColor={Colors.background}></Icons.Arrow>
         </Button>
       </View>
     </View>

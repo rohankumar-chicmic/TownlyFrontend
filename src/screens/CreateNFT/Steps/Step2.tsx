@@ -6,6 +6,10 @@ import styles from './styles';
 import Button from '@components/atoms/Button';
 import FormInput from '@components/atoms/FormInput';
 import { Icons } from '@utils/icons';
+import { useForm } from 'react-hook-form'
+import { step2Schema } from '../validationSchemas';
+import { InferType } from 'yup';
+
 
 interface stepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -16,6 +20,13 @@ interface stepProps {
 export default function Step2(props: stepProps) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<InferType<typeof step2Schema>>();
+
   return (
     <View style={dynamicStyles.containerSurface}>
       <Text style={[dynamicStyles.heading]}>Financial Information</Text>
@@ -36,6 +47,7 @@ export default function Step2(props: stepProps) {
             label="Total Property Value (USD)"
             required
             placeholder="$ 0.0"
+            keyboardType="number-pad"
             hintText="Minimum Value: $1000"
           ></FormInput>
         </View>
@@ -43,6 +55,7 @@ export default function Step2(props: stepProps) {
           <FormInput
             label="Total Number of Shares"
             required
+            keyboardType="number-pad"
             placeholder="0"
             hintText="Minimum: 100 Shares"
           ></FormInput>
@@ -62,12 +75,15 @@ export default function Step2(props: stepProps) {
         >
           Auto-Calculated
         </Text>
-        <Text style={{color: Colors.background, fontWeight: '500'}}>Price Per Share</Text>
+        <Text style={{ color: Colors.background, fontWeight: '500' }}>
+          Price Per Share
+        </Text>
       </View>
 
       <FormInput
         label="Rental Income History (per month)"
         required
+        keyboardType="number-pad"
         placeholder="0"
         hintText="Optional: Estimated annual rental return percentage"
       ></FormInput>
@@ -75,6 +91,7 @@ export default function Step2(props: stepProps) {
       <FormInput
         label="Expected Annual Yield (%)"
         required
+        keyboardType="number-pad"
         placeholder="0"
         hintText="Optional: Estimated annual rental return percentage"
       ></FormInput>
@@ -94,7 +111,7 @@ export default function Step2(props: stepProps) {
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
           textStyle={{ marginHorizontal: 10 }}
         >
-          <Icons.Arrow height={15} width={15}></Icons.Arrow>
+          <Icons.Arrow height={15} width={15} borderColor={Colors.background}></Icons.Arrow>
         </Button>
       </View>
     </View>

@@ -7,6 +7,8 @@ import Button from '@components/atoms/Button';
 import FormInput from '@components/atoms/FormInput';
 import { Icons } from '@utils/icons';
 import { Dropdown } from 'react-native-element-dropdown';
+import { step1Schema } from '../validationSchemas';
+
 import { DocumentPickerResponse, pick,   types,
  } from '@react-native-documents/picker';
 
@@ -21,8 +23,6 @@ const propertyTypeOptions = [
   { label: 'Residential', value: '2' },
   { label: 'Commercial', value: '3' },
 ];
-
-
 
 export default function Step1(props: stepProps) {
   const { Colors } = useTheme();

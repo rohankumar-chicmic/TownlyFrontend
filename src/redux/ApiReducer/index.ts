@@ -3,10 +3,9 @@ import api from '@redux/store/api';
 const authApi = api.injectEndpoints({
   endpoints: builder => ({
     generateNonce: builder.mutation({
-      query: body => ({
+      query: () => ({
         url: '/v1/auth/wallet/nonce',
         method: 'POST',
-        body,
       }),
     }),
 

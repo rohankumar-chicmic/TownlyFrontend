@@ -1,6 +1,7 @@
 import { loadAsync } from 'expo-font';
 
 // export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || '';
+// export const API_BASE_URL = "https://subgranularly-heathered-hester.ngrok-free.dev/";
 export const API_BASE_URL =
   'https://uncombinable-nonscholastic-layton.ngrok-free.dev/api';
 

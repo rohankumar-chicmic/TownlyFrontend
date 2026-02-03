@@ -27,12 +27,14 @@ const styles = (Colors: ThemeColors) =>
     walletButton: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: 'rgba(199, 254, 30, 0.08)', // Faint lime background
+      backgroundColor: Colors.elevated,
       paddingVertical: 5,
+      height: 40,
+      overflow: 'hidden',
       paddingHorizontal: 10,
       borderRadius: 20,
-      borderWidth: 1,
-      borderColor: 'rgba(199, 254, 30, 0.3)', // Subtle lime border
+      borderWidth: 0.5,
+      borderColor: Colors.primary, 
     },
     walletIconCircle: {
       width: 16,
@@ -46,11 +48,13 @@ const styles = (Colors: ThemeColors) =>
     walletIconText: {
       fontSize: 10,
       fontWeight: 'bold',
+      
       color: Colors.textSecondary,
     },
     walletAmount: {
       color: Colors.primary,
-      fontSize: 13,
+
+      fontSize: 10,
       fontWeight: '600',
     },
   });

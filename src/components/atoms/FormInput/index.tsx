@@ -10,6 +10,7 @@ import React from 'react';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
+import { FieldError, Merge, FieldErrorsImpl } from 'react-hook-form';
 
 interface FormInputType extends TextInputProps {
   label?: string;
@@ -18,13 +19,14 @@ interface FormInputType extends TextInputProps {
   style?: ViewStyle;
   placeholder?: string;
   hintText?: string;
+  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>> | undefined;
 }
 
 export default function FormInput(props: FormInputType) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   return (
-    <View style={{padding: 5}}>
+    <View style={{ padding: 5 }}>
       <Text style={[dynamicStyles.label, props.labelStyle]}>
         {props.label}{' '}
         {props.required && <Text style={{ color: Colors.primary }}>*</Text>}
@@ -39,11 +41,31 @@ export default function FormInput(props: FormInputType) {
         ]}
         {...props}
       />
-      {props.hintText && (
-        <Text style={{ color: Colors.textSecondary, fontSize: 10, marginLeft:5, marginBottom: 4}}>
-          {props.hintText}
-        </Text>
-      )}
+      {props.error
+        ? props.hintText && (
+            <Text
+              style={{
+                color: Colors.textSecondary,
+                fontSize: 10,
+                marginLeft: 5,
+                marginBottom: 4,
+              }}
+            >
+              {props.hintText}
+            </Text>
+          )
+        : props.hintText && (
+            <Text
+              style={{
+                color: Colors.textSecondary,
+                fontSize: 10,
+                marginLeft: 5,
+                marginBottom: 4,
+              }}
+            >
+              {props.hintText}
+            </Text>
+          )}
     </View>
   );
 }

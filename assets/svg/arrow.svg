@@ -7,7 +7,6 @@
 >
   <path 
     d="M5 12H19M19 12L13 6M19 12L13 18" 
-    stroke="currentColor" 
     stroke-width="3" 
     stroke-linecap="round" 
     stroke-linejoin="round"

@@ -2,8 +2,6 @@ import { Dimensions, StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
-
-
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     containerSurface: {
@@ -30,11 +28,11 @@ const styles = (Colors: ThemeColors) =>
       marginBottom: 15,
       height: Dimensions.get('screen').height * 0.047,
       backgroundColor: Colors.background,
-      borderColor: Colors.border
+      borderColor: Colors.border,
     },
     dropdownPlaceholder: {
       fontSize: 13,
-      color: Colors.textMuted, 
+      color: Colors.textMuted,
     },
     dropdownSelectedText: {
       fontSize: 13,
@@ -51,6 +49,12 @@ const styles = (Colors: ThemeColors) =>
     dropdownItemText: {
       fontSize: 13,
       color: Colors.textPrimary,
+    },
+    error: {
+      color: Colors.warning,
+      fontSize: 10,
+      marginLeft: 5,
+      marginBottom: 4,
     },
   });
 

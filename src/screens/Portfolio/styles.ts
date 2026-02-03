@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Dimensions, StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -35,8 +35,8 @@ const styles = (Colors: ThemeColors) =>
       padding: 8,
       justifyContent: 'space-evenly',
       alignItems: 'flex-start',
-      width: '49%',
-      marginBottom: 8,
+      width: Dimensions.get('window').width * 0.4, 
+      marginRight: 5,
     },
     dataPanel: {
       flexDirection: 'row',

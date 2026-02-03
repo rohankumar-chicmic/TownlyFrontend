@@ -91,6 +91,7 @@ export default function DonutGraph() {
               onPress={(_, index) => handlePress(index)}
               innerCircleColor={Colors.surface}
               innerRadius={40}
+              isAnimated
               strokeWidth={5}
               strokeColor={Colors.surface}
               sectionAutoFocus

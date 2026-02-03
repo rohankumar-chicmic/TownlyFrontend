@@ -1,9 +1,10 @@
 import React from 'react';
-import { Pressable, ViewStyle, Text } from 'react-native';
+import { Pressable, ViewStyle, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import useTheme from '@hooks/useTheme';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
+import { Icons } from '@utils/icons';
 interface BackButtonProps {
   style?: ViewStyle;
   onPress?: () => void;
@@ -36,9 +37,13 @@ export default function BackButton({
       hitSlop={10}
       style={[dynamicStyles.box, style]}
     >
-      <Text style={dynamicStyles.symbol}>
-        {' < Back'}
-      </Text>
+      <View style={{margin: 10 }}>
+        <Icons.BackLogo
+          height={10}
+          width={10}
+          color={Colors.primary}
+        ></Icons.BackLogo>
+      </View>
     </Pressable>
   );
 }
