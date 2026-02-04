@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
@@ -7,7 +7,6 @@ import Button from '@components/atoms/Button';
 import FormInput from '@components/atoms/FormInput';
 import { Icons } from '@utils/icons';
 import { step2Schema } from '../validationSchemas';
-import { InferType } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { NFTFormData, Step2FormData } from '../types';
@@ -24,6 +23,8 @@ export default function Step2(props: StepProps) {
   const {
     control,
     handleSubmit,
+    watch,
+    reset,
     formState: { errors },
   } = useForm<Step2FormData>({
     resolver: yupResolver(step2Schema),
@@ -35,15 +36,36 @@ export default function Step2(props: StepProps) {
       expectedAnnualYield: undefined,
     },
   });
+  const totalPropertyValue = watch('totalPropertyValue');
+  const numberOfShares = watch('numberOfShares');
+
+  const pricePerShare =
+    totalPropertyValue && numberOfShares && numberOfShares > 0
+      ? totalPropertyValue / numberOfShares
+      : 0;
+
+  const formattedPricePerShare = pricePerShare
+    ? `$ ${pricePerShare.toFixed(2)}`
+    : '$ 0.00';
 
   const handleContinue = (data: Step2FormData) => {
     props.setFormData(prev => ({
       ...prev,
       ...data,
+      pricePerShare,
     }));
 
     props.setStep(prev => prev + 1);
   };
+
+  useEffect(() => {
+    reset({
+      totalPropertyValue: props.formData.totalPropertyValue,
+      numberOfShares: props.formData.numberOfShares,
+      rentalIncome: props.formData.rentalIncome,
+      expectedAnnualYield: props.formData.expectedAnnualYield,
+    });
+  }, [props.formData, reset]);
 
   return (
     <View style={dynamicStyles.containerSurface}>
@@ -95,12 +117,29 @@ export default function Step2(props: StepProps) {
           padding: 15,
           borderRadius: 10,
           margin: 5,
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
-        <Text style={{ color: Colors.background, fontWeight: '600' }}>
-          Auto-Calculated
-        </Text>
-        <Text style={{ color: Colors.background }}>Price Per Share</Text>
+        <View>
+          <Text style={{ color: Colors.background, fontWeight: '600' }}>
+            Auto-Calculated
+          </Text>
+          <Text style={{ color: Colors.background }}>Price Per Share</Text>
+          <Text>Calculated as </Text>
+        </View>
+        <View>
+          <Text
+            style={{
+              color: Colors.background,
+              fontWeight: '600',
+              fontSize: 22,
+            }}
+          >
+            {formattedPricePerShare}
+          </Text>
+        </View>
       </View>
 
       <Controller
@@ -139,7 +178,7 @@ export default function Step2(props: StepProps) {
         <Button
           title="Back"
           variant="outline"
-          textStyle={{color: Colors.primary}}
+          textStyle={{ color: Colors.primary }}
           onPress={() => props.setStep(prev => prev - 1)}
         />
 

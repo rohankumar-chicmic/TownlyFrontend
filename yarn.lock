@@ -2188,6 +2188,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-documents/picker/-/picker-12.0.1.tgz#ea59796175308be9818dd9e8f14a41145c35042b"
   integrity sha512-vpJKb4t/5bnxe9+gQl+plJfKrrIsmYwANGhNH2B9E1dS1+6FDBzg4Dwmcq4ueaGfkRKEPJ606mJttVEH1ZKZaA==
 
+"@react-native-documents/viewer@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@react-native-documents/viewer/-/viewer-3.0.1.tgz#c7d68d64cc04bf3064c6371c32941379f3e765f2"
+  integrity sha512-Z626s0RJP7WOJz+SrbbtDA4SGiwBaSiVzkF2nf6F2kQ+pwrdDL2uSwM4LupW1HP25jbIaGHC0ltgxNX0ba044A==
+
 "@react-native-firebase/app@^23.8.4":
   version "23.8.4"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-23.8.4.tgz#96913406cf9c2fe0f8584d1512661d3103442a7c"

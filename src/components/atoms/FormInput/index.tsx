@@ -49,31 +49,31 @@ export default function FormInput(props: FormInputType) {
         ]}
         {...props}
       />
-      {props.error
-        ? (
-            <Text
-              style={{
-                color: Colors.error,
-                fontSize: 10,
-                marginLeft: 5,
-                marginBottom: 4,
-              }}
-            >
-              {props.error as string}
-            </Text>
-          )
-        : props.hintText && (
-            <Text
-              style={{
-                color: Colors.textSecondary,
-                fontSize: 10,
-                marginLeft: 5,
-                marginBottom: 4,
-              }}
-            >
-              {props.hintText}
-            </Text>
-          )}
+      {props.error ? (
+        <Text
+          style={{
+            color: Colors.error,
+            fontSize: 10,
+            marginLeft: 5,
+            marginBottom: 4,
+          }}
+        >
+          {props.error as string}
+        </Text>
+      ) : (
+        props.hintText && (
+          <Text
+            style={{
+              color: Colors.textSecondary,
+              fontSize: 10,
+              marginLeft: 5,
+              marginBottom: 4,
+            }}
+          >
+            {props.hintText}
+          </Text>
+        )
+      )}
     </View>
   );
 }

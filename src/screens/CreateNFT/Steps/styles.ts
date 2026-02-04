@@ -26,6 +26,7 @@ const styles = (Colors: ThemeColors) =>
       padding: 12,
       borderWidth: 1,
       marginBottom: 15,
+      color: Colors.textPrimary,
       height: Dimensions.get('screen').height * 0.047,
       backgroundColor: Colors.background,
       borderColor: Colors.border,

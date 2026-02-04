@@ -23,10 +23,7 @@ export interface Step2FormData {
   expectedAnnualYield: number;
 }
 
-
-
-
 export interface NFTFormData extends Step1FormData, Step2FormData {
-
+  pricePerUnit: number;
   propertyImage: DocumentFile | null;
 }

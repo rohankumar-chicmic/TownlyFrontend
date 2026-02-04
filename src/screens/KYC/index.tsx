@@ -54,7 +54,7 @@ export default function KYCVerificationScreen() {
 
   const formatDate = (iso?: string) => {
     if (!iso) return '';
-    return iso.split('T')[0]; 
+    return iso.split('T')[0];
   };
 
   const handleContinue = async (data: KYCFormData) => {
@@ -105,7 +105,7 @@ export default function KYCVerificationScreen() {
   };
 
   const handlePickFile = async () => {
-    const [result] = await pick({ type: [types.pdf, types.docx] });
+    const [result] = await pick({ type: [types.images] });
 
     const file = {
       name: result.name,
@@ -186,10 +186,7 @@ export default function KYCVerificationScreen() {
 
                   <Button
                     title=""
-                    style={[
-                      dynamicStyles.input,
-                      { marginBottom: 2 },
-                    ]}
+                    style={[dynamicStyles.input, { marginBottom: 2 }]}
                     onPress={() => setShowDatePicker(true)}
                   >
                     <Text
@@ -233,9 +230,9 @@ export default function KYCVerificationScreen() {
                       maximumDate={new Date()}
                       display={Platform.OS === 'ios' ? 'spinner' : 'default'}
                       onChange={(event, selectedDate) => {
-                        setShowDatePicker(false); 
+                        setShowDatePicker(false);
                         if (selectedDate) {
-                          onChange(selectedDate.toISOString()); 
+                          onChange(selectedDate.toISOString());
                         }
                       }}
                     />
@@ -298,10 +295,7 @@ export default function KYCVerificationScreen() {
                 </Text>
                 <Button
                   title=""
-                  style={[
-                    dynamicStyles.input,
-                    { marginBottom: 2 },
-                  ]}
+                  style={[dynamicStyles.input, { marginBottom: 2 }]}
                   onPress={handlePickFile}
                 >
                   <Text
@@ -345,10 +339,7 @@ export default function KYCVerificationScreen() {
               </Text>
               <Button
                 title=""
-                style={[
-                  dynamicStyles.input,
-                  { marginBottom: 2 },
-                ]}
+                style={[dynamicStyles.input, { marginBottom: 2 }]}
                 onPress={handleSelfiePick}
               >
                 <Text

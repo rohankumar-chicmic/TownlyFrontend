@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { View, Text, Image } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
@@ -18,12 +18,24 @@ interface StepProps {
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
 }
 
-export default function Step3({ setStep, setFormData }: StepProps) {
+export default function Step3({ setStep, setFormData, formData }: StepProps) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
 
-  const [pickedImage, setPickedImage] =
-    useState<DocumentPickerResponse | null>(null);
+  const [pickedImage, setPickedImage] = useState<DocumentPickerResponse | null>(
+    null,
+  );
+
+  useEffect(() => {
+    if (formData.propertyImage) {
+      setPickedImage({
+        uri: formData.propertyImage.uri,
+        name: formData.propertyImage.name,
+        type: formData.propertyImage.type,
+        size: formData.propertyImage.size,
+      } as DocumentPickerResponse);
+    }
+  }, [formData, setPickedImage]);
 
   const handlePickImage = async () => {
     try {

@@ -28,7 +28,6 @@
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="townly"/>
         <data android:scheme="exp+townly"/>
-        <data android:scheme="townly-dev"/>
       </intent-filter>
     </activity>
   </application>

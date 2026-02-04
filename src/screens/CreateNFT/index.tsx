@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import Step1 from './Steps/Step1';
@@ -9,16 +9,16 @@ import Step4 from './Steps/Step4';
 import StepIndicator from './Steps/StepIndicator';
 
 import styles from './styles';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Icons } from '@utils/icons';
 import { NFTFormData } from './types';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<NFTFormData>({
     propertyName: '',
     description: '',
@@ -28,18 +28,23 @@ export default function CreateNFTScreen() {
     totalPropertyValue: 0,
     numberOfShares: 0,
     rentalIncome: 0,
+    pricePerUnit: 0,
     expectedAnnualYield: 0,
     propertyImage: null,
   });
 
   return (
-    <SafeAreaProvider style={{ flex: 1 }}>
-      <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAwareScrollView
-          showsVerticalScrollIndicator={false}
-          style={{ backgroundColor: Colors.background }}
-          contentContainerStyle={dynamicStyles.container}
-        >
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ backgroundColor: Colors.background }}
+        contentContainerStyle={{ flexGrow: 1 }}
+        enableAutomaticScroll={true}
+        enableOnAndroid={true}
+        extraScrollHeight={Platform.OS === 'ios' ? 20 : 30}
+        keyboardShouldPersistTaps="handled"
+      >
+        <View style={[dynamicStyles.container, { flexGrow: 1 }]}>
           <BackButton />
           <Text
             style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}
@@ -109,7 +114,7 @@ export default function CreateNFTScreen() {
             </StepIndicator>
           </View>
 
-           {step === 0 && (
+          {step === 0 && (
             <Step1
               setStep={setStep}
               formData={formData}
@@ -133,14 +138,9 @@ export default function CreateNFTScreen() {
             />
           )}
 
-          {step === 3 && (
-            <Step4
-              setStep={setStep}
-              formData={formData}
-            />
-          )}
-        </KeyboardAwareScrollView>
-      </SafeAreaView>
-    </SafeAreaProvider>
+          {step === 3 && <Step4 setStep={setStep} formData={formData} />}
+        </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 }

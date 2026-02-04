@@ -13,12 +13,14 @@ import Tabs from './Tabs';
 import PropertyDetails from '@screens/PropertyDetails';
 import CreateNFTScreen from '@screens/CreateNFT';
 import KYC from '@screens/KYC';
+import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
 
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
   const navigationRef = useNavigationContainerRef();
   useReactNavigationDevTools(navigationRef);
+  useGetKYCStatusQuery();
   const { Colors, currentTheme } = useTheme();
 
   return (

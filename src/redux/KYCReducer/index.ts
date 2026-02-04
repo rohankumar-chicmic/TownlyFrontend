@@ -1,5 +1,6 @@
 import { kycApi } from '@redux/KYCApiReducer';
 import { createSlice } from '@reduxjs/toolkit';
+import { RootState } from '@redux/store';
 
 export enum KYC_STATUS {
   NOT_STARTED = 0,
@@ -29,14 +30,19 @@ const kycSlice = createSlice({
   extraReducers: builder => {
     builder.addMatcher(
       kycApi.endpoints.getKYCStatus.matchFulfilled,
-      (state, { payload }) => {
-        state.status = payload.status;
-        state.submittedAt = payload.submittedAt ?? null;
-        state.rejectionReason = payload.rejectionReason ?? null;
+      (state, action) => {
+        state.status = action.payload.status;
+        state.submittedAt = action.payload.submittedAt;
+        state.rejectionReason = action.payload.rejectionReason;
       },
     );
   },
 });
 
 export const { resetKyc } = kycSlice.actions;
+
+export const selectKycState = (state: RootState) => state.kyc;
+
+export const selectKycStatus = (state: RootState) => state.kyc.status;
+
 export default kycSlice.reducer;

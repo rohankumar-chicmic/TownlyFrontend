@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TextInput } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
@@ -74,6 +74,7 @@ export default function Step1(props: StepProps) {
     control,
     handleSubmit,
     setValue,
+    reset,
     formState: { errors },
   } = useForm<Step1FormData>({
     resolver: yupResolver(step1Schema),
@@ -91,6 +92,19 @@ export default function Step1(props: StepProps) {
       ],
     },
   });
+
+  useEffect(() => {
+    reset({
+      propertyName: props.formData.propertyName ?? '',
+      description: props.formData.description ?? '',
+      location: props.formData.location ?? '',
+      propertyType: props.formData.propertyType ?? '',
+      documents:
+        props.formData.documents?.length > 0
+          ? props.formData.documents
+          : [{ documentName: '', file: null }],
+    });
+  }, [props.formData, reset]);
 
   return (
     <View style={dynamicStyles.containerSurface}>
@@ -181,6 +195,7 @@ export default function Step1(props: StepProps) {
                   value={value}
                   onChange={item => onChange(item.value)}
                   style={[dynamicStyles.input]}
+                  activeColor={Colors.elevated}
                   placeholderStyle={dynamicStyles.dropdownPlaceholder}
                   selectedTextStyle={dynamicStyles.dropdownSelectedText}
                   containerStyle={dynamicStyles.dropdownContainer}
@@ -262,7 +277,11 @@ export default function Step1(props: StepProps) {
         style={{ alignSelf: 'flex-end', marginTop: 20 }}
         textStyle={{ marginHorizontal: 10 }}
       >
-        <Icons.Arrow height={15} width={15}></Icons.Arrow>
+        <Icons.Arrow
+          height={15}
+          width={15}
+          color={Colors.background}
+        ></Icons.Arrow>
       </Button>
     </View>
   );
