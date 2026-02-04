@@ -6,59 +6,86 @@ import styles from './styles';
 import Button from '@components/atoms/Button';
 import FormInput from '@components/atoms/FormInput';
 import { Icons } from '@utils/icons';
-import { useForm } from 'react-hook-form'
 import { step2Schema } from '../validationSchemas';
 import { InferType } from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { Controller, useForm } from 'react-hook-form';
+import { NFTFormData, Step2FormData } from '../types';
 
-
-interface stepProps {
+interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
-  formData: any;
-  setFormData: () => void;
+  formData: NFTFormData;
+  setFormData: Dispatch<SetStateAction<NFTFormData>>;
 }
 
-export default function Step2(props: stepProps) {
+export default function Step2(props: StepProps) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const {
-    register,
+    control,
     handleSubmit,
-    watch,
     formState: { errors },
-  } = useForm<InferType<typeof step2Schema>>();
+  } = useForm<Step2FormData>({
+    resolver: yupResolver(step2Schema),
+    mode: 'onSubmit',
+    defaultValues: {
+      totalPropertyValue: undefined,
+      numberOfShares: undefined,
+      rentalIncome: undefined,
+      expectedAnnualYield: undefined,
+    },
+  });
+
+  const handleContinue = (data: Step2FormData) => {
+    props.setFormData(prev => ({
+      ...prev,
+      ...data,
+    }));
+
+    props.setStep(prev => prev + 1);
+  };
 
   return (
     <View style={dynamicStyles.containerSurface}>
-      <Text style={[dynamicStyles.heading]}>Financial Information</Text>
-      <Text
-        style={{
-          color: Colors.textSecondary,
-          marginBottom: 10,
-          paddingVertical: 5,
-          fontSize: 12,
-        }}
-      >
-        Configure the tokenization and investment parameters
-      </Text>
+      <Text style={dynamicStyles.heading}>Financial Information</Text>
 
       <View style={{ flexDirection: 'row' }}>
         <View style={{ flex: 1 }}>
-          <FormInput
-            label="Total Property Value (USD)"
-            required
-            placeholder="$ 0.0"
-            keyboardType="number-pad"
-            hintText="Minimum Value: $1000"
-          ></FormInput>
+          <Controller
+            control={control}
+            name="totalPropertyValue"
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                label="Total Property Value (USD)"
+                required
+                placeholder="$ 0.0"
+                keyboardType="number-pad"
+                value={value?.toString() ?? ''}
+                onChangeText={onChange}
+                hintText="Minimum Value: $1000"
+                error={errors.totalPropertyValue?.message}
+              />
+            )}
+          />
         </View>
+
         <View style={{ flex: 1 }}>
-          <FormInput
-            label="Total Number of Shares"
-            required
-            keyboardType="number-pad"
-            placeholder="0"
-            hintText="Minimum: 100 Shares"
-          ></FormInput>
+          <Controller
+            control={control}
+            name="numberOfShares"
+            render={({ field: { onChange, value } }) => (
+              <FormInput
+                label="Total Number of Shares"
+                required
+                placeholder="0"
+                keyboardType="number-pad"
+                value={value?.toString() ?? ''}
+                onChangeText={onChange}
+                hintText="Minimum: 100 Shares"
+                error={errors.numberOfShares?.message}
+              />
+            )}
+          />
         </View>
       </View>
 
@@ -70,48 +97,54 @@ export default function Step2(props: stepProps) {
           margin: 5,
         }}
       >
-        <Text
-          style={{ color: Colors.background, fontSize: 15, fontWeight: '600' }}
-        >
+        <Text style={{ color: Colors.background, fontWeight: '600' }}>
           Auto-Calculated
         </Text>
-        <Text style={{ color: Colors.background, fontWeight: '500' }}>
-          Price Per Share
-        </Text>
+        <Text style={{ color: Colors.background }}>Price Per Share</Text>
       </View>
 
-      <FormInput
-        label="Rental Income History (per month)"
-        required
-        keyboardType="number-pad"
-        placeholder="0"
-        hintText="Optional: Estimated annual rental return percentage"
-      ></FormInput>
+      <Controller
+        control={control}
+        name="rentalIncome"
+        render={({ field: { onChange, value } }) => (
+          <FormInput
+            label="Rental Income (per month)"
+            required
+            placeholder="0"
+            keyboardType="number-pad"
+            value={value?.toString() ?? ''}
+            onChangeText={onChange}
+            error={errors.rentalIncome?.message}
+          />
+        )}
+      />
 
-      <FormInput
-        label="Expected Annual Yield (%)"
-        required
-        keyboardType="number-pad"
-        placeholder="0"
-        hintText="Optional: Estimated annual rental return percentage"
-      ></FormInput>
+      <Controller
+        control={control}
+        name="expectedAnnualYield"
+        render={({ field: { onChange, value } }) => (
+          <FormInput
+            label="Expected Annual Yield (%)"
+            required
+            placeholder="0"
+            keyboardType="number-pad"
+            value={value?.toString() ?? ''}
+            onChangeText={onChange}
+            error={errors.expectedAnnualYield?.message}
+          />
+        )}
+      />
 
       <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <Button
           title="Back"
-          onPress={() => props.setStep(prev => prev - 1)}
-          style={{ alignSelf: 'flex-end', marginTop: 10 }}
-          textStyle={{ marginHorizontal: 10, color: Colors.primaryDark }}
           variant="outline"
-        ></Button>
+          textStyle={{color: Colors.primary}}
+          onPress={() => props.setStep(prev => prev - 1)}
+        />
 
-        <Button
-          title="Continue"
-          onPress={() => props.setStep(prev => prev + 1)}
-          style={{ alignSelf: 'flex-end', marginTop: 10 }}
-          textStyle={{ marginHorizontal: 10 }}
-        >
-          <Icons.Arrow height={15} width={15} borderColor={Colors.background}></Icons.Arrow>
+        <Button title="Continue" onPress={handleSubmit(handleContinue)}>
+          <Icons.Arrow height={15} width={15} />
         </Button>
       </View>
     </View>

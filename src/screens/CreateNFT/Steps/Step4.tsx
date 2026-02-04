@@ -6,11 +6,11 @@ import styles from './styles';
 import Button from '@components/atoms/Button';
 import FormInput from '@components/atoms/FormInput';
 import { Icons } from '@utils/icons';
+import { NFTFormData } from '../types';
 
 interface stepProps {
   setStep: Dispatch<SetStateAction<number>>;
-  formData: any;
-  setFormData: () => void;
+  formData: NFTFormData;
 }
 
 export default function Step4(props: stepProps) {

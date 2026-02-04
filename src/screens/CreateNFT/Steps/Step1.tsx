@@ -12,7 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Icons } from '@utils/icons';
 import { Dropdown } from 'react-native-element-dropdown';
 import { step1Schema } from '../validationSchemas';
-import { NFTFormData } from '../types';
+import { DocumentFile, NFTFormData, Step1FormData } from '../types';
 
 import {
   DocumentPickerResponse,
@@ -35,29 +35,9 @@ const propertyTypeOptions = [
 export default function Step1(props: StepProps) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
-  const [propertyType, setPropertyType] = useState('');
   const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(
     null,
   );
-
-  const handleContinue = async () => {
-    if (!pickedFile) {
-      return;
-    }
-
-    try {
-      const uploadedFile = await uploadDocument(pickedFile);
-
-      props.setFormData(prev => ({
-        ...prev,
-        document: uploadedFile,
-      }));
-
-      props.setStep(prev => prev + 1);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const handlePickFile = async () => {
     try {
@@ -72,7 +52,7 @@ export default function Step1(props: StepProps) {
 
       setPickedFile(pickResult);
 
-      setValue('documents.0.file', file, {
+      setValue('documents.0.file', file as DocumentFile, {
         shouldValidate: true,
       });
     } catch (err) {
@@ -80,15 +60,29 @@ export default function Step1(props: StepProps) {
     }
   };
 
+  const handleContinue = (data: Step1FormData) => {
+    props.setFormData(prev => ({
+      ...prev,
+      ...data,
+      documents: data.documents,
+    }));
+
+    props.setStep(prev => prev + 1);
+  };
+
   const {
     control,
     handleSubmit,
     setValue,
     formState: { errors },
-  } = useForm<NFTFormData>({
+  } = useForm<Step1FormData>({
     resolver: yupResolver(step1Schema),
     mode: 'onSubmit',
     defaultValues: {
+      propertyName: '',
+      description: '',
+      location: '',
+      propertyType: '',
       documents: [
         {
           documentName: '',
@@ -178,22 +172,34 @@ export default function Step1(props: StepProps) {
             control={control}
             name="propertyType"
             render={({ field: { onChange, value } }) => (
-              <Dropdown
-                data={propertyTypeOptions}
-                labelField="label"
-                valueField="value"
-                placeholder="Select Type"
-                value={value}
-                onChange={item => {
-                  setPropertyType(item.value);
-                  onChange(item.value);
-                }}
-                style={dynamicStyles.input}
-                placeholderStyle={dynamicStyles.dropdownPlaceholder}
-                selectedTextStyle={dynamicStyles.dropdownSelectedText}
-                containerStyle={dynamicStyles.dropdownContainer}
-                itemTextStyle={dynamicStyles.dropdownItemText}
-              />
+              <>
+                <Dropdown
+                  data={propertyTypeOptions}
+                  labelField="label"
+                  valueField="value"
+                  placeholder="Select Type"
+                  value={value}
+                  onChange={item => onChange(item.value)}
+                  style={[dynamicStyles.input]}
+                  placeholderStyle={dynamicStyles.dropdownPlaceholder}
+                  selectedTextStyle={dynamicStyles.dropdownSelectedText}
+                  containerStyle={dynamicStyles.dropdownContainer}
+                  itemTextStyle={dynamicStyles.dropdownItemText}
+                />
+
+                {errors.propertyType && (
+                  <Text
+                    style={{
+                      color: Colors.error,
+                      fontSize: 10,
+                      marginLeft: 5,
+                      marginTop: 2,
+                    }}
+                  >
+                    {errors.propertyType?.message}
+                  </Text>
+                )}
+              </>
             )}
           />
         </View>
@@ -236,16 +242,18 @@ export default function Step1(props: StepProps) {
               {pickedFile ? pickedFile?.name : 'Select Document'}
             </Text>
           </Button>
-          <Text
-            style={{
-              color: Colors.textSecondary,
-              fontSize: 10,
-              marginLeft: 5,
-              marginBottom: 4,
-            }}
-          >
-            Recommeded: PDF, Doc
-          </Text>
+          {errors.documents?.[0]?.file && (
+            <Text
+              style={{
+                color: Colors.error,
+                fontSize: 10,
+                marginLeft: 5,
+                marginTop: 2,
+              }}
+            >
+              {errors.documents[0].file.message}
+            </Text>
+          )}
         </View>
       </View>
       <Button

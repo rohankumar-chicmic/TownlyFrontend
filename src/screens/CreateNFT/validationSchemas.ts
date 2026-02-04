@@ -1,6 +1,7 @@
 import * as yup from 'yup';
+import { Step1FormData, DocumentFile } from './types';
 
-export const step1Schema = yup.object().shape({
+export const step1Schema: yup.ObjectSchema<Step1FormData> = yup.object({
   propertyName: yup
     .string()
     .required('Property name is required')
@@ -23,52 +24,57 @@ export const step1Schema = yup.object().shape({
   documents: yup
     .array()
     .of(
-      yup.object().shape({
+      yup.object({
         documentName: yup.string().required('Document name is required'),
-        file: yup.mixed().required('Document file is required').nullable(),
+
+        file: yup
+          .mixed<DocumentFile>()
+          .nullable()
+          .required('Document file is required'),
       }),
     )
     .min(1, 'At least one document is required')
     .max(3, 'Maximum 3 documents allowed')
-    .required('Documents are required'),
+    .required(),
 });
 
-export const step2Schema = yup.object().shape({
+const parseNumber = (value: unknown, originalValue: unknown) => {
+  if (typeof originalValue === 'string') {
+    const parsed = Number(originalValue.replace(/[^0-9.]/g, ''));
+    return isNaN(parsed) ? undefined : parsed;
+  }
+  return value;
+};
+
+export const step2Schema = yup.object({
   totalPropertyValue: yup
-    .string()
+    .number()
+    .transform(parseNumber)
+    .typeError('Total property value must be a number')
     .required('Total property value is required')
-    .test('min-value', 'Total property value must be at least $1000', value => {
-      const numValue = parseFloat(value?.replace(/[^0-9.]/g, '') || '0');
-      return numValue >= 1000;
-    }),
+    .min(1000, 'Total property value must be at least $1000'),
 
   numberOfShares: yup
-    .string()
+    .number()
+    .transform(parseNumber)
+    .typeError('Number of shares must be a number')
     .required('Number of shares is required')
-    .test('min-shares', 'Number of shares must be at least 100', value => {
-      const numValue = parseInt(value?.replaceAll(/[^0-9]/g, '') || '0', 10);
-      return numValue >= 100;
-    }),
+    .min(100, 'Number of shares must be at least 100'),
 
   rentalIncome: yup
-    .string()
+    .number()
+    .transform(parseNumber)
+    .typeError('Rental income must be a number')
     .required('Rental income is required')
-    .test('non-negative', 'Rental income cannot be negative', value => {
-      const numValue = parseFloat(value?.replace(/[^0-9.]/g, '') || '0');
-      return numValue >= 0;
-    }),
+    .min(0, 'Rental income cannot be negative'),
 
   expectedAnnualYield: yup
-    .string()
+    .number()
+    .transform(parseNumber)
+    .typeError('Expected annual yield must be a number')
     .required('Expected annual yield is required')
-    .test(
-      'valid-percentage',
-      'Expected annual yield must be between 0 and 100%',
-      value => {
-        const numValue = parseFloat(value?.replace(/[^0-9.]/g, '') || '0');
-        return numValue >= 0 && numValue <= 100;
-      },
-    ),
+    .min(0, 'Expected annual yield must be at least 0%')
+    .max(100, 'Expected annual yield must be at most 100%'),
 });
 
 export const step3Schema = yup.object().shape({

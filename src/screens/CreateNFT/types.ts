@@ -5,24 +5,28 @@ export interface DocumentFile {
   size?: number;
 }
 
-export interface NFTFormData {
-  // Step 1: Property Details
+export interface Step1FormData {
   propertyName: string;
   description: string;
   location: string;
   propertyType: string;
-
-  documents: Array<{
+  documents: {
     documentName: string;
     file: DocumentFile | null;
-  }>;
+  }[];
+}
 
-  // Step 2: Financial Info
-  totalPropertyValue: string;
-  numberOfShares: string;
-  rentalIncome: string;
-  expectedAnnualYield: string;
+export interface Step2FormData {
+  totalPropertyValue: number;
+  numberOfShares: number;
+  rentalIncome: number;
+  expectedAnnualYield: number;
+}
 
-  // Step 3: Upload Image
-  propertyImage: DocumentFile;
+
+
+
+export interface NFTFormData extends Step1FormData, Step2FormData {
+
+  propertyImage: DocumentFile | null;
 }

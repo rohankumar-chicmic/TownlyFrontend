@@ -11,6 +11,5 @@ export const uploadImage = async (type: 'selfie') => {
     return null;
   }
 
-  // ✅ IMPORTANT: return LOCAL uri ONLY
   return result.assets[0].uri;
 };

@@ -1,27 +1,28 @@
 import React, { useState } from 'react';
-import { View, Text, Platform } from 'react-native';
-import useStyles from '@hooks/useStyles';
-import useTheme from '@hooks/useTheme';
+import { View, Text, Platform, Image, Dimensions } from 'react-native';
 
-import styles from './styles';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import BackButton from '@components/atoms/BackButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import FormInput from '@components/atoms/FormInput';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   DocumentPickerResponse,
   pick,
   types,
 } from '@react-native-documents/picker';
+
+import useStyles from '@hooks/useStyles';
+import useTheme from '@hooks/useTheme';
+import BackButton from '@components/atoms/BackButton';
+import FormInput from '@components/atoms/FormInput';
+import Button from '@components/atoms/Button';
+
 import { uploadImage } from '@utils/imageUpload';
 import { useSubmitKYCMutation } from '@redux/KYCApiReducer';
-
-import { Icons } from '@utils/icons';
-import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { KYCFormData } from './form.type';
+import { DocumentFile, KYCFormData } from './form.type';
 import { kycSchema } from './validationSchema';
-import Button from '@components/atoms/Button';
+import styles from './styles';
 
 export default function KYCVerificationScreen() {
   const { dynamicStyles } = useStyles(styles);
@@ -31,6 +32,7 @@ export default function KYCVerificationScreen() {
   );
   const [selfieUploaded, setSelfieUploaded] = useState(false);
   const [submitKYC, { isLoading }] = useSubmitKYCMutation();
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const {
     control,
@@ -49,6 +51,11 @@ export default function KYCVerificationScreen() {
       selfieUrl: '',
     },
   });
+
+  const formatDate = (iso?: string) => {
+    if (!iso) return '';
+    return iso.split('T')[0]; 
+  };
 
   const handleContinue = async (data: KYCFormData) => {
     if (!data.document || !data.selfieUrl) {
@@ -108,7 +115,7 @@ export default function KYCVerificationScreen() {
     };
 
     setPickedFile(result);
-    setValue('document', file, { shouldValidate: true });
+    setValue('document', file as DocumentFile, { shouldValidate: true });
   };
 
   return (
@@ -161,6 +168,7 @@ export default function KYCVerificationScreen() {
                   required
                   value={value}
                   onChangeText={onChange}
+                  placeholder="Full name"
                   error={errors.fullName?.message}
                 />
               )}
@@ -169,15 +177,70 @@ export default function KYCVerificationScreen() {
             <Controller
               control={control}
               name="dateOfBirth"
-              render={({ field: { onChange, value } }) => (
-                <FormInput
-                  label="Date of Birth"
-                  required
-                  placeholder="YYYY-MM-DD"
-                  value={value}
-                  onChangeText={onChange}
-                  error={errors.dateOfBirth?.message}
-                />
+              render={({ field: { value, onChange } }) => (
+                <View style={{ flex: 1, marginTop: 6 }}>
+                  <Text style={dynamicStyles.label}>
+                    Date of Birth
+                    <Text style={{ color: Colors.primary }}> *</Text>
+                  </Text>
+
+                  <Button
+                    title=""
+                    style={[
+                      dynamicStyles.input,
+                      { marginBottom: 2 },
+                    ]}
+                    onPress={() => setShowDatePicker(true)}
+                  >
+                    <Text
+                      style={{
+                        color: value ? Colors.textPrimary : Colors.textMuted,
+                        fontSize: 13,
+                      }}
+                    >
+                      {value ? formatDate(value) : 'Select Date'}
+                    </Text>
+                  </Button>
+
+                  {errors.dateOfBirth && (
+                    <Text
+                      style={{
+                        color: Colors.error,
+                        fontSize: 10,
+                        marginLeft: 5,
+                        marginTop: 2,
+                      }}
+                    >
+                      {errors.dateOfBirth.message}
+                    </Text>
+                  )}
+
+                  <Text
+                    style={{
+                      color: Colors.textSecondary,
+                      fontSize: 10,
+                      marginLeft: 5,
+                      marginTop: 4,
+                    }}
+                  >
+                    As per your official document
+                  </Text>
+
+                  {showDatePicker && (
+                    <DateTimePicker
+                      value={value ? new Date(value) : new Date()}
+                      mode="date"
+                      maximumDate={new Date()}
+                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      onChange={(event, selectedDate) => {
+                        setShowDatePicker(false); 
+                        if (selectedDate) {
+                          onChange(selectedDate.toISOString()); 
+                        }
+                      }}
+                    />
+                  )}
+                </View>
               )}
             />
 
@@ -197,6 +260,7 @@ export default function KYCVerificationScreen() {
                       label="Full Address"
                       required
                       value={value}
+                      placeholder="Full address"
                       onChangeText={onChange}
                       error={errors.fullAddress?.message}
                     />
@@ -219,7 +283,7 @@ export default function KYCVerificationScreen() {
                     <FormInput
                       label="Document Type"
                       required
-                      placeholder="e.g. Passport, Driver's License"
+                      placeholder="e.g. Passport, License"
                       value={value}
                       onChangeText={onChange}
                       error={errors.documentType?.message}
@@ -237,7 +301,6 @@ export default function KYCVerificationScreen() {
                   style={[
                     dynamicStyles.input,
                     { marginBottom: 2 },
-                    errors.document && { borderColor: Colors.error },
                   ]}
                   onPress={handlePickFile}
                 >
@@ -285,7 +348,6 @@ export default function KYCVerificationScreen() {
                 style={[
                   dynamicStyles.input,
                   { marginBottom: 2 },
-                  errors.selfieUrl && { borderColor: Colors.error },
                 ]}
                 onPress={handleSelfiePick}
               >
@@ -322,15 +384,35 @@ export default function KYCVerificationScreen() {
               </Text>
             </View>
 
+            {selfieUploaded && (
+              <View
+                style={{
+                  marginTop: 10,
+                  alignSelf: 'flex-start',
+                  borderRadius: 10,
+                  overflow: 'hidden',
+                  borderWidth: 1,
+                  borderColor: Colors.border,
+                }}
+              >
+                <Image
+                  source={{ uri: control._formValues.selfieUrl }}
+                  style={{
+                    width: 120,
+                    height: 120,
+                  }}
+                  resizeMode="cover"
+                />
+              </View>
+            )}
+
             <Button
-              title={isLoading ? 'Submitting...' : 'Continue'}
+              title={isLoading ? 'Submitting...' : 'Submit'}
               onPress={handleSubmit(handleContinue)}
               disabled={isLoading}
               style={{ alignSelf: 'flex-end', marginTop: 20 }}
               textStyle={{ marginHorizontal: 10 }}
-            >
-              {!isLoading && <Icons.Arrow height={15} width={15} />}
-            </Button>
+            ></Button>
           </View>
         </KeyboardAwareScrollView>
       </SafeAreaView>

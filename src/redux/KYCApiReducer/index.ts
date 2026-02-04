@@ -1,8 +1,6 @@
-
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { API_BASE_URL } from '@utils/constants';
 import { KYC_STATUS } from '@redux/KYCReducer';
-
 
 interface KYCSubmitResponse {
   success: boolean;
@@ -22,7 +20,8 @@ export const kycApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.API_BASE_URL || API_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
-      const token = (getState() as any)?.auth?.token;
+      const token = (getState() as any)?.auth?.userToken;
+
       if (token) {
         headers.set('authorization', `Bearer ${token}`);
       }
@@ -37,6 +36,7 @@ export const kycApi = createApi({
         method: 'POST',
         body: formData,
       }),
+
       invalidatesTags: ['KYC'],
     }),
 

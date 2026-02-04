@@ -13,11 +13,24 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { Icons } from '@utils/icons';
+import { NFTFormData } from './types';
 
 export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const [step, setStep] = useState(0);
+  const [step, setStep] = useState(2);
+  const [formData, setFormData] = useState<NFTFormData>({
+    propertyName: '',
+    description: '',
+    location: '',
+    propertyType: '',
+    documents: [],
+    totalPropertyValue: 0,
+    numberOfShares: 0,
+    rentalIncome: 0,
+    expectedAnnualYield: 0,
+    propertyImage: null,
+  });
 
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
@@ -96,32 +109,34 @@ export default function CreateNFTScreen() {
             </StepIndicator>
           </View>
 
-          {step === 0 && (
+           {step === 0 && (
             <Step1
               setStep={setStep}
-              formData={{}}
-              setFormData={() => console.log('nothing')}
+              formData={formData}
+              setFormData={setFormData}
             />
           )}
+
           {step === 1 && (
             <Step2
               setStep={setStep}
-              formData={{}}
-              setFormData={() => console.log('nothing')}
+              formData={formData}
+              setFormData={setFormData}
             />
           )}
+
           {step === 2 && (
             <Step3
               setStep={setStep}
-              formData={{}}
-              setFormData={() => console.log('nothing')}
+              formData={formData}
+              setFormData={setFormData}
             />
           )}
+
           {step === 3 && (
             <Step4
               setStep={setStep}
-              formData={{}}
-              setFormData={() => console.log('nothing')}
+              formData={formData}
             />
           )}
         </KeyboardAwareScrollView>

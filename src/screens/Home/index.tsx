@@ -13,7 +13,7 @@ import { Icons } from '@utils/icons';
 import { useAppNavigation } from '@hooks/useNavigation';
 import PropertyListing from '@components/molecules/PropertyListing';
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
-import KYCStatusModal from '@components/molecules/KYCModal';
+
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
   const navigation = useAppNavigation();
@@ -47,7 +47,7 @@ const Home = () => {
         style={{ marginBottom: 5 }}
         textStyle={{ margin: 10 }}
         size="lg"
-        onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
+        onPress={() => navigation.navigate(ROUTES.KYC)}
       >
         {
           <Icons.Arrow

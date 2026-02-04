@@ -1,7 +1,8 @@
-interface DocumentFile {
-  name: string;
+// form.type.ts
+export interface DocumentFile {
   uri: string;
-  type: string;
+  name: string;
+  type?: string;
   size?: number;
 }
 
@@ -11,5 +12,5 @@ export interface KYCFormData {
   fullAddress: string;
   documentType: string;
   document: DocumentFile | null;
-  selfieUrl: string; // local uri
+  selfieUrl: string;
 }
