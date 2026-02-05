@@ -11,7 +11,7 @@ interface InitialStateType {
 }
 const initialState: InitialStateType = {
   userToken: undefined,
-  userData: undefined,
+  userData: undefined,  
   theme: THEME.DEVICE,
 };
 

@@ -12,6 +12,7 @@ import { useAppSelector } from '@redux/store';
 interface HeaderProps extends BottomTabHeaderProps {
   drawerOpened: boolean;
   setDrawerOpened: Dispatch<SetStateAction<boolean>>;
+  onPress: () => void;
 }
 
 export default function Header({
@@ -20,6 +21,8 @@ export default function Header({
   navigation,
   drawerOpened,
   setDrawerOpened,
+  onPress,
+  
 }: Readonly<HeaderProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
@@ -50,18 +53,20 @@ export default function Header({
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <ConnectButton style={dynamicStyles.walletButton} />
         <Pressable
-          onPress={() => setDrawerOpened(prev => !prev)}
+          onPress={onPress}
+          onPressIn={() => setDrawerOpened(true)}
+          onPressOut={() => setDrawerOpened(false)}
           style={{
             marginLeft: 10,
             borderRadius: 5,
-            backgroundColor: drawerOpened ? Colors.elevated : Colors.surface,
+            backgroundColor: !drawerOpened ? Colors.elevated : Colors.surface,
           }}
         >
           <View style={{ margin: 10 }}>
             <Icons.Drawer
               height={18}
               width={18}
-              color={drawerOpened ? Colors.primary : Colors.primaryDark}
+              color={!drawerOpened ? Colors.primary : Colors.primaryDark}
             ></Icons.Drawer>
           </View>
         </Pressable>

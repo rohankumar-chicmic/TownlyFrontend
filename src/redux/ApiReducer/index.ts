@@ -16,11 +16,33 @@ const authApi = api.injectEndpoints({
         body,
       }),
     }),
+
+    getMyInvestmentDetails: builder.query({
+      query: () => ({
+        url: '/portfolio/me/overview',
+        method: 'GET',
+      }),
+    }),
+
+    requestCurrency: builder.mutation({
+      query: (amount) => ({
+        url: '/tokens/requests', 
+        method: 'POST', 
+        body: {
+          amount: amount
+        }
+      }) 
+    })
   }),
 
   overrideExisting: false,
 });
 
-export const { useGenerateNonceMutation, useVerifySignatureMutation } = authApi;
+export const {
+  useGenerateNonceMutation,
+  useVerifySignatureMutation,
+  useGetMyInvestmentDetailsQuery,
+  useRequestCurrencyMutation
+} = authApi;
 
 export { authApi };

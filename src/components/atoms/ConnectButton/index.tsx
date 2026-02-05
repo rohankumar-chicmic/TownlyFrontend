@@ -7,7 +7,6 @@ import {
   Pressable,
   ViewStyle,
   Dimensions,
-  SafeAreaView,
   ScrollView,
   TextInput,
 } from 'react-native';

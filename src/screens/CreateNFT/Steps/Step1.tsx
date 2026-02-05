@@ -27,9 +27,9 @@ interface StepProps {
 }
 
 const propertyTypeOptions = [
-  { label: 'Land', value: '1' },
-  { label: 'Residential', value: '2' },
-  { label: 'Commercial', value: '3' },
+  { label: 'Land', value: 'Land' },
+  { label: 'Residential', value: 'Residential' },
+  { label: 'Commercial', value: 'Commercial' },
 ];
 
 export default function Step1(props: StepProps) {

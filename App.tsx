@@ -17,6 +17,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { appKit, wagmiAdapter } from './src/AppkitConfig'; // Your configured AppKit instance
 import { AppKitProvider, AppKit } from '@reown/appkit-react-native';
 import { WagmiProvider } from 'wagmi';
@@ -75,18 +76,20 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <AppKitProvider instance={appKit}>
-        <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-          <QueryClientProvider client={queryClient}>
-            <Provider store={store}>
-              <PersistGate persistor={persistor}>
-                <RootNavigator />
-                <AppKit />
-              </PersistGate>
-            </Provider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </AppKitProvider>
+      <KeyboardProvider>
+        <AppKitProvider instance={appKit}>
+          <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+            <QueryClientProvider client={queryClient}>
+              <Provider store={store}>
+                <PersistGate persistor={persistor}>
+                  <RootNavigator />
+                  <AppKit />
+                </PersistGate>
+              </Provider>
+            </QueryClientProvider>
+          </WagmiProvider>
+        </AppKitProvider>
+      </KeyboardProvider>
     </SafeAreaProvider>
   );
 }

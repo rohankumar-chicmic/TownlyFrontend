@@ -38,7 +38,6 @@ export default function KYCStatusModal({
     (state: RootState) => state.kyc,
   );
 
-  // Don't render modal if KYC is approved
   if (status === KYC_STATUS.APPROVED) {
     return null;
   }

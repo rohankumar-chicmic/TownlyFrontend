@@ -23,6 +23,7 @@ import { useSubmitKYCMutation } from '@redux/KYCApiReducer';
 import { DocumentFile, KYCFormData } from './form.type';
 import { kycSchema } from './validationSchema';
 import styles from './styles';
+import { useAppNavigation } from '@hooks/useNavigation';
 
 export default function KYCVerificationScreen() {
   const { dynamicStyles } = useStyles(styles);
@@ -30,6 +31,8 @@ export default function KYCVerificationScreen() {
   const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(
     null,
   );
+
+  const navigation = useAppNavigation();
   const [selfieUploaded, setSelfieUploaded] = useState(false);
   const [submitKYC, { isLoading }] = useSubmitKYCMutation();
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -90,6 +93,8 @@ export default function KYCVerificationScreen() {
       } as any);
 
       await submitKYC(formData).unwrap();
+
+      navigation.navigate('Home');
     } catch (error) {
       console.error('KYC submission failed:', error);
     }

@@ -10,12 +10,15 @@ import useTheme from '@hooks/useTheme';
 import Home from '@screens/Home';
 import Marketplace from '@screens/Marketplace';
 import Portfolio from '@screens/Portfolio';
+import { useNavigation } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export default function Tabs() {
   const { Colors } = useTheme();
   const [drawerOpened, setDrawerOpened] = useState(false);
+  const navigation = useNavigation();
+
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -23,6 +26,7 @@ export default function Tabs() {
           <Header
             {...props}
             setDrawerOpened={setDrawerOpened}
+            onPress={() => navigation.openDrawer()}
             drawerOpened={drawerOpened}
           />
         ),

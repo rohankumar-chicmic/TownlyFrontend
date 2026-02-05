@@ -9,8 +9,13 @@ import Button from '@components/atoms/Button';
 import { useAppNavigation } from '@hooks/useNavigation';
 import InvestedPropertyCard from '@components/molecules/InvestedPropertyCard';
 import { useAppSelector } from '@redux/store';
+import { useGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
+import PropertyListing from '@components/molecules/PropertyListing';
+import { useGetMyInvestmentDetailsQuery } from '@redux/ApiReducer';
+import PortfolioAuthRequired from './PortfolioWithoutAuth';
+import KYCpendingPortfolio from './KYCpendingPortfolio';
 
-const InvestPorpertyData = {
+const InvestPropertyData = {
   id: 'property-001',
   imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
   name: 'Suburban Family Home',
@@ -31,8 +36,21 @@ export default function Portfolio() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-
+  const { data, isLoading, error } = useGetMyPropertiesQuery();
+  const InvestmentDetails = useGetMyInvestmentDetailsQuery();
   const address = useAppSelector(state => state.auth.userData?.walletAddress);
+
+  const userToken = useAppSelector(state => state.auth.userToken);
+  const kycStatus = useAppSelector(state => state.kyc.status);
+
+  if (!userToken) {
+    return <KYCpendingPortfolio />;
+  }
+
+  if(kycStatus!=2){
+    return <KYCpendingPortfolio/>
+  }
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -47,9 +65,12 @@ export default function Portfolio() {
           <Text style={[dynamicStyles.heroText]}>
             Track and manage your real-world asset investments
           </Text>
-          <Text style={[dynamicStyles.smallText, { marginTop: 10 }]}>
-            wallet :<Text style={{ color: Colors.primary }}>{address}</Text>
-          </Text>
+          {address && (
+            <Text style={[dynamicStyles.smallText, { marginTop: 10 }]}>
+              wallet:
+              <Text style={{ color: Colors.primary }}>{address}</Text>
+            </Text>
+          )}
         </View>
         <ScrollView
           horizontal
@@ -65,26 +86,34 @@ export default function Portfolio() {
           {/* <View style={dynamicStyles.dataPanel}> */}
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Total Invested</Text>
-            <Text style={dynamicStyles.heading}>2.1245 ETH</Text>
+            <Text style={dynamicStyles.heading}>
+              {InvestmentDetails.data?.totalInvestedEth}
+            </Text>
             <Text style={dynamicStyles.smallText}>
               4 Properties <Text>120 Tokens</Text>
             </Text>
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Current Value</Text>
-            <Text style={dynamicStyles.heading}>2.1245 ETH</Text>
+            <Text style={dynamicStyles.heading}>
+              {InvestmentDetails.data?.currentValueEth}
+            </Text>
             <Text style={[dynamicStyles.smallText, { color: Colors.primary }]}>
               +2.04% overall return
             </Text>
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Total Returns</Text>
-            <Text style={dynamicStyles.heading}>+0.04 ETH</Text>
+            <Text style={dynamicStyles.heading}>
+              {InvestmentDetails.data?.totalReturnEth}
+            </Text>
             <Text style={dynamicStyles.smallText}>Income: 0.0357 ETH</Text>
           </View>
           <View style={dynamicStyles.containerStyle}>
-            <Text style={dynamicStyles.heroText}>Total Returns</Text>
-            <Text style={dynamicStyles.heading}>2.1245 ETH</Text>
+            <Text style={dynamicStyles.heroText}>Monthly Income</Text>
+            <Text style={dynamicStyles.heading}>
+              {InvestmentDetails.data?.monthlyIncomeEth}
+            </Text>
             <Text style={dynamicStyles.smallText}>
               Next payment: Feb 1, 2025
             </Text>
@@ -109,15 +138,7 @@ export default function Portfolio() {
           }}
         >
           <Text style={dynamicStyles.heading}> Your Property Portfolio</Text>
-          <ScrollView
-            contentContainerStyle={{
-              maxHeight: Dimensions.get('screen').height * 0.4,
-            }}
-          >
-            <InvestedPropertyCard
-              {...InvestPorpertyData}
-            ></InvestedPropertyCard>
-          </ScrollView>
+          <PropertyListing horizontal data={data}></PropertyListing>
         </View>
       </View>
     </ScrollView>

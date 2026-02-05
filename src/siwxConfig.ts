@@ -8,6 +8,7 @@ import { loginUser, logoutUser } from '@redux/AuthReducer';
 import {
   saveSiwxSession,
   getSiwxSession,
+  getSiwxToken,
   clearSiwxSession,
 } from '@utils/siwxSessionStorage';
 import { connectWallet } from '@redux/WalletReducer';
@@ -55,7 +56,7 @@ export const siwx: SIWXConfig = {
 
   addSession: async session => {
     const chainId = Number(session.data.chainId.split(':')[1]);
-    console.log(session);
+    console.log('Adding new session for:', session.data.accountAddress);
 
     const result = await store
       .dispatch(
@@ -68,17 +69,23 @@ export const siwx: SIWXConfig = {
       )
       .unwrap();
 
-    await saveSiwxSession(session);
+    const accessToken = result.data.accessToken;
+
+    // Save session with token
+    await saveSiwxSession(session, accessToken);
 
     store.dispatch(
       loginUser({
-        token: result.data.accessToken,
+        token: accessToken,
         walletAddress: session.data.accountAddress,
-      }),
+      })
+    );
+    
+    store.dispatch(
       connectWallet({
         address: session.data.accountAddress,
         chainId: session.data.chainId,
-      }),
+      })
     );
   },
 
@@ -96,17 +103,59 @@ export const siwx: SIWXConfig = {
   },
 
   setSessions: async (sessions: SIWXSession[]) => {
+    console.log('setSessions called with:', sessions.length, 'sessions');
+    
     if (!sessions.length) {
+      console.log('No sessions - logging out');
+      await clearSiwxSession();
       store.dispatch(logoutUser());
       return;
     }
-    await saveSiwxSession(sessions[0]);
 
-    store.dispatch(
-      loginUser({
-        walletAddress: sessions[0].data.accountAddress,
-      }),
-    );
+    const newSession = sessions[0];
+    const savedSession = await getSiwxSession();
+    const savedToken = await getSiwxToken();
+
+    console.log('New wallet:', newSession.data.accountAddress);
+    console.log('Saved wallet:', savedSession?.data.accountAddress);
+
+    // Check if wallet address has changed
+    const walletChanged = savedSession && 
+      savedSession.data.accountAddress.toLowerCase() !== newSession.data.accountAddress.toLowerCase();
+
+    if (walletChanged) {
+      console.log('Wallet changed - clearing old session and token');
+      await clearSiwxSession();
+      // Don't restore token - user needs to sign with new wallet
+      store.dispatch(
+        loginUser({
+          walletAddress: newSession.data.accountAddress,
+          // No token - will trigger re-authentication
+        })
+      );
+      return;
+    }
+
+    // Same wallet - restore session and token
+    if (savedToken && savedSession) {
+      console.log('Restoring session for same wallet');
+      await saveSiwxSession(newSession, savedToken);
+      
+      store.dispatch(
+        loginUser({
+          token: savedToken,
+          walletAddress: newSession.data.accountAddress,
+        })
+      );
+    } else {
+      console.log('No saved token - need to authenticate');
+      await saveSiwxSession(newSession);
+      store.dispatch(
+        loginUser({
+          walletAddress: newSession.data.accountAddress,
+        })
+      );
+    }
   },
 
   getRequired: () => true,

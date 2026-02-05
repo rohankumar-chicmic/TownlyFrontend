@@ -10,6 +10,7 @@ import PropertyListing from '@components/molecules/PropertyListing';
 import useTheme from '@hooks/useTheme';
 
 import { useLazySearchPropertiesQuery } from '@redux/PropertyApiReducer';
+import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
 
 const Marketplace = () => {
   const { dynamicStyles } = useStyles(styles);
@@ -17,7 +18,7 @@ const Marketplace = () => {
   const [filter, setFilter] = useState('');
   const [text, setText] = useState('');
   const [page, setPage] = useState(1);
-  const [allProperties, setAllProperties] = useState<any[]>([]);
+  const [allProperties, setAllProperties] = useState<PropertyCardProps[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
   const [triggerSearch, { data, isLoading, isFetching, error }] =

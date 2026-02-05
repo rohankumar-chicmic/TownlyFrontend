@@ -7,6 +7,9 @@ import Button from '@components/atoms/Button';
 import { Icons } from '@utils/icons';
 import { NFTFormData } from '../types';
 import { viewDocument } from '@react-native-documents/viewer';
+import { useMakePropertyMutation } from '@redux/PropertyApiReducer';
+import { useAppSelector } from '@redux/store';
+import { useAppNavigation } from '@hooks/useNavigation';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -48,6 +51,35 @@ export default function Step4(props: StepProps) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   console.log(props.formData);
+  const [makeProperty, { isLoading, error }] = useMakePropertyMutation();
+  const navigation = useAppNavigation();
+  const userToken = useAppSelector(state => state.auth.userToken);
+  console.log(userToken);
+  const handleSubmitProperty = async () => {
+    console.log('Token being sent:', userToken);
+    console.log('Token type:', typeof userToken);
+    console.log('Token length:', userToken?.length);
+    
+
+    if (!userToken) {
+      console.error('No token available!');
+      return;
+    }
+
+    try {
+      const result = await makeProperty({
+        data: props.formData,
+        token: userToken,
+      }).unwrap();
+      navigation.navigate('Portfolio')
+      console.log('Property created successfully!', result);
+      
+    } catch (err: any) {
+      console.error('Failed to create property:', err);
+      console.error('Error status:', err.status);
+      console.error('Error data:', err.data);
+    }
+  };
 
   return (
     <View style={dynamicStyles.containerSurface}>
@@ -221,7 +253,7 @@ export default function Step4(props: StepProps) {
 
         <Button
           title="Submit"
-          onPress={() => console.log('implementation pending')}
+          onPress={handleSubmitProperty}
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
           textStyle={{ marginHorizontal: 10 }}
         >

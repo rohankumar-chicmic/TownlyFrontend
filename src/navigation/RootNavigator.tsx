@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import {
   NavigationContainer,
@@ -14,8 +15,25 @@ import PropertyDetails from '@screens/PropertyDetails';
 import CreateNFTScreen from '@screens/CreateNFT';
 import KYC from '@screens/KYC';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
+import CustomSidebar from '@components/molecules/CustomSidebar';
 
 const Stack = createNativeStackNavigator();
+const Drawer = createDrawerNavigator();
+
+function MainDrawerNavigation() {
+  return (
+    <Drawer.Navigator
+      screenOptions={{
+        headerShown: false,
+        drawerPosition: 'right',
+        drawerType: 'back'
+      }}
+      drawerContent={props => <CustomSidebar {...props} />}
+    >
+      <Drawer.Screen name="Tabs" component={Tabs} />
+    </Drawer.Navigator>
+  );
+}
 
 const RootNavigator = () => {
   const navigationRef = useNavigationContainerRef();
@@ -32,11 +50,11 @@ const RootNavigator = () => {
             contentStyle: { backgroundColor: Colors.background },
           }}
         >
-          <Stack.Screen name="Tabs" component={Tabs} />
+          <Stack.Screen name="Drawer" component={MainDrawerNavigation} />
 
           <Stack.Screen name="PropertyDetails" component={PropertyDetails} />
           <Stack.Screen name="CreateNft" component={CreateNFTScreen} />
-          <Stack.Screen name="KycScreen" component={KYC}/>
+          <Stack.Screen name="KycScreen" component={KYC} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
