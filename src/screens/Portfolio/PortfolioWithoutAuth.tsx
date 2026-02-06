@@ -7,7 +7,7 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import useStyles from '@hooks/useStyles';
 import { useAppKit } from '@reown/appkit-react-native';
 
-export default function PortfolioAuthRequired() {
+export default function PortfolioWithoutAuth() {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const navigation = useAppNavigation();

@@ -184,6 +184,7 @@ export default function Step4(props: StepProps) {
                     marginLeft: 6,
                     color: Colors.primary,
                     fontSize: 13,
+                    width: '60%',
                     fontWeight: '600',
                   }}
                 >

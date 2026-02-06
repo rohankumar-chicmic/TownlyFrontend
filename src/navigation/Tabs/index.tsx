@@ -11,6 +11,7 @@ import Home from '@screens/Home';
 import Marketplace from '@screens/Marketplace';
 import Portfolio from '@screens/Portfolio';
 import { useNavigation } from '@react-navigation/native';
+import Notifications from '@screens/Notifications';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -69,7 +70,7 @@ export default function Tabs() {
       />
       <Tab.Screen
         name={ROUTES.PORTFOLIO}
-        component={Portfolio}
+        component={Notifications}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icons.Portfolio width={size} height={size} borderColor={color} />

@@ -3,7 +3,7 @@ import { type SIWXConfig, type SIWXSession } from '@reown/appkit-react-native';
 import store from '@redux/store';
 import { SIWXMessage } from '@reown/appkit-react-native';
 import { authApi } from '@redux/ApiReducer';
-import { loginUser, logoutUser } from '@redux/AuthReducer';
+import { loginUser } from '@redux/AuthReducer';
 
 import {
   saveSiwxSession,
@@ -12,6 +12,7 @@ import {
   clearSiwxSession,
 } from '@utils/siwxSessionStorage';
 import { connectWallet } from '@redux/WalletReducer';
+import { logoutAndDisconnect } from '@redux/store/logoutAndDisconnect';
 
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const SIWX_DOMAIN = 'com.townly.townly';
@@ -78,14 +79,14 @@ export const siwx: SIWXConfig = {
       loginUser({
         token: accessToken,
         walletAddress: session.data.accountAddress,
-      })
+      }),
     );
-    
+
     store.dispatch(
       connectWallet({
         address: session.data.accountAddress,
         chainId: session.data.chainId,
-      })
+      }),
     );
   },
 
@@ -99,16 +100,15 @@ export const siwx: SIWXConfig = {
 
   revokeSession: async () => {
     await clearSiwxSession();
-    store.dispatch(logoutUser());
+    store.dispatch(logoutAndDisconnect());
   },
 
   setSessions: async (sessions: SIWXSession[]) => {
     console.log('setSessions called with:', sessions.length, 'sessions');
-    
+
     if (!sessions.length) {
-      console.log('No sessions - logging out');
       await clearSiwxSession();
-      store.dispatch(logoutUser());
+      store.dispatch(logoutAndDisconnect());
       return;
     }
 
@@ -116,44 +116,51 @@ export const siwx: SIWXConfig = {
     const savedSession = await getSiwxSession();
     const savedToken = await getSiwxToken();
 
-    console.log('New wallet:', newSession.data.accountAddress);
-    console.log('Saved wallet:', savedSession?.data.accountAddress);
+    const walletChanged =
+      savedSession &&
+      savedSession.data.accountAddress.toLowerCase() !==
+        newSession.data.accountAddress.toLowerCase();
 
-    // Check if wallet address has changed
-    const walletChanged = savedSession && 
-      savedSession.data.accountAddress.toLowerCase() !== newSession.data.accountAddress.toLowerCase();
+    const sessionIdChanged = savedSession && savedSession.id !== newSession.id;
 
-    if (walletChanged) {
-      console.log('Wallet changed - clearing old session and token');
+    console.log('Wallet changed:', walletChanged);
+    console.log('Session changed:', sessionIdChanged);
+
+    // 🚨 If session OR wallet changed → TOKEN INVALID → force re-auth
+    if (walletChanged || sessionIdChanged) {
+      console.log('Session mismatch — clearing and forcing re-auth');
+
       await clearSiwxSession();
-      // Don't restore token - user needs to sign with new wallet
+      await saveSiwxSession(newSession); // save session WITHOUT token
+
       store.dispatch(
         loginUser({
           walletAddress: newSession.data.accountAddress,
-          // No token - will trigger re-authentication
-        })
+        }),
       );
+
       return;
     }
 
-    // Same wallet - restore session and token
+    // ✅ Only restore token if session is EXACT SAME
     if (savedToken && savedSession) {
-      console.log('Restoring session for same wallet');
-      await saveSiwxSession(newSession, savedToken);
-      
+      console.log('Restoring SAME session + token');
+
       store.dispatch(
         loginUser({
           token: savedToken,
           walletAddress: newSession.data.accountAddress,
-        })
+        }),
       );
     } else {
-      console.log('No saved token - need to authenticate');
+      console.log('No token — need auth');
+
       await saveSiwxSession(newSession);
+
       store.dispatch(
         loginUser({
           walletAddress: newSession.data.accountAddress,
-        })
+        }),
       );
     }
   },

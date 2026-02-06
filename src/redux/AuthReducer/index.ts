@@ -3,7 +3,7 @@ import { THEME } from '@theme/constants';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@redux/store';
 import { KYC_STATUS } from '@redux/KYCReducer';
-
+import { connectWallet, disconnectWallet } from '@redux/WalletReducer';
 interface InitialStateType {
   userToken: string | undefined;
   userData: any;

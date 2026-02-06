@@ -12,8 +12,8 @@ import { useAppSelector } from '@redux/store';
 import { useGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
 import PropertyListing from '@components/molecules/PropertyListing';
 import { useGetMyInvestmentDetailsQuery } from '@redux/ApiReducer';
-import PortfolioAuthRequired from './PortfolioWithoutAuth';
 import KYCpendingPortfolio from './KYCpendingPortfolio';
+import PortfolioWithoutAuth from './PortfolioWithoutAuth';
 
 const InvestPropertyData = {
   id: 'property-001',
@@ -44,7 +44,7 @@ export default function Portfolio() {
   const kycStatus = useAppSelector(state => state.kyc.status);
 
   if (!userToken) {
-    return <KYCpendingPortfolio />;
+    return <PortfolioWithoutAuth />;
   }
 
   if(kycStatus!=2){
@@ -87,7 +87,7 @@ export default function Portfolio() {
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Total Invested</Text>
             <Text style={dynamicStyles.heading}>
-              {InvestmentDetails.data?.totalInvestedEth}
+              {InvestmentDetails.data?.totalInvestedEth.toFixed(3)}
             </Text>
             <Text style={dynamicStyles.smallText}>
               4 Properties <Text>120 Tokens</Text>
@@ -96,7 +96,7 @@ export default function Portfolio() {
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Current Value</Text>
             <Text style={dynamicStyles.heading}>
-              {InvestmentDetails.data?.currentValueEth}
+              {InvestmentDetails.data?.currentValueEth.toFixed(3)}
             </Text>
             <Text style={[dynamicStyles.smallText, { color: Colors.primary }]}>
               +2.04% overall return
@@ -105,14 +105,14 @@ export default function Portfolio() {
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Total Returns</Text>
             <Text style={dynamicStyles.heading}>
-              {InvestmentDetails.data?.totalReturnEth}
+              {InvestmentDetails.data?.totalReturnEth.toFixed(3)}
             </Text>
             <Text style={dynamicStyles.smallText}>Income: 0.0357 ETH</Text>
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Monthly Income</Text>
             <Text style={dynamicStyles.heading}>
-              {InvestmentDetails.data?.monthlyIncomeEth}
+              {InvestmentDetails.data?.monthlyIncomeEth.toFixed(3)}
             </Text>
             <Text style={dynamicStyles.smallText}>
               Next payment: Feb 1, 2025

@@ -28,7 +28,6 @@ export const kycApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['KYC'],
   endpoints: builder => ({
     submitKYC: builder.mutation<KYCSubmitResponse, FormData>({
       query: (formData: FormData) => ({
@@ -36,13 +35,10 @@ export const kycApi = createApi({
         method: 'POST',
         body: formData,
       }),
-
-      invalidatesTags: ['KYC'],
     }),
 
     getKYCStatus: builder.query<GetKYCStatusResponse, void>({
       query: () => '/kyc/me/status',
-      providesTags: ['KYC'],
     }),
   }),
 });

@@ -7,14 +7,21 @@ const SIWX_TOKEN_KEY = 'siwx_access_token';
 export const saveSiwxSession = async (session: SIWXSession, token?: string) => {
   try {
     await AsyncStorage.setItem(SIWX_SESSION_KEY, JSON.stringify(session));
+
     if (token) {
       await AsyncStorage.setItem(SIWX_TOKEN_KEY, token);
-      console.log('Saved token for wallet:', session.data.accountAddress);
+    } else {
+      // Remove stale token if new one not provided
+      await AsyncStorage.removeItem(SIWX_TOKEN_KEY);
     }
+
+    console.log('Saved token for wallet:', session.data.accountAddress);
   } catch (error) {
     console.error('Error saving SIWX session:', error);
   }
 };
+
+
 
 export const getSiwxSession = async (): Promise<SIWXSession | null> => {
   try {

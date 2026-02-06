@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import { Step1FormData, DocumentFile } from './types';
+import customParseNumber from '@utils/parseNumber';
 
 export const step1Schema: yup.ObjectSchema<Step1FormData> = yup.object({
   propertyName: yup
@@ -38,39 +39,31 @@ export const step1Schema: yup.ObjectSchema<Step1FormData> = yup.object({
     .required(),
 });
 
-const parseNumber = (value: unknown, originalValue: unknown) => {
-  if (typeof originalValue === 'string') {
-    const parsed = Number(originalValue.replace(/[^0-9.]/g, ''));
-    return isNaN(parsed) ? undefined : parsed;
-  }
-  return value;
-};
-
 export const step2Schema = yup.object({
   totalPropertyValue: yup
     .number()
-    .transform(parseNumber)
+    .transform(customParseNumber)
     .typeError('Total property value must be a number')
     .required('Total property value is required')
     .min(1000, 'Total property value must be at least $1000'),
 
   numberOfShares: yup
     .number()
-    .transform(parseNumber)
+    .transform(customParseNumber)
     .typeError('Number of shares must be a number')
     .required('Number of shares is required')
     .min(100, 'Number of shares must be at least 100'),
 
   rentalIncome: yup
     .number()
-    .transform(parseNumber)
+    .transform(customParseNumber)
     .typeError('Rental income must be a number')
     .required('Rental income is required')
     .min(0, 'Rental income cannot be negative'),
 
   expectedAnnualYield: yup
     .number()
-    .transform(parseNumber)
+    .transform(customParseNumber)
     .typeError('Expected annual yield must be a number')
     .required('Expected annual yield is required')
     .min(0, 'Expected annual yield must be at least 0%')

@@ -17,10 +17,10 @@ export interface Step1FormData {
 }
 
 export interface Step2FormData {
-  totalPropertyValue: number;
-  numberOfShares: number;
-  rentalIncome: number;
-  expectedAnnualYield: number;
+  totalPropertyValue: number | undefined;
+  numberOfShares: number | undefined;
+  rentalIncome: number | undefined;
+  expectedAnnualYield: number | undefined;
 }
 
 export interface NFTFormData extends Step1FormData, Step2FormData {

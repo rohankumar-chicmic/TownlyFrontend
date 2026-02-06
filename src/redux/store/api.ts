@@ -33,7 +33,6 @@ const baseQueryWithInterceptor: BaseQueryFn<
       | undefined;
 
     if (status === 401) {
-      // Handle unauthorized access
       console.error('Unauthorized access');
     } else {
       console.error(
