@@ -3,7 +3,9 @@ export type RootStackParamList = {
   Marketplace: undefined;
   Portfolio: undefined;
   Drawer: undefined;
+  WalletScreen: undefined;
   PropertyDetails: { id: string };
   CreateNft: undefined;
   KycScreen: undefined;
+  Notifications: undefined;
 };

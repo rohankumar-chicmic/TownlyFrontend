@@ -1,7 +1,7 @@
-module.exports = function (api) {
+module.exports = function babelConfig(api) {
   api.cache(true);
   return {
-    presets: [["babel-preset-expo", { unstable_transformImportMeta: true }]], // or '@babel/preset-env' etc.
+    presets: [['babel-preset-expo', { unstable_transformImportMeta: true }]], // or '@babel/preset-env' etc.
     plugins: [
       [
         'module-resolver',
@@ -17,6 +17,7 @@ module.exports = function (api) {
             '@hooks': './src/hooks',
           },
         },
+        'react-native-reanimated/plugin',
       ],
     ],
   };

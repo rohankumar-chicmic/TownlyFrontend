@@ -27,3 +27,25 @@ export const boldText = isAndroid() ? FONT_WEIGHTS[700] : FONT_WEIGHTS[600];
 export const _scaleText = (fontSize: number) => {
   return RFValue(fontSize);
 };
+/**
+ * Formats numbers to compact versions (K, M, B, T)
+ * @param value The number to format
+ * @param fractionDigits Number of decimal places (default 1)
+ */
+export const formatCompactNumber = (
+  value: number,
+  fractionDigits: number = 1,
+): string => {
+  const formatter = Intl.NumberFormat('en', {
+    notation: 'compact',
+    compactDisplay: 'short',
+    maximumFractionDigits: fractionDigits,
+  });
+
+  return formatter.format(value);
+};
+
+// Usage:
+console.log(formatCompactNumber(1500)); // "1.5K"
+console.log(formatCompactNumber(2500000)); // "2.5M"
+console.log(formatCompactNumber(1200000000)); // "1.2B"

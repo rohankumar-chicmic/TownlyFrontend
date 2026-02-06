@@ -13,7 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
 import { Icons } from '@utils/icons';
 import { NFTFormData } from './types';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 
 export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -18,6 +18,7 @@ import {
   useGetMyUnreadNotificationsQuery,
   useReadAllNotificationMutation,
 } from '@redux/NotificationsApiReducer';
+import { useAppSelector } from '@redux/store';
 
 interface NotificationItem {
   id: string;
@@ -28,28 +29,63 @@ interface NotificationItem {
   createdAt: string;
 }
 
+const DUMMY_NOTIFICATIONS: NotificationItem[] = Array.from(
+  { length: 100 },
+  (_, i) => ({
+    id: `dummy-${i + 1}`,
+    title: `Notification ${i + 1}`,
+    message: `This is a dummy notification message number ${i + 1}. Testing FlatList rendering performance.`,
+    isRead: i % 3 === 0, // some read, some unread
+    type: (i % 5) + 1,
+    createdAt: new Date(Date.now() - i * 60000).toISOString(), // staggered times
+  }),
+);
+
+
+
 const Notifications = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-
+  const userToken = useAppSelector(state => state.auth.userToken);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [isPressed, setIsPressed] = useState(false);
 
-  const { data: allNotifications = [], isLoading } =
-    useGetMyNotificationsQuery();
-  const { data: unreadNotifications = [] } = useGetMyUnreadNotificationsQuery();
-  const [readAllNotifications, {isError}] = useReadAllNotificationMutation();
+  const {
+    data: allNotifications = [],
+    isLoading: isLoadingNotifications,
+    refetch: refetchAll,
+  } = useGetMyNotificationsQuery(undefined, {
+    skip: !userToken,
+  });
+  const { data: unreadNotifications = [], refetch: refetchUnread } =
+    useGetMyUnreadNotificationsQuery(undefined, {
+      skip: !userToken,
+    });
+  const [readAllNotifications, { isLoading: isLoadingReadAll, isError }] =
+    useReadAllNotificationMutation();
 
   const unreadCount = unreadNotifications.length;
 
   const notificationsToRender =
     filter === 'unread' ? unreadNotifications : allNotifications;
 
+  const handleMarkAllAsRead = async () => {
+    try {
+      if (!userToken) return;
+      await readAllNotifications();
+      refetchAll();
+      refetchUnread();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const renderItem = ({ item }: { item: NotificationItem }) => (
-    <Notification item={item} onPress={()=> console.log('hif')} />
+    <Notification item={item} onPress={() => console.log('hif')} />
   );
 
   const renderEmpty = () => {
-    if (isLoading) return null;
+    if (isLoadingNotifications) return null;
     return (
       <View style={dynamicStyles.emptyContainer}>
         <Text style={dynamicStyles.heroText}>
@@ -61,21 +97,21 @@ const Notifications = () => {
     );
   };
 
-  if (isLoading) {
+  if (isLoadingNotifications) {
     return (
-        <View style={dynamicStyles.container}>
-          <View style={dynamicStyles.headerSection}>
-            <Text style={dynamicStyles.heroPrimarytext}>Notifications</Text>
-            <Text style={dynamicStyles.heroText}>
-              Stay updated with your investments and activities
-            </Text>
-          </View>
-
-          <View style={dynamicStyles.loadingContainer}>
-            <ActivityIndicator size="large" color={Colors.primary} />
-            <Text style={dynamicStyles.heroText}>Loading notifications...</Text>
-          </View>
+      <View style={dynamicStyles.container}>
+        <View style={dynamicStyles.headerSection}>
+          <Text style={dynamicStyles.heroPrimarytext}>Notifications</Text>
+          <Text style={dynamicStyles.heroText}>
+            Stay updated with your investments and activities
+          </Text>
         </View>
+
+        <View style={dynamicStyles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={dynamicStyles.heroText}>Loading notifications...</Text>
+        </View>
+      </View>
     );
   }
 
@@ -88,56 +124,93 @@ const Notifications = () => {
             Stay updated with your investments and activities
           </Text>
         </View>
-
-        <View style={dynamicStyles.filterContainer}>
-          <Pressable
+        <View>
+          <View
             style={[
-              dynamicStyles.tag,
-              {
-                borderColor: filter === 'all' ? Colors.primary : Colors.border,
-              },
+              dynamicStyles.filterContainer,
+              { justifyContent: 'space-between' },
             ]}
-            onPress={() => setFilter('all')}
           >
-            <Text
+            <View style={{ flexDirection: 'row' }}>
+              <Pressable
+                style={[
+                  dynamicStyles.tag,
+                  {
+                    borderColor:
+                      filter === 'all' ? Colors.primary : Colors.border,
+                  },
+                ]}
+                onPress={() => setFilter('all')}
+              >
+                <Text
+                  style={[
+                    dynamicStyles.tagText,
+                    {
+                      color:
+                        filter === 'all'
+                          ? Colors.primary
+                          : Colors.textSecondary,
+                    },
+                  ]}
+                >
+                  All
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={[
+                  dynamicStyles.tag,
+                  {
+                    borderColor:
+                      filter === 'unread' ? Colors.primary : Colors.border,
+                  },
+                ]}
+                onPress={() => setFilter('unread')}
+              >
+                <Text
+                  style={[
+                    dynamicStyles.tagText,
+                    {
+                      color:
+                        filter === 'unread'
+                          ? Colors.primary
+                          : Colors.textSecondary,
+                    },
+                  ]}
+                >
+                  Unread {unreadCount > 0 && `(${unreadCount})`}
+                </Text>
+              </Pressable>
+            </View>
+
+            <Pressable
               style={[
-                dynamicStyles.tagText,
+                dynamicStyles.tag,
                 {
-                  color:
-                    filter === 'all' ? Colors.primary : Colors.textSecondary,
+                  borderColor: isPressed ? Colors.primary : Colors.border,
                 },
               ]}
+              onPressIn={() => setIsPressed(true)}
+              onPressOut={() => setIsPressed(false)}
+              onPress={handleMarkAllAsRead}
             >
-              All
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={[
-              dynamicStyles.tag,
-              {
-                borderColor:
-                  filter === 'unread' ? Colors.primary : Colors.border,
-              },
-            ]}
-            onPress={() => setFilter('unread')}
-          >
-            <Text
-              style={[
-                dynamicStyles.tagText,
-                {
-                  color:
-                    filter === 'unread' ? Colors.primary : Colors.textSecondary,
-                },
-              ]}
-            >
-              Unread {unreadCount > 0 && `(${unreadCount})`}
-            </Text>
-          </Pressable>
+              <Text
+                style={[
+                  dynamicStyles.tagText,
+                  {
+                    color: isPressed ? Colors.primary : Colors.textSecondary,
+                  },
+                ]}
+              >
+                Mark all read
+              </Text>
+            </Pressable>
+          </View>
         </View>
 
         <View style={dynamicStyles.notificationsContainer}>
           <FlatList
+            // data={DUMMY_NOTIFICATIONS}
             data={notificationsToRender}
             renderItem={renderItem}
             keyExtractor={item => item.id}

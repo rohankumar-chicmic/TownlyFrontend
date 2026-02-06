@@ -13,6 +13,7 @@ import {
 } from '@utils/siwxSessionStorage';
 import { connectWallet } from '@redux/WalletReducer';
 import { logoutAndDisconnect } from '@redux/store/logoutAndDisconnect';
+import { resetKyc } from '@redux/KYCReducer';
 
 const IS_DEV = process.env.APP_VARIANT === 'development';
 const SIWX_DOMAIN = 'com.townly.townly';
@@ -101,6 +102,7 @@ export const siwx: SIWXConfig = {
   revokeSession: async () => {
     await clearSiwxSession();
     store.dispatch(logoutAndDisconnect());
+    store.dispatch(resetKyc());
   },
 
   setSessions: async (sessions: SIWXSession[]) => {
@@ -109,6 +111,8 @@ export const siwx: SIWXConfig = {
     if (!sessions.length) {
       await clearSiwxSession();
       store.dispatch(logoutAndDisconnect());
+      store.dispatch(resetKyc());
+
       return;
     }
 

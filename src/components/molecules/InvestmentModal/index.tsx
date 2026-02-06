@@ -15,41 +15,61 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import Button from '@components/atoms/Button';
 import useTheme from '@hooks/useTheme';
+import { useInvestInPropertyMutation } from '@redux/PropertyApiReducer';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { useAppNavigation } from '@hooks/useNavigation';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
+  id: string;
+  pricePerShare: number;
 }
 
-export default function InvestPropertyModal({ visible, onClose }: Props) {
-  const [shares, setShares] = useState('10');
+export default function InvestPropertyModal({
+  visible,
+  onClose,
+  id,
+  pricePerShare,
+}: Readonly<Props>) {
+  const [shares, setShares] = useState(0);
   const { Colors } = useTheme();
-  const pricePerShare = 10;
+  const navigation = useAppNavigation();
   const totalCost = Number(shares || 0) * pricePerShare;
+  const [investInProperty, { isError, isSuccess }] =
+    useInvestInPropertyMutation();
 
   const { dynamicStyles } = useStyles(styles);
 
+  const handleSubmit = async () => {
+    try {
+      await investInProperty({ propertyId: id, shares: Number(shares) });
+      navigation.navigate('Drawer');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <Modal animationType="slide" transparent visible={visible}>
-      {/* Backdrop */}
-      <Pressable
-        style={dynamicStyles.backdrop}
-        onPress={() => {
-          Keyboard.dismiss();
-          onClose();
-        }}
-      />
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    <KeyboardAwareScrollView>
+      <Modal
+        animationType="slide"
+        transparent
+        visible={visible}
+        style={{ flexGrow: 1 }}
       >
-        {/* Modal Container */}
+        <Pressable
+          style={dynamicStyles.backdrop}
+          onPress={() => {
+            Keyboard.dismiss();
+            onClose();
+          }}
+        />
         <SafeAreaView style={dynamicStyles.sheet}>
           <ScrollView
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            {/* Header */}
             <View style={dynamicStyles.header}>
               <Text style={dynamicStyles.title}>Invest in Property</Text>
               <Pressable onPress={onClose} style={{ height: 25, width: 25 }}>
@@ -59,7 +79,6 @@ export default function InvestPropertyModal({ visible, onClose }: Props) {
 
             <Text style={dynamicStyles.subtitle}>Suburban Family Home</Text>
 
-            {/* Input */}
             <Text style={dynamicStyles.label}>
               Number of Shares to Buy{' '}
               <Text style={dynamicStyles.required}>*</Text>
@@ -74,7 +93,6 @@ export default function InvestPropertyModal({ visible, onClose }: Props) {
 
             <Text style={dynamicStyles.hint}>Min: 1 • Max: 10,000 shares</Text>
 
-            {/* Summary Card */}
             <View style={dynamicStyles.card}>
               <Row label="Shares" value={shares} />
               <Row label="Price per Share" value={`${pricePerShare} ETH`} />
@@ -82,7 +100,6 @@ export default function InvestPropertyModal({ visible, onClose }: Props) {
               <Row label="Total Cost" value={`${totalCost} ETH`} bold large />
             </View>
 
-            {/* Info Box */}
             <View style={dynamicStyles.info}>
               <Text style={dynamicStyles.infoText}>
                 Transaction Fee: ~0.05 ETH
@@ -92,7 +109,6 @@ export default function InvestPropertyModal({ visible, onClose }: Props) {
               </Text>
             </View>
 
-            {/* Footer Actions */}
             <View style={dynamicStyles.footer}>
               <Button
                 title="Cancel"
@@ -103,13 +119,13 @@ export default function InvestPropertyModal({ visible, onClose }: Props) {
 
               <Button
                 title={`Invest ${totalCost} ETH`}
-                onPress={() => console.log('invested')}
+                onPress={handleSubmit}
               ></Button>
             </View>
           </ScrollView>
         </SafeAreaView>
-      </KeyboardAvoidingView>
-    </Modal>
+      </Modal>
+    </KeyboardAwareScrollView>
   );
 }
 
@@ -118,12 +134,12 @@ function Row({
   value,
   bold,
   large,
-}: {
+}: Readonly<{
   label: string;
   value: string | number;
   bold?: boolean;
   large?: boolean;
-}) {
+}>) {
   const { dynamicStyles } = useStyles(styles);
 
   return (

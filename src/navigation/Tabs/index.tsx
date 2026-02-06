@@ -12,6 +12,8 @@ import Marketplace from '@screens/Marketplace';
 import Portfolio from '@screens/Portfolio';
 import { useNavigation } from '@react-navigation/native';
 import Notifications from '@screens/Notifications';
+import Feather from '@expo/vector-icons/Feather';
+import { View } from 'react-native';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -70,10 +72,21 @@ export default function Tabs() {
       />
       <Tab.Screen
         name={ROUTES.PORTFOLIO}
-        component={Notifications}
+        component={Portfolio}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Icons.Portfolio width={size} height={size} borderColor={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={ROUTES.NOTIFICATIONS}
+        component={Notifications}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <View>
+              <Feather name="bell" size={size+5} color={color} />
+            </View>
           ),
         }}
       />

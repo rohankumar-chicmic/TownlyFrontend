@@ -14,6 +14,7 @@ import { Icons } from '@utils/icons';
 import {
   useGetPropertyDetailsQuery,
   useGetRelatedPropertiesQuery,
+  useInvestInPropertyMutation,
 } from '@redux/PropertyApiReducer';
 import InvestPropertyModal from '@components/molecules/InvestmentModal';
 
@@ -31,11 +32,11 @@ export default function PropertyDetails() {
   const { data, isLoading, error, refetch } = useGetPropertyDetailsQuery(
     params.id,
   );
+
   const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
-
   return (
     <ScrollView
       style={[
@@ -169,6 +170,8 @@ export default function PropertyDetails() {
         <InvestPropertyModal
           visible={showModal}
           onClose={() => setShowModal(false)}
+          id={data?.id}
+          pricePerShare = {data?.pricePerUnitEth}
         />
       ) : (
         <KYCStatusModal

@@ -17,6 +17,8 @@ interface GetKYCStatusResponse {
 
 export const kycApi = createApi({
   reducerPath: 'kycApi',
+  tagTypes: ['KYC'],
+
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.API_BASE_URL || API_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
@@ -35,10 +37,15 @@ export const kycApi = createApi({
         method: 'POST',
         body: formData,
       }),
+      invalidatesTags: ['KYC'],
     }),
 
     getKYCStatus: builder.query<GetKYCStatusResponse, void>({
-      query: () => '/kyc/me/status',
+      query: () => ({
+        url: '/kyc/me/status',
+        method: 'GET',
+      }),
+      providesTags: ['KYC'],
     }),
   }),
 });

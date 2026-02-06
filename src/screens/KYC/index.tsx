@@ -34,8 +34,12 @@ export default function KYCVerificationScreen() {
 
   const navigation = useAppNavigation();
   const [selfieUploaded, setSelfieUploaded] = useState(false);
-  const [submitKYC, { isLoading }] = useSubmitKYCMutation();
+  const [submitKYC, { isLoading, isSuccess }] = useSubmitKYCMutation();
   const [showDatePicker, setShowDatePicker] = useState(false);
+
+  if (isSuccess) {
+    navigation.navigate('Home');
+  }
 
   const {
     control,

@@ -1,19 +1,32 @@
-import { View, Text, ScrollView, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import DonutGraph from '@components/molecules/DonutGraph';
-import React from 'react';
+import React, { useCallback } from 'react';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import LineGraph from '@components/molecules/LineGraph';
 import Button from '@components/atoms/Button';
 import { useAppNavigation } from '@hooks/useNavigation';
-import InvestedPropertyCard from '@components/molecules/InvestedPropertyCard';
-import { useAppSelector } from '@redux/store';
+
+import { useAppDispatch, useAppSelector } from '@redux/store';
 import { useGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
 import PropertyListing from '@components/molecules/PropertyListing';
-import { useGetMyInvestmentDetailsQuery } from '@redux/ApiReducer';
+import {
+  useGetDonutGraphDataQuery,
+  useGetLineGraphDataQuery,
+  useGetMyInvestmentDetailsQuery,
+} from '@redux/ApiReducer';
 import KYCpendingPortfolio from './KYCpendingPortfolio';
 import PortfolioWithoutAuth from './PortfolioWithoutAuth';
+import { useFocusEffect } from '@react-navigation/native';
+import { resetKyc } from '@redux/KYCReducer';
+import { linea } from 'viem/chains';
 
 const InvestPropertyData = {
   id: 'property-001',
@@ -36,19 +49,49 @@ export default function Portfolio() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-  const { data, isLoading, error } = useGetMyPropertiesQuery();
-  const InvestmentDetails = useGetMyInvestmentDetailsQuery();
+  const dispatch = useAppDispatch();
+  const userToken = useAppSelector(state => state.auth.userToken);
+
+  const { data, isLoading, error, refetch } = useGetMyPropertiesQuery(
+    undefined,
+    { skip: !userToken },
+  );
+  const InvestmentDetails = useGetMyInvestmentDetailsQuery(undefined, {
+    skip: !userToken,
+  });
+  const {
+    data: lineData,
+    isLoading: lineLoading,
+    error: lineError,
+  } = useGetLineGraphDataQuery(undefined, {
+    skip: !userToken,
+  });
+  const {
+    data: donutData,
+    isLoading: donutLoading,
+    error: donutError,
+  } = useGetDonutGraphDataQuery(undefined, {
+    skip: !userToken,
+  });
+
   const address = useAppSelector(state => state.auth.userData?.walletAddress);
 
-  const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
+  console.log(data);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!userToken) return;
+      refetch();
+    }, []),
+  );
 
   if (!userToken) {
     return <PortfolioWithoutAuth />;
   }
 
-  if(kycStatus!=2){
-    return <KYCpendingPortfolio/>
+  if (kycStatus !== 2) {
+    return <KYCpendingPortfolio />;
   }
 
   return (
@@ -89,39 +132,35 @@ export default function Portfolio() {
             <Text style={dynamicStyles.heading}>
               {InvestmentDetails.data?.totalInvestedEth.toFixed(3)}
             </Text>
-            <Text style={dynamicStyles.smallText}>
-              4 Properties <Text>120 Tokens</Text>
-            </Text>
+            {/* <Text style={dynamicStyles.smallText}></Text> */}
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Current Value</Text>
             <Text style={dynamicStyles.heading}>
               {InvestmentDetails.data?.currentValueEth.toFixed(3)}
             </Text>
-            <Text style={[dynamicStyles.smallText, { color: Colors.primary }]}>
-              +2.04% overall return
-            </Text>
+            {/* <Text
+              style={[dynamicStyles.smallText, { color: Colors.primary }]}
+            ></Text> */}
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Total Returns</Text>
             <Text style={dynamicStyles.heading}>
               {InvestmentDetails.data?.totalReturnEth.toFixed(3)}
             </Text>
-            <Text style={dynamicStyles.smallText}>Income: 0.0357 ETH</Text>
+            {/* <Text style={dynamicStyles.smallText}></Text> */}
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Monthly Income</Text>
             <Text style={dynamicStyles.heading}>
               {InvestmentDetails.data?.monthlyIncomeEth.toFixed(3)}
             </Text>
-            <Text style={dynamicStyles.smallText}>
-              Next payment: Feb 1, 2025
-            </Text>
+            {/* <Text style={dynamicStyles.smallText}></Text> */}
             {/* </View> */}
           </View>
         </ScrollView>
-        <DonutGraph></DonutGraph>
-        <LineGraph></LineGraph>
+        {donutData && <DonutGraph data={donutData}></DonutGraph>}
+        {lineData && <LineGraph data={lineData}></LineGraph>}
         <Button
           title="Create Property"
           onPress={() => navigation.navigate('CreateNft')}

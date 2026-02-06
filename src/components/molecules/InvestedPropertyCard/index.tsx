@@ -48,24 +48,19 @@ export default function InvestedPropertyCard(
             </Text>
 
             <View style={dynamicStyles.badge}>
-              <Text style={dynamicStyles.badgeText}>
-                {props.propertyType}
-              </Text>
+              <Text style={dynamicStyles.badgeText}>{props.propertyType}</Text>
             </View>
           </View>
 
           <Text style={dynamicStyles.location} numberOfLines={2}>
-            <Icons.Location width={10} height={10} color={Colors.primary}/> {props.location}
+            <Icons.Location width={10} height={10} color={Colors.primary} />{' '}
+            {props.location}
           </Text>
 
           <Text style={dynamicStyles.risk}>
             Final Risk Score{' '}
-            <Text style={dynamicStyles.riskValue}>
-              {props.riskScore}/10
-            </Text>{' '}
-            <Text style={dynamicStyles.riskLabel}>
-              ({props.riskLabel})
-            </Text>
+            <Text style={dynamicStyles.riskValue}>{props.riskScore}/10</Text>{' '}
+            <Text style={dynamicStyles.riskLabel}>({props.riskLabel})</Text>
           </Text>
         </View>
       </View>
@@ -103,9 +98,7 @@ function Stat({
 
   return (
     <View style={{ width: '33%' }}>
-      <Text style={{ fontSize: 12, color: Colors.textSecondary }}>
-        {label}
-      </Text>
+      <Text style={{ fontSize: 12, color: Colors.textSecondary }}>{label}</Text>
       <Text
         style={{
           fontSize: 15,

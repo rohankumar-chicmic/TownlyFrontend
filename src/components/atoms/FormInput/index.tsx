@@ -19,11 +19,7 @@ interface FormInputType extends TextInputProps {
   style?: ViewStyle;
   placeholder?: string;
   hintText?: string;
-  error?:
-    | string
-    | FieldError
-    | Merge<FieldError, FieldErrorsImpl<any>>
-    | undefined;
+  error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
 }
 
 export default function FormInput(props: FormInputType) {

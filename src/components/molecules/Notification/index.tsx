@@ -5,7 +5,7 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 
-interface NotificationProps {
+export interface NotificationProps {
   item: {
     id: string;
     title: string;
@@ -40,11 +40,23 @@ const Notification = ({ item, onPress }: NotificationProps) => {
       onPress={onPress}
     >
       <View style={dynamicStyles.header}>
-        <Text style={[dynamicStyles.title, { fontWeight: item.isRead ? '400' : '600' }]}>
+        <Text
+          style={[
+            dynamicStyles.title,
+            { fontWeight: item.isRead ? '400' : '600' },
+          ]}
+        >
           {item.title}
         </Text>
         {!item.isRead && (
-          <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.primary }} />
+          <View
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 3,
+              backgroundColor: Colors.primary,
+            }}
+          />
         )}
       </View>
       <Text style={dynamicStyles.message}>{item.message}</Text>

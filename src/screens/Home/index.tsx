@@ -47,7 +47,7 @@ const Home = () => {
         style={{ marginBottom: 5 }}
         textStyle={{ margin: 10 }}
         size="lg"
-        onPress={() => navigation.navigate(ROUTES.KYC)}
+        onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
       >
         {
           <Icons.Arrow

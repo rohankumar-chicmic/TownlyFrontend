@@ -60,7 +60,7 @@ const Marketplace = () => {
       }
       setHasMore(data.hasMore);
     }
-  }, [data]);
+  }, [data, page]);
 
   useEffect(() => {
     if (page > 1) {
@@ -181,7 +181,7 @@ const Marketplace = () => {
               dynamicStyles.tagText,
               {
                 color:
-                  filter == 'residential'
+                  filter === 'residential'
                     ? Colors.primary
                     : Colors.textSecondary,
               },

@@ -24,10 +24,7 @@ const propertyApi = api.injectEndpoints({
           'InitialValuation',
           (data.totalPropertyValue ?? 0).toString(),
         );
-        formData.append(
-          'TotalUnits',
-          (data.numberOfShares ?? 0).toString(),
-        );
+        formData.append('TotalUnits', (data.numberOfShares ?? 0).toString());
         formData.append('rentalIncome', (data.rentalIncome ?? 0).toString());
         formData.append(
           'AnnualYieldPercent',
@@ -71,9 +68,9 @@ const propertyApi = api.injectEndpoints({
 
     getMyProperties: builder.query<PropertyCardProps[], void>({
       query: () => ({
-        url: '/properties/me', 
-        method: 'GET'
-      })
+        url: '/properties/me',
+        method: 'GET',
+      }),
     }),
 
     getFeaturedProperties: builder.query<PropertyCardProps[], void>({
@@ -106,6 +103,17 @@ const propertyApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+
+    investInProperty: builder.mutation<
+      void,
+      { propertyId: string; shares: number }
+    >({
+      query: body => ({
+        url: '/investments',
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
 
   overrideExisting: false,
@@ -117,7 +125,8 @@ export const {
   useGetPropertyDetailsQuery,
   useLazySearchPropertiesQuery,
   useGetRelatedPropertiesQuery,
-  useGetMyPropertiesQuery
+  useInvestInPropertyMutation,
+  useGetMyPropertiesQuery,
 } = propertyApi;
 
 export { propertyApi };

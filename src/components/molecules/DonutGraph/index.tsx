@@ -5,14 +5,37 @@ import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import { useState } from 'react';
 
-export default function DonutGraph() {
+export interface DonutDataPoint {
+  label: string;
+  percentage: number;
+}
+
+export interface DonutData {
+  data: DonutDataPoint[];
+}
+
+export default function DonutGraph({ data }: Readonly<DonutData>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const [pieData, setPieData] = useState([
-    { value: 65, color: '#9161f3', text: 'Residential', focused: false }, // Residential
-    { value: 22.3, color: '#3b82f6', text: 'Commercial', focused: false }, // Commercial
-    { value: 8.7, color: '#10b981', text: 'Industrial', focused: false }, // Industrial
-    { value: 4, color: '#f59e0b', text: 'Land', focused: false }, // Land
+    {
+      value: data?.[0]?.percentage ?? 0,
+      color: '#9161f3',
+      text: 'Residential',
+      focused: false,
+    },
+    {
+      value: data?.[1]?.percentage ?? 0,
+      color: '#3b82f6',
+      text: 'Commercial',
+      focused: false,
+    },
+    {
+      value: data?.[2]?.percentage ?? 0,
+      color: '#f59e0b',
+      text: 'Land',
+      focused: false,
+    },
   ]);
 
   const handlePress = (index: number) => {
@@ -65,7 +88,7 @@ export default function DonutGraph() {
                 <Text
                   style={
                     dataPoint.focused
-                      ? [dynamicStyles.smallText, { color: 'white' }]
+                      ? [dynamicStyles.smallText, { color: Colors.textPrimary }]
                       : dynamicStyles.smallText
                   }
                 >

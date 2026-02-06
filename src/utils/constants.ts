@@ -9,13 +9,40 @@ export const FONT_WEIGHTS = {
   100: '100',
   200: '200',
   300: '300',
-  400: '400', // Also known as "Regular"
+  400: '400',
   500: '500',
   600: '600',
   700: '700',
   800: '800',
-  900: '900', // Heaviest weight
+  900: '900',
 } as const;
+
+export enum NotificationType {
+  KycApproved = 1,
+  KycRejected,
+  PropertyApproved,
+  PropertyRejected,
+  InvestmentSuccess,
+  TokenRequestApproved,
+  TokenRequestRejected,
+  PropertySoldOut,
+}
+
+export interface NotificationProps {
+  id: string;
+  userId: string;
+  type: NotificationType; 
+  title: string;
+  message: string;
+  referenceId: string | null;
+  isRead: boolean;
+  readAt: string | null;
+  createdAt: string; 
+  updatedAt: string | null;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  deletedBy: string | null;
+}
 
 export const FONT = {
   LIGHT: 'Signika-Negative-Light',
@@ -24,6 +51,7 @@ export const FONT = {
   SEMI_BOLD: 'Signika-Negative-SemiBold',
   BOLD: 'Signika-Negative-Bold',
 };
+
 
 export const preloadFonts = async () => {
   loadAsync({

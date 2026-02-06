@@ -1,25 +1,50 @@
-import { Text, View, Pressable } from 'react-native';
+import { Text, View, Pressable, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-gifted-charts';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
-// import { useState } from 'react';
+import { formatCompactNumber } from '@utils/utility';
 
-export default function LineGraph() {
+export interface LinePoint {
+  label: string;
+  value: number;
+}
+
+export interface LineGraphProps {
+  data: LinePoint[];
+}
+
+const getYAxisScale = (data: number[], sections = 4) => {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+
+  const range = max - min || max * 0.02;
+  const step = range / sections;
+  const padding = range * 0.1;
+
+  return {
+    maxValue: range + padding,
+    stepValue: step,
+    minValue: min,
+  };
+};
+
+export default function LineGraph({ data }: Readonly<LineGraphProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
+  console.log(data);
 
+  if (!data || data.length === 0) return null;
 
-  const lineData = [
-    { value: 500, label: 'Jul' },
-    { value: 500, label: 'Aug' },
-    { value: 500, label: 'Sep' },
-    { value: 1000, label: 'Oct' },
-    { value: 3200, label: 'Nov' },
-    { value: 4600, label: 'Dec' },
-    { value: 6000, label: 'Jan' },
-  ];
- 
+  const lineData = (data ?? []).map(item => ({
+    value: Number(item.value) || 0,
+    label: item.label,
+  }));
+
+  const values = data.map(d => Number(d.value) || 0);
+  const { maxValue, minValue } = getYAxisScale(values, 4);
+
+  console.log(minValue, maxValue, '===========================');
   return (
     <Pressable>
       <View style={dynamicStyles.container}>
@@ -29,12 +54,17 @@ export default function LineGraph() {
         </Text>
         <View style={{ paddingLeft: '3%', alignItems: 'center' }}>
           <LineChart
+            maxValue={maxValue}
+            yAxisOffset={minValue}
+            curved
+            curvature={0.1}
             data={lineData}
             height={140}
+            width={Dimensions.get('window').width * 0.7}
             thickness={2}
             isAnimated
-            onDataChangeAnimationDuration={0.5}
-            spacing={45}
+            onDataChangeAnimationDuration={0.3}
+            spacing={Dimensions.get('window').width * 0.13}
             initialSpacing={10}
             endSpacing={0}
             color={Colors.primary}
@@ -53,6 +83,8 @@ export default function LineGraph() {
             showVerticalLines
             verticalLinesColor={Colors.border}
             noOfSections={4}
+
+            // formatYLabel={formatYAxisLabel}
             // onPress={(item, index) => setSelectedIndex(index)}
           />
         </View>
