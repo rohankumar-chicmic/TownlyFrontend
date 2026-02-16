@@ -127,7 +127,7 @@ export default function Step2(props: StepProps) {
             Auto-Calculated
           </Text>
           <Text style={{ color: Colors.background }}>Price Per Share</Text>
-          <Text>Calculated as </Text>
+          <Text style={{ color: Colors.background }}>Calculated as </Text>
         </View>
         <View>
           <Text

@@ -3,16 +3,18 @@ import { THEME } from '@theme/constants';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '@redux/store';
 import { KYC_STATUS } from '@redux/KYCReducer';
-import { connectWallet, disconnectWallet } from '@redux/WalletReducer';
 interface InitialStateType {
   userToken: string | undefined;
   userData: any;
   theme: THEME;
+  unreadNotifcations: boolean;
 }
+
 const initialState: InitialStateType = {
   userToken: undefined,
-  userData: undefined,  
+  userData: undefined,
   theme: THEME.DEVICE,
+  unreadNotifcations: false,
 };
 
 const authReducer = createSlice({
@@ -30,10 +32,13 @@ const authReducer = createSlice({
     setTheme(state, action: PayloadAction<THEME>) {
       state.theme = action.payload;
     },
+    hasUnreadNotifications(state, action) {
+      state.unreadNotifcations = action.payload;
+    },
   },
 });
 
-export const { loginUser, logoutUser, setTheme } = authReducer.actions;
+export const { loginUser, logoutUser, setTheme, hasUnreadNotifications } = authReducer.actions;
 export const canUserInvest = (state: RootState) =>
   state.wallet.connected && state.kyc.status === KYC_STATUS.APPROVED;
 export default authReducer.reducer;

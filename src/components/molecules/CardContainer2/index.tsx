@@ -62,7 +62,10 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
 
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Estimated Yield</Text>
-          <Text style={[dynamicStyles.values]}>{props.annualYieldPercent}</Text>
+          <Text style={[dynamicStyles.values]}>
+            {props.annualYieldPercent}
+            {'%'}
+          </Text>
         </View>
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Availability</Text>

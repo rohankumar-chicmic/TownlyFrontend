@@ -46,7 +46,7 @@ export default function InvestPropertyModal({
       await investInProperty({ propertyId: id, shares: Number(shares) });
       navigation.navigate('Drawer');
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 

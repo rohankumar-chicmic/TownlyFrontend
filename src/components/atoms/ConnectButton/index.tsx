@@ -20,8 +20,12 @@ function ConnectButton(props: ConnectButtonPropsType) {
   const { open, disconnect } = useAppKit();
   const { address, isConnected, chainId } = useAccount();
   const userToken = useAppSelector(state => state.auth.userToken);
+  console.log(userToken);
   const navigation = useAppNavigation();
   const { data, error } = useGetBalanceQuery(undefined, {
+    skip: !userToken,
+  });
+  useGetKYCStatusQuery(undefined, {
     skip: !userToken,
   });
 

@@ -1,26 +1,26 @@
 export const LightColors = {
-  // Primary Brand Colors (Kept the same as requested)
-  primary: '#BECC33',       // Vibrant Lime
-  primaryDark: '#9CAF2A',   // Slightly darker lime for contrast on light backgrounds
+  // Primary Brand Colors (Locked as requested)
+  primary: '#BECC33',       
+  primaryDark: '#7A851C',   
 
-  // Background Colors
-  background: '#f7fafc',    // Pure White
-  surface: '#F5F5F5',       // Light Gray (Card/Container)
-  elevated: '#E8E8E8',      // Slightly darker gray for nested elements
+  // Background Colors (High-Contrast Layering)
+  background: '#FFFFFF',    // Pure White base
+  surface: '#F1F5F9',       // Noticeably darker than white for clear card separation
+  elevated: '#E2E8F0',      // Distinctly darker for nested elements/modals
 
-  // Text Colors
-  textPrimary: '#0D0D0D',   // Deep Black (Replaces White)
-  textSecondary: '#4A4A4A', // Dark Gray (Replaces A0A0A0)
-  textMuted: '#8E8E93',     // Muted Gray (Replaces 666666)
+  // Text Colors (Maximum Legibility)
+  textPrimary: '#0F172A',   // Near-black Navy (Better contrast than pure black)
+  textSecondary: '#334155', // Solid slate for sub-text
+  textMuted: '#64748B',     // Darkest "muted" gray that still meets contrast standards
 
-  // Status & Feedback
-  success: '#22C55E',       // Slightly darker green for readability on white
-  error: '#DC2626',         // Slightly darker red for readability on white
-  warning: '#CA8A04',       // Darker yellow/gold for readability on white
+  // Status & Feedback (More intense saturation)
+  success: '#166534',       // Deep Forest Green
+  error: '#991B1B',         // Deep Crimson
+  warning: '#854D0E',       // Dark Ochre
 
-  // Border/Divider
-  border: '#E2E2E2',        // Light separators
-  outline: '#D1D1D1',       // Input borders
+  // Border/Divider (Sharper definition)
+  border: '#CBD5E1',        // Stronger line for structure
+  outline: '#94A3B8',       // Clearly defined input borders for accessibility
 };
 
 export type DefaultColorType = typeof LightColors;

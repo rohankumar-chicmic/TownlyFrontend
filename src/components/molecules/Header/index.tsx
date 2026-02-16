@@ -22,13 +22,10 @@ export default function Header({
   drawerOpened,
   setDrawerOpened,
   onPress,
-  
 }: Readonly<HeaderProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const insets = useSafeAreaInsets();
-  const userToken = useAppSelector(state => state.auth.userToken);
-  console.log(userToken);
   return (
     <View
       style={[

@@ -2,8 +2,7 @@ import { loadAsync } from 'expo-font';
 
 // export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || '';
 // export const API_BASE_URL = "https://subgranularly-heathered-hester.ngrok-free.dev/";
-export const API_BASE_URL =
-  'https://uncombinable-nonscholastic-layton.ngrok-free.dev/api';
+export const API_BASE_URL = 'https://api-townly.runasp.net/api';
 
 export const FONT_WEIGHTS = {
   100: '100',
@@ -31,13 +30,13 @@ export enum NotificationType {
 export interface NotificationProps {
   id: string;
   userId: string;
-  type: NotificationType; 
+  type: NotificationType;
   title: string;
   message: string;
   referenceId: string | null;
   isRead: boolean;
   readAt: string | null;
-  createdAt: string; 
+  createdAt: string;
   updatedAt: string | null;
   isDeleted: boolean;
   deletedAt: string | null;
@@ -51,7 +50,6 @@ export const FONT = {
   SEMI_BOLD: 'Signika-Negative-SemiBold',
   BOLD: 'Signika-Negative-Bold',
 };
-
 
 export const preloadFonts = async () => {
   loadAsync({

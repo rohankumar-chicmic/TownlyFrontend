@@ -3,7 +3,6 @@ import { LineChart } from 'react-native-gifted-charts';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
-import { formatCompactNumber } from '@utils/utility';
 
 export interface LinePoint {
   label: string;
@@ -32,7 +31,6 @@ const getYAxisScale = (data: number[], sections = 4) => {
 export default function LineGraph({ data }: Readonly<LineGraphProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  console.log(data);
 
   if (!data || data.length === 0) return null;
 
@@ -44,7 +42,6 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
   const values = data.map(d => Number(d.value) || 0);
   const { maxValue, minValue } = getYAxisScale(values, 4);
 
-  console.log(minValue, maxValue, '===========================');
   return (
     <Pressable>
       <View style={dynamicStyles.container}>

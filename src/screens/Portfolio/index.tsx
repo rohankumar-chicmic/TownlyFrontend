@@ -27,6 +27,7 @@ import PortfolioWithoutAuth from './PortfolioWithoutAuth';
 import { useFocusEffect } from '@react-navigation/native';
 import { resetKyc } from '@redux/KYCReducer';
 import { linea } from 'viem/chains';
+import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
 
 const InvestPropertyData = {
   id: 'property-001',
@@ -66,6 +67,7 @@ export default function Portfolio() {
   } = useGetLineGraphDataQuery(undefined, {
     skip: !userToken,
   });
+  
   const {
     data: donutData,
     isLoading: donutLoading,
@@ -75,9 +77,7 @@ export default function Portfolio() {
   });
 
   const address = useAppSelector(state => state.auth.userData?.walletAddress);
-
   const kycStatus = useAppSelector(state => state.kyc.status);
-  console.log(data);
 
   useFocusEffect(
     useCallback(() => {
@@ -85,6 +85,10 @@ export default function Portfolio() {
       refetch();
     }, []),
   );
+
+  useGetKYCStatusQuery(undefined, {
+    skip: !userToken,
+  });
 
   if (!userToken) {
     return <PortfolioWithoutAuth />;

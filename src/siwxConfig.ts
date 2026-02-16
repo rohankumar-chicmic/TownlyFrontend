@@ -27,7 +27,6 @@ export const siwx: SIWXConfig = {
 
     const nonce = result.data?.nonce;
     const issuedAt = new Date().toISOString();
-    console.log(nonce);
 
     const message: SIWXMessage = {
       accountAddress: input.accountAddress,
@@ -96,13 +95,15 @@ export const siwx: SIWXConfig = {
     if (!wcConnected) return [];
 
     const session = await getSiwxSession();
-    return session ? [session] : [];
-  },
+    const token = await getSiwxToken();
 
-  revokeSession: async () => {
-    await clearSiwxSession();
-    store.dispatch(logoutAndDisconnect());
-    store.dispatch(resetKyc());
+    // 🚨 If token exists but session missing → force cleanup
+    if (!session && token) {
+      await clearSiwxSession();
+      return [];
+    }
+
+    return session ? [session] : [];
   },
 
   setSessions: async (sessions: SIWXSession[]) => {
@@ -167,6 +168,15 @@ export const siwx: SIWXConfig = {
         }),
       );
     }
+  },
+
+  revokeSession: async () => {
+    console.log('Hard logout: clearing session + token');
+
+    await clearSiwxSession();
+
+    store.dispatch(logoutAndDisconnect());
+    store.dispatch(resetKyc());
   },
 
   getRequired: () => true,

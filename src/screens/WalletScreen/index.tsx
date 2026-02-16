@@ -67,7 +67,7 @@ export default function WalletScreen() {
   );
   const userToken = useAppSelector(state => state.auth.userToken);
 
-  const { data, isloading, error } = useGetBalanceQuery(undefined, {
+  const { data, isloading, error, refetch } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
@@ -108,7 +108,7 @@ export default function WalletScreen() {
 
   const refreshBalance = async () => {
     try {
-      await trigger();
+      await refetch();
     } catch (error) {
       console.log(error);
     }
@@ -121,7 +121,7 @@ export default function WalletScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.e }}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         style={{ backgroundColor: Colors.background }}
@@ -129,12 +129,16 @@ export default function WalletScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View style={[dynamicStyles.container, { flexGrow: 1 }]}>
-          <BackButton />
-          <Text
-            style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}
-          >
-            Account Details
-          </Text>
+          <View style={{ justifyContent: 'center', alignItems: 'stretch' }}>
+            <View style={{ marginLeft: -10, justifyContent: 'center' }}>
+              <BackButton />
+              <Text
+                style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}
+              >
+                Account Details
+              </Text>
+            </View>
+          </View>
 
           <View
             style={[

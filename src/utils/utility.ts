@@ -44,8 +44,3 @@ export const formatCompactNumber = (
 
   return formatter.format(value);
 };
-
-// Usage:
-console.log(formatCompactNumber(1500)); // "1.5K"
-console.log(formatCompactNumber(2500000)); // "2.5M"
-console.log(formatCompactNumber(1200000000)); // "1.2B"

@@ -5,7 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import useTheme from '@hooks/useTheme';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
-import { navigationRef } from '@utils/navigationService';
+import {
+  flushPendingNavigation,
+  navigationRef,
+} from '@utils/navigationService';
 import Tabs from './Tabs';
 import PropertyDetails from '@screens/PropertyDetails';
 import CreateNFTScreen from '@screens/CreateNFT';
@@ -17,6 +20,7 @@ import { ROUTES } from './constants';
 import { RootStackParamList } from './types';
 import { useAppSelector } from '@redux/store';
 import useNotification from '@hooks/useNotification';
+import Toast from 'react-native-toast-message';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
@@ -37,18 +41,23 @@ function MainDrawerNavigation() {
 }
 
 const RootNavigator = () => {
-  useNotification();
   // const navigationRef = useNavigationContainerRef();
   useReactNavigationDevTools(navigationRef);
   const userToken = useAppSelector(state => state.auth.userToken);
   useGetKYCStatusQuery(undefined, {
     skip: !userToken,
   });
-  const { Colors, currentTheme } = useTheme();
+  useNotification();
+  const { Colors } = useTheme();
 
   return (
     <SafeAreaProvider style={{ backgroundColor: Colors.background }}>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer
+        ref={navigationRef}
+        onReady={() => {
+          flushPendingNavigation();
+        }}
+      >
         <Stack.Navigator
           screenOptions={{
             headerShown: false,
@@ -65,6 +74,7 @@ const RootNavigator = () => {
           <Stack.Screen name={ROUTES.CREATE_NFT} component={CreateNFTScreen} />
           <Stack.Screen name={ROUTES.KYC} component={KYC} />
         </Stack.Navigator>
+        <Toast />
       </NavigationContainer>
     </SafeAreaProvider>
   );

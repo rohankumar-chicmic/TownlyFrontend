@@ -25,6 +25,8 @@ import { AppKitProvider, AppKit } from '@reown/appkit-react-native';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import messaging from '@react-native-firebase/messaging';
+import handleNotification from '@utils/handleNotification';
+import useNotification from '@hooks/useNotification';
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
@@ -57,15 +59,17 @@ export default function App() {
     })();
   }, []);
 
-  useEffect(() => {
-    messaging()
-      .getInitialNotification()
-      .then(remoteMessage => {
-        if (remoteMessage) {
-          console.log('App opened from quit by notification:', remoteMessage);
-        }
-      });
-  }, []);
+  //the below comment is for f
+  // useEffect(() => {
+  //   messaging()
+  //     .getInitialNotification()
+  //     .then(remoteMessage => {
+  //       if (remoteMessage) {
+  //         console.warn('App opened from quit by notification:', remoteMessage);
+  //         handleNotification(remoteMessage.data);
+  //       }
+  //     });
+  // }, []);
 
   return (
     <SafeAreaProvider>
@@ -77,7 +81,6 @@ export default function App() {
                 <PersistGate persistor={persistor}>
                   <RootNavigator />
                   <Toast />
-
                   <AppKit />
                 </PersistGate>
               </Provider>

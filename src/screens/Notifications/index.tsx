@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -17,10 +17,14 @@ import {
   useGetMyNotificationsQuery,
   useGetMyUnreadNotificationsQuery,
   useReadAllNotificationMutation,
+  useReadNotificationMutation,
 } from '@redux/NotificationsApiReducer';
-import { useAppSelector } from '@redux/store';
+import { useAppDispatch, useAppSelector } from '@redux/store';
+import handleNotification from '@utils/handleNotification';
+import { NotificationProps } from '@utils/constants';
+import { hasUnreadNotifications } from '@redux/AuthReducer';
 
-interface NotificationItem {
+interface NotificationItem extends NotificationProps {
   id: string;
   title: string;
   message: string;
@@ -29,27 +33,16 @@ interface NotificationItem {
   createdAt: string;
 }
 
-const DUMMY_NOTIFICATIONS: NotificationItem[] = Array.from(
-  { length: 100 },
-  (_, i) => ({
-    id: `dummy-${i + 1}`,
-    title: `Notification ${i + 1}`,
-    message: `This is a dummy notification message number ${i + 1}. Testing FlatList rendering performance.`,
-    isRead: i % 3 === 0, // some read, some unread
-    type: (i % 5) + 1,
-    createdAt: new Date(Date.now() - i * 60000).toISOString(), // staggered times
-  }),
-);
-
-
-
 const Notifications = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const userToken = useAppSelector(state => state.auth.userToken);
+  const notificationsArrived = useAppSelector(
+    state => state.auth.unreadNotifcations,
+  );
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [isPressed, setIsPressed] = useState(false);
-
+  const dispatch = useAppDispatch();
   const {
     data: allNotifications = [],
     isLoading: isLoadingNotifications,
@@ -61,6 +54,8 @@ const Notifications = () => {
     useGetMyUnreadNotificationsQuery(undefined, {
       skip: !userToken,
     });
+
+  const [readSingleNotification] = useReadNotificationMutation();
   const [readAllNotifications, { isLoading: isLoadingReadAll, isError }] =
     useReadAllNotificationMutation();
 
@@ -75,13 +70,44 @@ const Notifications = () => {
       await readAllNotifications();
       refetchAll();
       refetchUnread();
+      dispatch(hasUnreadNotifications(false));
     } catch (error) {
       console.log(error);
     }
   };
 
+  const handleSingleNotificationRead = async (item: NotificationItem) => {
+    try {
+      handleNotification({ type: item.type, referenceId: item.referenceId });
+      if (!item.isRead) {
+        await readSingleNotification(item.id);
+        refetchAll();
+        refetchUnread();
+      }
+    } catch (e: any) {
+      console.log(e);
+    }
+  };
+
+  useEffect(() => {
+    if (unreadNotifications.length === 0) {
+      dispatch(hasUnreadNotifications(false));
+    }
+  }, [unreadNotifications, dispatch]);
+
+  useEffect(() => {
+    const func = async () => {
+      await refetchAll();
+      await refetchUnread();
+    };
+    func();
+  }, [notificationsArrived, refetchAll, refetchUnread]);
+
   const renderItem = ({ item }: { item: NotificationItem }) => (
-    <Notification item={item} onPress={() => console.log('hif')} />
+    <Notification
+      item={item}
+      onPress={() => handleSingleNotificationRead(item)}
+    />
   );
 
   const renderEmpty = () => {
@@ -210,7 +236,6 @@ const Notifications = () => {
 
         <View style={dynamicStyles.notificationsContainer}>
           <FlatList
-            // data={DUMMY_NOTIFICATIONS}
             data={notificationsToRender}
             renderItem={renderItem}
             keyExtractor={item => item.id}

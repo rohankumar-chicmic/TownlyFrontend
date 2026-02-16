@@ -1,8 +1,6 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import { ThemeColors } from '@theme/constants';
 
-const { width } = Dimensions.get('window');
-
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     screen: {
@@ -13,14 +11,12 @@ const styles = (Colors: ThemeColors) =>
     heroImage: {
       width: '100%',
       height: 240,
-      zIndex: 0
     },
 
     section: {
       paddingHorizontal: 20,
       paddingTop: 16,
     },
-    
     title: {
       fontSize: 25,
       fontWeight: '500',

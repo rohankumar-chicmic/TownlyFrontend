@@ -18,7 +18,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<NFTFormData>({
     propertyName: '',
     description: '',
@@ -34,7 +34,7 @@ export default function CreateNFTScreen() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated}}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         style={{ backgroundColor: Colors.background }}

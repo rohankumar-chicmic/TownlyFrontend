@@ -37,11 +37,11 @@ export default function BackButton({
       hitSlop={10}
       style={[dynamicStyles.box, style]}
     >
-      <View style={{margin: 10 }}>
+      <View style={{ margin: 10 }}>
         <Icons.BackLogo
           height={10}
           width={10}
-          color={Colors.primary}
+          color={Colors.primaryDark}
         ></Icons.BackLogo>
       </View>
     </Pressable>

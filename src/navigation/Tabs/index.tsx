@@ -14,6 +14,8 @@ import { useNavigation } from '@react-navigation/native';
 import Notifications from '@screens/Notifications';
 import Feather from '@expo/vector-icons/Feather';
 import { View } from 'react-native';
+import { useAppSelector } from '@redux/store';
+import { useGetMyUnreadNotificationsQuery } from '@redux/NotificationsApiReducer';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -21,7 +23,14 @@ export default function Tabs() {
   const { Colors } = useTheme();
   const [drawerOpened, setDrawerOpened] = useState(false);
   const navigation = useNavigation();
+  const userToken = useAppSelector(state => state.auth.userToken);
+  const { data } = useGetMyUnreadNotificationsQuery(undefined, {
+    skip: !userToken,
+  });
 
+  const unreadNotifcations = useAppSelector(
+    state => state.auth.unreadNotifcations,
+  );
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -85,7 +94,23 @@ export default function Tabs() {
         options={{
           tabBarIcon: ({ color, size }) => (
             <View>
-              <Feather name="bell" size={size+5} color={color} />
+              {((userToken && unreadNotifcations) ||
+                (data && data?.length !== 0)) && (
+                <View
+                  style={{
+                    height: 15,
+                    width: 15,
+                    backgroundColor: 'red',
+                    position: 'absolute',
+                    zIndex: 100,
+                    right: 0,
+                    borderRadius: 8,
+                    borderColor: Colors.surface,
+                    borderWidth: 3,
+                  }}
+                ></View>
+              )}
+              <Feather name="bell" size={size + 5} color={color} />
             </View>
           ),
         }}

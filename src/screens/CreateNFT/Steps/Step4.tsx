@@ -59,7 +59,6 @@ export default function Step4(props: StepProps) {
     navigation.navigate('Home');
   }
   const userToken = useAppSelector(state => state.auth.userToken);
-  console.log(userToken);
   const handleSubmitProperty = async () => {
     console.log('Token being sent:', userToken);
     console.log('Token type:', typeof userToken);

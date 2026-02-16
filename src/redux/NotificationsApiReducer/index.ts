@@ -1,9 +1,4 @@
 import api from '@redux/store/api';
-import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
-import { NFTFormData } from '@screens/CreateNFT/types';
-import { PropertyDetailsType } from '@utils/types';
-import { RootState, useAppSelector } from '@redux/store';
-import { fetchBaseQuery } from '@reduxjs/toolkit/query';
 
 export interface NotificationItem {
   id: string;

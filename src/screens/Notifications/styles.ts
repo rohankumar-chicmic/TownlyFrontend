@@ -9,8 +9,8 @@ const styles = (Colors: ThemeColors) =>
     },
     container: {
       flex: 1,
-      padding: 20,
-      margin: 5,
+      paddingHorizontal: 20,
+      paddingBottom: 20,
     },
     heroPrimarytext: {
       fontSize: 25,
@@ -50,12 +50,12 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '400',
     },
     notificationsContainer: {
+      flex: 1,
       marginVertical: 5,
       padding: 10,
       borderWidth: 1,
       backgroundColor: Colors.surface,
       borderColor: Colors.border,
-      flex: 1,
     },
     emptyContainer: {
       padding: 40,

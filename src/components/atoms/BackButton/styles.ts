@@ -3,7 +3,7 @@ import { ThemeColors } from "@theme/constants";
 
 const styles = (Colors : ThemeColors) => StyleSheet.create({
     box:{
-        backgroundColor: Colors.surface,
+        backgroundColor: Colors.border,
         position: 'absolute',
         justifyContent: 'center',
         borderRadius: 5,
@@ -13,8 +13,6 @@ const styles = (Colors : ThemeColors) => StyleSheet.create({
         shadowColor: Colors.background, 
     }, 
     symbol:{
-        fontSize: 12, 
-        margin: 5,
         color: Colors.primaryDark, 
     }
 })

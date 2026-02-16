@@ -13,6 +13,7 @@ import { Icons } from '@utils/icons';
 import { useAppNavigation } from '@hooks/useNavigation';
 import PropertyListing from '@components/molecules/PropertyListing';
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
+import Toast from 'react-native-toast-message';
 
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
@@ -21,7 +22,12 @@ const Home = () => {
   const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery();
   const [showModal, setShowModal] = useState(false);
 
-  console.log(data);
+  const handleClick = () => {
+    Toast.show({
+      type: 'info',
+      text1: 'this is an info message',
+    });
+  };
 
   const header = (
     <>
@@ -47,7 +53,8 @@ const Home = () => {
         style={{ marginBottom: 5 }}
         textStyle={{ margin: 10 }}
         size="lg"
-        onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
+        onPress={() => handleClick()}
+        // onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
       >
         {
           <Icons.Arrow
@@ -76,8 +83,8 @@ const Home = () => {
           >
             99%
           </Text>
-          <Text style={[dynamicStyles.smallText, { width: 80 }]}>
-            Customer Satifaction
+          <Text style={[dynamicStyles.smallText, { width: 90 }]}>
+            Customer Satisfaction
           </Text>
         </View>
         <View style={dynamicStyles.containerStyle}>

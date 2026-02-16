@@ -6,7 +6,10 @@ import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { useAppRoute } from '@hooks/useAppRoute';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import PropertyListing from '@components/molecules/PropertyListing';
@@ -14,7 +17,6 @@ import { Icons } from '@utils/icons';
 import {
   useGetPropertyDetailsQuery,
   useGetRelatedPropertiesQuery,
-  useInvestInPropertyMutation,
 } from '@redux/PropertyApiReducer';
 import InvestPropertyModal from '@components/molecules/InvestmentModal';
 
@@ -38,148 +40,148 @@ export default function PropertyDetails() {
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
   return (
-    <ScrollView
-      style={[
-        dynamicStyles.screen,
-        {
-          paddingTop: insets.top,
-        },
-      ]}
-      contentContainerStyle={{ padding: 5, paddingBottom: 20 }}
-      showsVerticalScrollIndicator={false}
-    >
-      <BackButton />
-
-      <PagerView style={dynamicStyles.heroImage} pageMargin={10}>
-        <Image
-          source={{
-            uri: data?.imageUrl,
-          }}
-        />
-      </PagerView>
-
-      <View style={dynamicStyles.section}>
-        <Text style={dynamicStyles.title}>{data?.name}</Text>
-        <Text style={dynamicStyles.location}>
-          {<Icons.Location height={10} width={10} color={Colors.primary} />}{' '}
-          {data?.location}
-        </Text>
-        <View style={dynamicStyles.tag}>
-          <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
-        </View>
-      </View>
-
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
-        horizontal
+        style={[dynamicStyles.screen]}
         contentContainerStyle={{
-          borderTopWidth: 1,
-          borderTopColor: Colors.border,
-          borderBottomWidth: 1,
-          borderBottomColor: Colors.border,
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          padding: 15,
-          paddingVertical: 10,
-          marginTop: 10,
+          paddingBottom: 20,
+          backgroundColor: Colors.background,
         }}
+        showsVerticalScrollIndicator={false}
       >
-        <View style={dynamicStyles.containerStyle}>
-          <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
-            Total Value
-          </Text>
-          <Text
-            style={{
-              color: Colors.textPrimary,
-              fontSize: 18,
-              fontWeight: '500',
-            }}
-          >
-            {'$'}
-            {data?.totalValue}
-          </Text>
-        </View>
-        <View style={dynamicStyles.containerStyle}>
-          <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
-            Price/Share
-          </Text>
-          <Text
-            style={{
-              color: Colors.textPrimary,
-              fontSize: 18,
-              fontWeight: '500',
-            }}
-          >
-            {Number(data?.pricePerUnitEth ?? 10).toFixed(5)}
-            {' ETH'}
-          </Text>
-        </View>
-        <View style={[dynamicStyles.containerStyle]}>
-          <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
-            Annual Yield
-          </Text>
-          <Text
-            style={{ color: Colors.primary, fontSize: 18, fontWeight: '500' }}
-          >
-            {data?.annualYieldPercent}
-            {'%'}
-          </Text>
-        </View>
-        <View style={[dynamicStyles.containerStyle]}>
-          <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
-            Available Share
-          </Text>
-          <Text
-            style={{
-              color: Colors.textPrimary,
-              fontSize: 18,
-              fontWeight: '500',
-            }}
-          >
-            {data?.availableUnits}
-            {'/'}
-            {data?.totalUnits}
-          </Text>
-        </View>
-      </ScrollView>
+        <BackButton />
 
-      <View style={[dynamicStyles.section, { paddingTop: 5 }]}>
-        <Text style={dynamicStyles.sectionTitle}>Property Highlights</Text>
-        <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
-          {data?.description}
-        </Text>
-      </View>
+        <PagerView style={dynamicStyles.heroImage} pageMargin={10}>
+          <Image
+            source={{
+              uri: data?.imageUrl,
+            }}
+          />
+        </PagerView>
 
-      <Button
-        title="Invest"
-        disabled={!userToken}
-        onPress={() => setShowModal(true)}
-        size="lg"
-        style={{ margin: 15 }}
-      ></Button>
+        <View style={dynamicStyles.section}>
+          <Text style={dynamicStyles.title}>{data?.name}</Text>
+          <Text style={dynamicStyles.location}>
+            {<Icons.Location height={10} width={10} color={Colors.primary} />}{' '}
+            {data?.location}
+          </Text>
+          <View style={dynamicStyles.tag}>
+            <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
+          </View>
+        </View>
 
-      <View style={[dynamicStyles.section, { paddingHorizontal: 15 }]}>
-        <Text style={[dynamicStyles.sectionTitle, { paddingHorizontal: 10 }]}>
-          Related Properties
-        </Text>
-        <PropertyListing
+        <ScrollView
           horizontal
-          data={relatedProperties.data}
-        ></PropertyListing>
-      </View>
-      {kycStatus === 2 ? (
-        <InvestPropertyModal
-          visible={showModal}
-          onClose={() => setShowModal(false)}
-          id={data?.id}
-          pricePerShare = {data?.pricePerUnitEth}
-        />
-      ) : (
-        <KYCStatusModal
-          visible={showModal}
-          onClose={() => setShowModal(false)}
-          onStartKYC={() => navigation.navigate('KycScreen')}
-        />
-      )}
-    </ScrollView>
+          contentContainerStyle={{
+            borderTopWidth: 1,
+            borderTopColor: Colors.border,
+            borderBottomWidth: 1,
+            borderBottomColor: Colors.border,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            padding: 15,
+            paddingVertical: 10,
+            marginTop: 10,
+          }}
+        >
+          <View style={dynamicStyles.containerStyle}>
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Total Value
+            </Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+            >
+              {'$'}
+              {data?.totalValue}
+            </Text>
+          </View>
+          <View style={dynamicStyles.containerStyle}>
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Price/Share
+            </Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+            >
+              {Number(data?.pricePerUnitEth ?? 10).toFixed(5)}
+              {' ETH'}
+            </Text>
+          </View>
+          <View style={[dynamicStyles.containerStyle]}>
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Annual Yield
+            </Text>
+            <Text
+              style={{ color: Colors.primary, fontSize: 18, fontWeight: '500' }}
+            >
+              {data?.annualYieldPercent}
+              {'%'}
+            </Text>
+          </View>
+          <View style={[dynamicStyles.containerStyle]}>
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Available Share
+            </Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+            >
+              {data?.availableUnits}
+              {'/'}
+              {data?.totalUnits}
+            </Text>
+          </View>
+        </ScrollView>
+
+        <View style={[dynamicStyles.section, { paddingTop: 5 }]}>
+          <Text style={dynamicStyles.sectionTitle}>Property Highlights</Text>
+          <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
+            {data?.description}
+          </Text>
+        </View>
+
+        <Button
+          title="Invest"
+          disabled={!userToken}
+          onPress={() => setShowModal(true)}
+          size="lg"
+          style={{ margin: 15 }}
+        ></Button>
+
+        <View style={[dynamicStyles.section, { paddingHorizontal: 15 }]}>
+          <Text style={[dynamicStyles.sectionTitle, { paddingHorizontal: 10 }]}>
+            Related Properties
+          </Text>
+          <PropertyListing
+            horizontal
+            data={relatedProperties.data}
+          ></PropertyListing>
+        </View>
+        {kycStatus === 2 ? (
+          <InvestPropertyModal
+            visible={showModal}
+            onClose={() => setShowModal(false)}
+            id={String(data?.id)}
+            pricePerShare={Number(data?.pricePerUnitEth)}
+          />
+        ) : (
+          <KYCStatusModal
+            visible={showModal}
+            onClose={() => setShowModal(false)}
+            onStartKYC={() => navigation.navigate('KycScreen')}
+          />
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 }
