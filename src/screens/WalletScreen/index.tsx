@@ -6,6 +6,7 @@ import {
   ScrollView,
   Modal,
   Pressable,
+  StatusBar,
 } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
@@ -26,6 +27,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useAppKit } from '@reown/appkit-react-native';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
+import { THEME } from '@theme/constants';
 
 const InfoRow = ({
   field,
@@ -60,7 +62,7 @@ const InfoRow = ({
 
 export default function WalletScreen() {
   const { dynamicStyles } = useStyles(styles);
-  const { Colors } = useTheme();
+  const { Colors, currentTheme } = useTheme();
   const [amount, setAmount] = useState('');
   const walletAddress = useAppSelector(
     state => state.auth.userData?.walletAddress,

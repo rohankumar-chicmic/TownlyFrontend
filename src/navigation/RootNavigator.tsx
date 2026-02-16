@@ -20,7 +20,9 @@ import { ROUTES } from './constants';
 import { RootStackParamList } from './types';
 import { useAppSelector } from '@redux/store';
 import useNotification from '@hooks/useNotification';
-import Toast from 'react-native-toast-message';
+import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import { StatusBar } from 'react-native';
+import { THEME } from '@theme/constants';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
@@ -48,10 +50,60 @@ const RootNavigator = () => {
     skip: !userToken,
   });
   useNotification();
-  const { Colors } = useTheme();
+  const { Colors, currentTheme } = useTheme();
+
+  const toastConfig = {
+    success: props => (
+      <BaseToast
+        {...props}
+        style={{ borderLeftColor: Colors.success }} // ✔ required value
+        contentContainerStyle={{ paddingHorizontal: 15 }}
+        text1Style={{
+          fontSize: 15,
+          fontWeight: '400',
+          color: Colors.text,
+        }}
+      />
+    ),
+
+    error: props => (
+      <ErrorToast
+        {...props}
+        style={{ borderLeftColor: Colors.error }} // ✔ recommended
+        text1Style={{
+          fontSize: 17,
+          color: Colors.text,
+        }}
+        text2Style={{
+          fontSize: 15,
+          color: Colors.textSecondary,
+        }}
+      />
+    ),
+
+    info: props => (
+      <BaseToast
+        {...props}
+        style={{
+          width: '90%',
+          borderLeftColor: Colors.primaryDark,
+          backgroundColor: Colors.elevated,
+        }}
+        text1Style={{
+          color: Colors.textPrimary,
+          fontSize: 20,
+        }}
+      />
+    ),
+  };
 
   return (
     <SafeAreaProvider style={{ backgroundColor: Colors.background }}>
+      <StatusBar
+        barStyle={
+          currentTheme === THEME.DARK ? 'light-content' : 'dark-content'
+        }
+      />
       <NavigationContainer
         ref={navigationRef}
         onReady={() => {
@@ -74,7 +126,12 @@ const RootNavigator = () => {
           <Stack.Screen name={ROUTES.CREATE_NFT} component={CreateNFTScreen} />
           <Stack.Screen name={ROUTES.KYC} component={KYC} />
         </Stack.Navigator>
-        <Toast />
+        <Toast
+          config={toastConfig}
+          position="bottom"
+          swipeable
+          bottomOffset={70}
+        />
       </NavigationContainer>
     </SafeAreaProvider>
   );

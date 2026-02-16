@@ -16,7 +16,6 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import 'react-native-reanimated';
-import Toast from 'react-native-toast-message';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -80,7 +79,6 @@ export default function App() {
               <Provider store={store}>
                 <PersistGate persistor={persistor}>
                   <RootNavigator />
-                  <Toast />
                   <AppKit />
                 </PersistGate>
               </Provider>

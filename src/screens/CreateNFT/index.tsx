@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  KeyboardAvoidingView,
+  Platform,
+  StatusBar,
+} from 'react-native';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import Step1 from './Steps/Step1';
@@ -14,10 +20,11 @@ import BackButton from '@components/atoms/BackButton';
 import { Icons } from '@utils/icons';
 import { NFTFormData } from './types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { THEME } from '@theme/constants';
 
 export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
-  const { Colors } = useTheme();
+  const { Colors, currentTheme } = useTheme();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<NFTFormData>({
     propertyName: '',
@@ -34,14 +41,11 @@ export default function CreateNFTScreen() {
   });
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.background }}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         style={{ backgroundColor: Colors.background }}
         contentContainerStyle={{ flexGrow: 1 }}
-        enableAutomaticScroll={true}
-        enableOnAndroid={true}
-        extraScrollHeight={Platform.OS === 'ios' ? 20 : 30}
         keyboardShouldPersistTaps="handled"
       >
         <View style={[dynamicStyles.container, { flexGrow: 1 }]}>
