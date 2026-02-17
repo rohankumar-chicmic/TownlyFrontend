@@ -11,6 +11,8 @@ interface PropertyCardProps {
   riskScore: number;
   pricePerUnitEth: number;
   description?: string;
+  userOwned?: boolean;
+  status?: number;
 }
 
 export default PropertyCardProps;

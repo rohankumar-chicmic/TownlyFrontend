@@ -31,16 +31,15 @@ const styles = (Colors: ThemeColors) =>
     },
     filterContainer: {
       flexDirection: 'row',
-      borderTopWidth: 1,
-      borderBottomWidth: 1,
       borderColor: Colors.border,
       marginVertical: 5,
+      marginBottom: 0,
       paddingVertical: 5,
     },
     tag: {
       paddingVertical: 8,
       paddingHorizontal: 16,
-      marginHorizontal: 4,
+      // marginHorizontal: 4,
       borderRadius: 4,
       borderWidth: 1,
       backgroundColor: Colors.surface,
@@ -56,6 +55,7 @@ const styles = (Colors: ThemeColors) =>
       borderWidth: 1,
       backgroundColor: Colors.surface,
       borderColor: Colors.border,
+      borderRadius: 4
     },
     emptyContainer: {
       padding: 40,

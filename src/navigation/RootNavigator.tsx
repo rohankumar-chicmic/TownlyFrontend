@@ -32,6 +32,9 @@ function MainDrawerNavigation() {
     <Drawer.Navigator
       screenOptions={{
         headerShown: false,
+        drawerStyle: {
+          width: '55%',
+        },
         drawerPosition: 'right',
         drawerType: 'back',
       }}
@@ -56,7 +59,7 @@ const RootNavigator = () => {
     success: props => (
       <BaseToast
         {...props}
-        style={{ borderLeftColor: Colors.success }} // ✔ required value
+        style={{ borderLeftColor: Colors.success }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
           fontSize: 15,
@@ -87,7 +90,19 @@ const RootNavigator = () => {
         style={{
           width: '90%',
           borderLeftColor: Colors.primaryDark,
-          backgroundColor: Colors.elevated,
+          borderRightColor: Colors.primaryDark,
+          backgroundColor: Colors.border,
+          borderColor: Colors.border,
+          shadowColor: 'grey',
+          shadowOffset: {
+            width: 0,
+            height: 10,
+          },
+          shadowOpacity: 0.7,
+          shadowRadius: 4.65,
+
+          // Android Shadow
+          elevation: 8,
         }}
         text1Style={{
           color: Colors.textPrimary,
@@ -126,12 +141,7 @@ const RootNavigator = () => {
           <Stack.Screen name={ROUTES.CREATE_NFT} component={CreateNFTScreen} />
           <Stack.Screen name={ROUTES.KYC} component={KYC} />
         </Stack.Navigator>
-        <Toast
-          config={toastConfig}
-          position="bottom"
-          swipeable
-          bottomOffset={70}
-        />
+        <Toast config={toastConfig} position="top" swipeable topOffset={120} />
       </NavigationContainer>
     </SafeAreaProvider>
   );

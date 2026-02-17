@@ -20,7 +20,7 @@ const styles = (Colors: ThemeColors) =>
     },
     heading: {
       fontSize: 20,
-      fontWeight: '400',
+      fontWeight: '600',
       color: Colors.textPrimary,
     },
     smallText: {
@@ -35,7 +35,7 @@ const styles = (Colors: ThemeColors) =>
       padding: 8,
       justifyContent: 'space-evenly',
       alignItems: 'flex-start',
-      width: Dimensions.get('window').width * 0.4, 
+      width: Dimensions.get('window').width * 0.4,
       marginRight: 5,
     },
     dataPanel: {

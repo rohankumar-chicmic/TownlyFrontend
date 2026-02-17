@@ -26,12 +26,17 @@ export default function CustomSidebar(props: any) {
       <View
         style={[
           dynamicStyles.menuItem,
-          { backgroundColor: Colors.background, borderRadius: 12 },
+          {
+            backgroundColor: Colors.background,
+            borderRadius: 12,
+            borderColor: Colors.border,
+            borderWidth: 1,
+          },
         ]}
       >
         <Text
           style={{
-            color: Colors.textSecondary,
+            color: Colors.textPrimary,
             fontSize: 18,
             fontWeight: '500',
           }}

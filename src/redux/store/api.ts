@@ -1,6 +1,6 @@
 import { API_BASE_URL } from '@utils/constants';
 
-import { RootState } from '../store';
+import store, { RootState } from '../store';
 
 import {
   BaseQueryFn,
@@ -9,6 +9,7 @@ import {
   fetchBaseQuery,
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
+import { logoutAndDisconnect } from './logoutAndDisconnect';
 // your real baseQuery (wrapped for 401 handling)
 const baseQuery = fetchBaseQuery({
   baseUrl: API_BASE_URL,
@@ -34,6 +35,7 @@ const baseQueryWithInterceptor: BaseQueryFn<
 
     if (status === 401) {
       console.error('Unauthorized access');
+      store.dispatch(logoutAndDisconnect());
     } else {
       console.error(
         `API Error: ${status} - ${errorData?.message || errorData?.error}`,

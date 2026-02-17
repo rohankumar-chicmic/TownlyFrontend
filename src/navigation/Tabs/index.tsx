@@ -51,11 +51,11 @@ export default function Tabs() {
           backgroundColor: Colors.surface,
           borderTopColor: Colors.border,
           height: 60,
-          paddingTop: 10,
         },
         tabBarItemStyle: {
           height: 10,
           width: 10,
+          margin: 8,
         },
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textMuted,

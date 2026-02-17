@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, ScrollView, FlatList, Dimensions } from 'react-native';
 import DonutGraph from '@components/molecules/DonutGraph';
 import React, { useCallback } from 'react';
 import useStyles from '@hooks/useStyles';
@@ -16,7 +10,6 @@ import { useAppNavigation } from '@hooks/useNavigation';
 
 import { useAppDispatch, useAppSelector } from '@redux/store';
 import { useGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
-import PropertyListing from '@components/molecules/PropertyListing';
 import {
   useGetDonutGraphDataQuery,
   useGetLineGraphDataQuery,
@@ -25,9 +18,10 @@ import {
 import KYCpendingPortfolio from './KYCpendingPortfolio';
 import PortfolioWithoutAuth from './PortfolioWithoutAuth';
 import { useFocusEffect } from '@react-navigation/native';
-import { resetKyc } from '@redux/KYCReducer';
-import { linea } from 'viem/chains';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
+
+import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
+import CardContainer2 from '@components/molecules/CardContainer2';
 
 const InvestPropertyData = {
   id: 'property-001',
@@ -45,6 +39,51 @@ const InvestPropertyData = {
   riskScore: 3.4,
   riskLabel: 'Low Moderate Risk',
 };
+
+export const DUMMY_PORTFOLIO = [
+  {
+    propertyId: 'ab35368b-b41a-41cb-bdaa-d6e2afe47c0f',
+    propertyName: 'Burger King',
+    imageUrl:
+      'https://curb360.com/wp-content/uploads/2024/09/A_serene_real_estate_scene_captured_during_sunset_converted.jpg',
+    location: 'Rajpura, PB',
+    tokensOwned: 900,
+    investedEth: 3053.57,
+    currentValueEth: 3078.1066,
+    unrealizedPnLEth: 24.5366,
+    unrealizedPnLPercent: 0.8,
+    monthlyIncomeEth: 589.9704,
+    riskScore: 6.5,
+  },
+  {
+    propertyId: 'bc22459c-c52b-52dc-cebb-e7f3bfe58d1g',
+    propertyName: 'Suburban Villa',
+    imageUrl:
+      'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=400&q=80',
+    location: 'Detroit, MI',
+    tokensOwned: 501,
+    investedEth: 0.8203,
+    currentValueEth: 0.8398,
+    unrealizedPnLEth: 0.0195,
+    unrealizedPnLPercent: 2.37,
+    monthlyIncomeEth: 0.0057,
+    riskScore: 3.4,
+  },
+  {
+    propertyId: 'de44671e-e74d-74fe-efdd-g9h5ihg70j3i',
+    propertyName: 'Skyline Penthouse',
+    imageUrl:
+      'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=400&q=80',
+    location: 'Downtown Dubai',
+    tokensOwned: 120,
+    investedEth: 5.42,
+    currentValueEth: 5.85,
+    unrealizedPnLEth: 0.43,
+    unrealizedPnLPercent: 7.93,
+    monthlyIncomeEth: 0.045,
+    riskScore: 2.1,
+  },
+];
 
 export default function Portfolio() {
   const { dynamicStyles } = useStyles(styles);
@@ -67,7 +106,7 @@ export default function Portfolio() {
   } = useGetLineGraphDataQuery(undefined, {
     skip: !userToken,
   });
-  
+
   const {
     data: donutData,
     isLoading: donutLoading,
@@ -175,13 +214,50 @@ export default function Portfolio() {
           style={{
             marginVertical: 5,
             padding: 10,
+            borderRadius: 4,
             borderWidth: 1,
             backgroundColor: Colors.surface,
             borderColor: Colors.border,
           }}
         >
-          <Text style={dynamicStyles.heading}> Your Property Portfolio</Text>
-          <PropertyListing horizontal data={data}></PropertyListing>
+          <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
+              My Listed Properties
+          </Text>
+          <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
+            Properties you&apos;ve created and tokenized
+          </Text>
+          <FlatList
+            data={data}
+            horizontal
+            renderItem={({ item }) => <CardContainer2 userOwned {...item} />}
+          />
+        </View>
+        <View
+          style={{
+            marginVertical: 5,
+            padding: 10,
+            borderRadius: 4,
+            borderWidth: 1,
+            backgroundColor: Colors.surface,
+            borderColor: Colors.border,
+          }}
+        >
+          <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
+            Your Property Portfolio
+          </Text>
+          <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
+            Properties you&apos;ve created and tokenized
+          </Text>
+          <FlatList
+            data={DUMMY_PORTFOLIO}
+            horizontal
+            renderItem={({ item }) => <HoldingPropertyCard {...item} />}
+            contentContainerStyle={{
+              flexDirection: 'row',
+              gap: 10,
+              paddingHorizontal: 5,
+            }}
+          />
         </View>
       </View>
     </ScrollView>

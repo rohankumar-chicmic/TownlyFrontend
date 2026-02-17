@@ -6,7 +6,7 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       borderWidth: 1,
-      minWidth:Dimensions.get('screen').width * 0.86,
+      minWidth: Dimensions.get('screen').width * 0.86,
       borderColor: Colors.border,
       flexDirection: 'row',
       margin: 5,
@@ -51,6 +51,37 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '400',
       color: Colors.primary,
     },
+    badgeContainer: {
+      position: 'absolute',
+      top: 8,
+      left: 8,
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 12,
+      // Adds a slight shadow for depth over the image
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.2,
+      shadowRadius: 2,
+      elevation: 3,
+    },
+    badgeText: {
+      fontSize: 10,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    // detailsContainer: {
+    //   flex: 1,
+    //   padding: 12,
+    //   justifyContent: 'space-between',
+    // },
+    // column: {
+    //   flexDirection: 'row',
+    //   justifyContent: 'space-between',
+    //   alignItems: 'center',
+    //   marginTop: 4,
+    // },
   });
 
 export default styles;

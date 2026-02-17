@@ -157,7 +157,7 @@ const Notifications = () => {
               { justifyContent: 'space-between' },
             ]}
           >
-            <View style={{ flexDirection: 'row' }}>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
               <Pressable
                 style={[
                   dynamicStyles.tag,

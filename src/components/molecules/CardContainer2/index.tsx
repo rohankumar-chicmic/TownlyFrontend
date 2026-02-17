@@ -18,6 +18,39 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id: props.id });
   };
 
+  const getBadgeConfig = (status?: number) => {
+    switch (status) {
+      case 1:
+        return { label: 'Pending', color: Colors.warning || '#FFA500' };
+      case 2:
+        return { label: 'Active', color: Colors.success || '#4CAF50' };
+      case 3:
+        return { label: 'Sold Out', color: Colors.error || '#F44336' };
+      case 4:
+        return { label: 'Rejected', color: Colors.textSecondary || '#757575' };
+      default:
+        return null;
+    }
+  };
+
+  const renderBadge = () => {
+    const config = getBadgeConfig(props.status); // Assuming 'status' exists in PropertyCardProps
+    if (!config) return null;
+
+    return (
+      <View
+        style={[
+          dynamicStyles.badgeContainer,
+          { backgroundColor: config.color },
+        ]}
+      >
+        <Text style={[dynamicStyles.badgeText, { color: Colors.background }]}>
+          {config.label}
+        </Text>
+      </View>
+    );
+  };
+
   return (
     <Pressable
       onPress={handlePressed}
@@ -36,9 +69,11 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         style={{ borderBottomLeftRadius: 7, borderTopLeftRadius: 7 }}
       ></Image>
 
+      {props.userOwned && renderBadge()}
+
       <View style={dynamicStyles.detailsContainer}>
         <Text numberOfLines={3} style={dynamicStyles.title}>
-          {props.name}{' '}
+          {props.name}
         </Text>
         <Text style={dynamicStyles.location} numberOfLines={2}>
           <Icons.Location width={10} height={10} borderColor={Colors.primary} />{' '}
@@ -62,10 +97,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
 
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Estimated Yield</Text>
-          <Text style={[dynamicStyles.values]}>
-            {props.annualYieldPercent}
-            {'%'}
-          </Text>
+          <Text style={[dynamicStyles.values]}>{props.annualYieldPercent}</Text>
         </View>
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Availability</Text>

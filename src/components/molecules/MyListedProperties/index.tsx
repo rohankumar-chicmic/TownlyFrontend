@@ -16,7 +16,7 @@ interface PropertyListingProps {
   onEndReachedThreshold?: number;
 }
 
-const PropertyListing = ({
+const MyListedProperties = ({
   data,
   header,
   footer,
@@ -47,4 +47,4 @@ const PropertyListing = ({
   );
 };
 
-export default PropertyListing;
+export default MyListedProperties;

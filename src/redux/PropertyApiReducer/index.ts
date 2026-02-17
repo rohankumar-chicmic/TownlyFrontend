@@ -104,6 +104,14 @@ const propertyApi = api.injectEndpoints({
       }),
     }),
 
+    editProperty: builder.mutation({
+      query: body => ({
+        url: `/properties/${body.propertyId}/update-request`,
+        method: 'POST',
+        body: body,
+      }),
+    }),
+
     investInProperty: builder.mutation<
       void,
       { propertyId: string; shares: number }
@@ -127,6 +135,7 @@ export const {
   useGetRelatedPropertiesQuery,
   useInvestInPropertyMutation,
   useGetMyPropertiesQuery,
+  useEditPropertyMutation,
 } = propertyApi;
 
 export { propertyApi };

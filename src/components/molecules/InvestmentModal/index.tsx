@@ -77,8 +77,6 @@ export default function InvestPropertyModal({
               </Pressable>
             </View>
 
-            <Text style={dynamicStyles.subtitle}>Suburban Family Home</Text>
-
             <Text style={dynamicStyles.label}>
               Number of Shares to Buy{' '}
               <Text style={dynamicStyles.required}>*</Text>

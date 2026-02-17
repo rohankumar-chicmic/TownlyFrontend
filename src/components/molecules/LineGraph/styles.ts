@@ -18,7 +18,7 @@ const styles = (Colors: ThemeColors) =>
     },
     heading: {
       fontSize: 15,
-      fontWeight: '400',
+      fontWeight: '600',
       color: Colors.textPrimary,
     },
     smallText: {
