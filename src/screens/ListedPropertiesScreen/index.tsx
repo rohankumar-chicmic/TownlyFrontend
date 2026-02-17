@@ -9,8 +9,7 @@ import useTheme from '@hooks/useTheme';
 import BackButton from '@components/atoms/BackButton';
 
 import styles from './styles';
-
-export default function InvestedPropertiesScreen() {
+export default function ListedPropertiesScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
@@ -24,9 +23,9 @@ export default function InvestedPropertiesScreen() {
         >
           <BackButton />
           <Text
-            style={[dynamicStyles.heroPrimarytext, { textAlign: 'center' }]}
+            style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}
           >
-            My Property holdings
+            My Listed Properties
           </Text>
           <Text
             style={[
@@ -35,12 +34,12 @@ export default function InvestedPropertiesScreen() {
                 color: Colors.textSecondary,
                 fontSize: 15,
                 textAlign: 'center',
-                marginBottom: 10,
+                marginBottom: 20,
               },
             ]}
           >
-            Monitor your real estate portfolio, track monthly rental yields, and
-            view the growth of your fractional property investments.
+            Manage and track the performance of the properties you have
+            tokenized and listed on the marketplace.
           </Text>
         </KeyboardAwareScrollView>
       </SafeAreaView>

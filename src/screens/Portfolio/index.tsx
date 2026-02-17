@@ -22,6 +22,7 @@ import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
 
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
 import CardContainer2 from '@components/molecules/CardContainer2';
+import { ROUTES } from 'src/navigation/constants';
 
 const InvestPropertyData = {
   id: 'property-001',
@@ -221,7 +222,7 @@ export default function Portfolio() {
           }}
         >
           <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
-              My Listed Properties
+            My Listed Properties
           </Text>
           <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
             Properties you&apos;ve created and tokenized
@@ -230,6 +231,13 @@ export default function Portfolio() {
             data={data}
             horizontal
             renderItem={({ item }) => <CardContainer2 userOwned {...item} />}
+            ListFooterComponent={() => (
+              <Button
+                title="View All"
+                onPress={() => navigation.navigate(ROUTES.LISTED_PROPERTIES)}
+                style={{ alignSelf: 'center' }}
+              ></Button>
+            )}
           />
         </View>
         <View
@@ -257,6 +265,12 @@ export default function Portfolio() {
               gap: 10,
               paddingHorizontal: 5,
             }}
+            ListFooterComponent={() => (
+              <Button
+                onPress={() => navigation.navigate(ROUTES.INVESTED_PROPERTIES)}
+                title="View All"
+              ></Button>
+            )}
           />
         </View>
       </View>

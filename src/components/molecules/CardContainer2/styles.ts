@@ -58,7 +58,6 @@ const styles = (Colors: ThemeColors) =>
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 12,
-      // Adds a slight shadow for depth over the image
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.2,

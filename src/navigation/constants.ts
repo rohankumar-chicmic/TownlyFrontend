@@ -8,4 +8,6 @@ export enum ROUTES {
   NOTIFICATIONS = 'Notifications',
   WALLET = 'WalletScreen',
   CREATE_NFT = 'CreateNft',
+  LISTED_PROPERTIES = 'ListedProperties',
+  INVESTED_PROPERTIES = 'InvestedProperties',
 }

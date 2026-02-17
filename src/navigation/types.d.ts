@@ -8,4 +8,6 @@ export type RootStackParamList = {
   CreateNft: undefined;
   KycScreen: undefined;
   Notifications: undefined;
+  ListedProperties: undefined;
+  InvestedProperties: undefined;
 };

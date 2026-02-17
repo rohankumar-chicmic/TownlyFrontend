@@ -23,6 +23,8 @@ import useNotification from '@hooks/useNotification';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { StatusBar } from 'react-native';
 import { THEME } from '@theme/constants';
+import InvestedPropertiesScreen from '@screens/InvestedPropertiesScreen';
+import ListedPropertiesScreen from '@screens/ListedPropertiesScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
@@ -72,7 +74,7 @@ const RootNavigator = () => {
     error: props => (
       <ErrorToast
         {...props}
-        style={{ borderLeftColor: Colors.error }} // ✔ recommended
+        style={{ borderLeftColor: Colors.error }}
         text1Style={{
           fontSize: 17,
           color: Colors.text,
@@ -100,8 +102,6 @@ const RootNavigator = () => {
           },
           shadowOpacity: 0.7,
           shadowRadius: 4.65,
-
-          // Android Shadow
           elevation: 8,
         }}
         text1Style={{
@@ -133,6 +133,14 @@ const RootNavigator = () => {
         >
           <Stack.Screen name={ROUTES.DRAWER} component={MainDrawerNavigation} />
           <Stack.Screen name={ROUTES.WALLET} component={WalletScreen} />
+          <Stack.Screen
+            name={ROUTES.LISTED_PROPERTIES}
+            component={ListedPropertiesScreen}
+          />
+          <Stack.Screen
+            name={ROUTES.INVESTED_PROPERTIES}
+            component={InvestedPropertiesScreen}
+          />
 
           <Stack.Screen
             name={ROUTES.PROPERTY_DETAILS}
