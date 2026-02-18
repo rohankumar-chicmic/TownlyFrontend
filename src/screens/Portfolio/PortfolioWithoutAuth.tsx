@@ -38,7 +38,7 @@ export default function PortfolioWithoutAuth() {
         Please login or connect your wallet to view your investor portfolio,
         track investments, and manage properties.
       </Text>
-
+      
       <Button
         title="Login / Connect Wallet"
         onPress={open}

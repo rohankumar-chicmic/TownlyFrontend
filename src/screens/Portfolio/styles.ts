@@ -35,8 +35,6 @@ const styles = (Colors: ThemeColors) =>
       padding: 8,
       justifyContent: 'space-evenly',
       alignItems: 'flex-start',
-      width: Dimensions.get('window').width * 0.4,
-      marginRight: 5,
     },
     dataPanel: {
       flexDirection: 'row',

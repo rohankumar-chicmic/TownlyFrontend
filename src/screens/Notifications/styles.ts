@@ -49,7 +49,6 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '400',
     },
     notificationsContainer: {
-      flex: 1,
       marginVertical: 5,
       padding: 10,
       borderWidth: 1,

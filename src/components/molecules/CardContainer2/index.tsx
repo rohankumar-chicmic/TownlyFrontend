@@ -65,7 +65,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
     >
       <Image
         src={props.imageUrl}
-        width={Dimensions.get('screen').width * 0.4}
+        width={'40%'}
         style={{ borderBottomLeftRadius: 7, borderTopLeftRadius: 7 }}
       ></Image>
 

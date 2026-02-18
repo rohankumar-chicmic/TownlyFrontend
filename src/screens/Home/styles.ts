@@ -7,7 +7,6 @@ const styles = (Colors: ThemeColors) =>
     container: {
       backgroundColor: Colors.background,
       padding: 20,
-      paddingBottom: 0,
     },
     heroPrimarytext: {
       fontSize: 30,

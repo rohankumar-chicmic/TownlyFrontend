@@ -6,11 +6,11 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       borderWidth: 1,
-      minWidth: Dimensions.get('screen').width * 0.86,
+      aspectRatio: 3 / 2, // fixed ratio
       borderColor: Colors.border,
       flexDirection: 'row',
-      margin: 5,
       borderRadius: 10,
+      overflow: 'hidden',
     },
     detailsContainer: {
       padding: 10,

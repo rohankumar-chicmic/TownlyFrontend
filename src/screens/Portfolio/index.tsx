@@ -86,11 +86,14 @@ export const DUMMY_PORTFOLIO = [
   },
 ];
 
+const CARD_WIDTH = Dimensions.get('window').width * 0.75;
+
 export default function Portfolio() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
   const dispatch = useAppDispatch();
+
   const userToken = useAppSelector(state => state.auth.userToken);
 
   const { data, isLoading, error, refetch } = useGetMyPropertiesQuery(
@@ -161,13 +164,17 @@ export default function Portfolio() {
         </View>
         <ScrollView
           horizontal
-          style={{
+          contentContainerStyle={{
             flexDirection: 'row',
+            gap: 8,
+            paddingVertical: 8,
+            paddingHorizontal: 4,
+          }}
+          style={{
             borderTopWidth: 1,
             borderBottomWidth: 1,
             borderColor: Colors.border,
-            marginVertical: 5,
-            paddingVertical: 5,
+            marginVertical: 6,
           }}
         >
           {/* <View style={dynamicStyles.dataPanel}> */}
@@ -228,15 +235,34 @@ export default function Portfolio() {
             Properties you&apos;ve created and tokenized
           </Text>
           <FlatList
+            keyExtractor={item => item.id}
             data={data}
             horizontal
-            renderItem={({ item }) => <CardContainer2 userOwned {...item} />}
+            contentContainerStyle={{
+              flexDirection: 'row',
+              gap: 10,
+            }}
+            renderItem={({ item }) => (
+              <View style={{ width: CARD_WIDTH }}>
+                <CardContainer2 userOwned {...item} />
+              </View>
+            )}
             ListFooterComponent={() => (
-              <Button
-                title="View All"
-                onPress={() => navigation.navigate(ROUTES.LISTED_PROPERTIES)}
-                style={{ alignSelf: 'center' }}
-              ></Button>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 10,
+                  width: Dimensions.get('screen').width * 0.5,
+                  aspectRatio: 1 / 1,
+                  backgroundColor: Colors.elevated,
+                }}
+              >
+                <Button
+                  title="View All"
+                  onPress={() => navigation.navigate(ROUTES.LISTED_PROPERTIES)}
+                />
+              </View>
             )}
           />
         </View>
@@ -259,6 +285,8 @@ export default function Portfolio() {
           <FlatList
             data={DUMMY_PORTFOLIO}
             horizontal
+            initialNumToRender={3}
+            keyExtractor={item => item.propertyId}
             renderItem={({ item }) => <HoldingPropertyCard {...item} />}
             contentContainerStyle={{
               flexDirection: 'row',
@@ -266,10 +294,24 @@ export default function Portfolio() {
               paddingHorizontal: 5,
             }}
             ListFooterComponent={() => (
-              <Button
-                onPress={() => navigation.navigate(ROUTES.INVESTED_PROPERTIES)}
-                title="View All"
-              ></Button>
+              <View
+                style={{
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  paddingHorizontal: 10,
+                  height: Dimensions.get('screen').width * 0.5,
+                  aspectRatio: 1 / 1,
+                  marginVertical: 20,
+                  backgroundColor: Colors.elevated,
+                }}
+              >
+                <Button
+                  onPress={() =>
+                    navigation.navigate(ROUTES.INVESTED_PROPERTIES)
+                  }
+                  title="View All"
+                />
+              </View>
             )}
           />
         </View>
