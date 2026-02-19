@@ -28,6 +28,7 @@ import { useAppKit } from '@reown/appkit-react-native';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import { THEME } from '@theme/constants';
+import Toast from 'react-native-toast-message';
 
 const InfoRow = ({
   field,
@@ -93,9 +94,14 @@ export default function WalletScreen() {
         setInputError('Amount must be between 1 and 999');
         return;
       }
-      await requestCurrency(rawAmount.toString());
+      // await requestCurrency(rawAmount.toString());
       setInputError('');
       setAmount('');
+
+      Toast.show({
+        type: 'info',
+        text1: 'request sent to admin',
+      });
     } catch (e: any) {
       console.log(e);
     }

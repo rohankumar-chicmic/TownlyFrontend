@@ -10,13 +10,14 @@ import { useAppNavigation } from '@hooks/useNavigation';
 
 import { useAppDispatch, useAppSelector } from '@redux/store';
 import {
-  useGetMyPropertiesQuery,
-  useGetMyInvestedPropertiesQuery,
+  useLazyGetMyPropertiesQuery,
+  useLazyGetMyInvestedPropertiesQuery,
 } from '@redux/PropertyApiReducer';
 import {
   useGetDonutGraphDataQuery,
   useGetLineGraphDataQuery,
   useGetMyInvestmentDetailsQuery,
+  useLazyGetTransactionsQuery,
 } from '@redux/ApiReducer';
 import KYCpendingPortfolio from './KYCpendingPortfolio';
 import PortfolioWithoutAuth from './PortfolioWithoutAuth';
@@ -26,69 +27,7 @@ import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
 import CardContainer2 from '@components/molecules/CardContainer2';
 import { ROUTES } from 'src/navigation/constants';
-import TransactionRow from '@components/atoms/TransactionsRow';
-
-const InvestPropertyData = {
-  id: 'property-001',
-  imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c',
-  name: 'Suburban Family Home',
-  location: '9943 Marlowe St, Detroit, MI',
-
-  tokensOwned: 501,
-  totalInvestedEth: 0.8203,
-  currentValueEth: 0.8398,
-  totalReturnEth: 0.0195,
-  monthlyIncomeEth: 0.0057,
-  annualYield: 8.5,
-
-  riskScore: 3.4,
-  riskLabel: 'Low Moderate Risk',
-};
-
-export const DUMMY_PORTFOLIO = [
-  {
-    propertyId: 'ab35368b-b41a-41cb-bdaa-d6e2afe47c0f',
-    propertyName: 'Burger King',
-    imageUrl:
-      'https://curb360.com/wp-content/uploads/2024/09/A_serene_real_estate_scene_captured_during_sunset_converted.jpg',
-    location: 'Rajpura, PB',
-    tokensOwned: 900,
-    investedEth: 3053.57,
-    currentValueEth: 3078.1066,
-    unrealizedPnLEth: 24.5366,
-    unrealizedPnLPercent: 0.8,
-    monthlyIncomeEth: 589.9704,
-    riskScore: 6.5,
-  },
-  {
-    propertyId: 'bc22459c-c52b-52dc-cebb-e7f3bfe58d1g',
-    propertyName: 'Suburban Villa',
-    imageUrl:
-      'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=400&q=80',
-    location: 'Detroit, MI',
-    tokensOwned: 501,
-    investedEth: 0.8203,
-    currentValueEth: 0.8398,
-    unrealizedPnLEth: 0.0195,
-    unrealizedPnLPercent: 2.37,
-    monthlyIncomeEth: 0.0057,
-    riskScore: 3.4,
-  },
-  {
-    propertyId: 'de44671e-e74d-74fe-efdd-g9h5ihg70j3i',
-    propertyName: 'Skyline Penthouse',
-    imageUrl:
-      'https://images.unsplash.com/photo-1512918728675-ed5a9ecdebfd?auto=format&fit=crop&w=400&q=80',
-    location: 'Downtown Dubai',
-    tokensOwned: 120,
-    investedEth: 5.42,
-    currentValueEth: 5.85,
-    unrealizedPnLEth: 0.43,
-    unrealizedPnLPercent: 7.93,
-    monthlyIncomeEth: 0.045,
-    riskScore: 2.1,
-  },
-];
+import TransactionsRow from '@components/atoms/TransactionsRow';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.75;
 
@@ -96,25 +35,23 @@ export default function Portfolio() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-  const dispatch = useAppDispatch();
 
   const userToken = useAppSelector(state => state.auth.userToken);
 
-  const { data, isLoading, error, refetch } = useGetMyPropertiesQuery(
-    undefined,
-    { skip: !userToken },
-  );
+  const [triggerMyProperties, myPropertiesResult] =
+    useLazyGetMyPropertiesQuery();
 
-  const {
-    data: investedList,
-    isLoading: investedLoading,
-    error: investedError,
-    refetch: investedRefetch,
-  } = useGetMyInvestedPropertiesQuery(undefined, { skip: !userToken });
+  const [triggerTransactions, transactionsResult] =
+    useLazyGetTransactionsQuery();
+
+  const [triggerInvested, investedResult] =
+    useLazyGetMyInvestedPropertiesQuery();
 
   const InvestmentDetails = useGetMyInvestmentDetailsQuery(undefined, {
     skip: !userToken,
   });
+
+  console.log(investedResult.data);
 
   const {
     data: lineData,
@@ -135,13 +72,6 @@ export default function Portfolio() {
   const address = useAppSelector(state => state.auth.userData?.walletAddress);
   const kycStatus = useAppSelector(state => state.kyc.status);
 
-  useFocusEffect(
-    useCallback(() => {
-      if (!userToken) return;
-      refetch();
-    }, []),
-  );
-
   useGetKYCStatusQuery(undefined, {
     skip: !userToken,
   });
@@ -153,7 +83,29 @@ export default function Portfolio() {
   if (kycStatus !== 2) {
     return <KYCpendingPortfolio />;
   }
-  console.log(data);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!userToken) return;
+
+      triggerMyProperties({
+        page: 1,
+        pageSize: 5,
+      });
+
+      triggerInvested({
+        page: 1,
+        pageSize: 3,
+        propertyType: 'commercial',
+      });
+
+      triggerTransactions({
+        page: 1,
+        pageSize: 4,
+      });
+    }, [userToken]),
+  );
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -248,8 +200,10 @@ export default function Portfolio() {
             Properties you&apos;ve created and tokenized
           </Text>
           <FlatList
-            keyExtractor={item => item.id}
-            data={data?.items}
+            keyExtractor={item => {
+              return item.id.toString();
+            }}
+            data={myPropertiesResult.data?.items}
             horizontal
             contentContainerStyle={{
               flexDirection: 'row',
@@ -261,14 +215,14 @@ export default function Portfolio() {
               </View>
             )}
             ListFooterComponent={() =>
-              data?.hasMore ? (
+              myPropertiesResult.data?.hasMore ? (
                 <View
                   style={{
                     justifyContent: 'center',
                     alignItems: 'center',
                     paddingHorizontal: 10,
                     width: Dimensions.get('screen').width * 0.5,
-                    aspectRatio: 1 / 1,
+                    aspectRatio: 1,
                     borderRadius: 8,
 
                     backgroundColor: Colors.elevated,
@@ -302,26 +256,30 @@ export default function Portfolio() {
             Properties you&apos;ve created and tokenized
           </Text>
           <FlatList
-            data={investedList?.items}
+            data={investedResult.data?.items}
             horizontal
             initialNumToRender={3}
-            keyExtractor={item => item.investmentId.toString()}
-            renderItem={({ item }) => <HoldingPropertyCard {...item} />}
+            keyExtractor={item => item.propertyId.toString()}
+            renderItem={({ item }) => (
+              <View style={{ width: Dimensions.get('screen').width * 0.7 }}>
+                <HoldingPropertyCard {...item} />
+              </View>
+            )}
             contentContainerStyle={{
               flexDirection: 'row',
               gap: 10,
               paddingHorizontal: 5,
             }}
             ListFooterComponent={() =>
-              investedList?.hasMore ? (
+              investedResult.data?.hasMore ? (
                 <View
                   style={{
                     justifyContent: 'center',
                     alignItems: 'center',
                     paddingHorizontal: 10,
-                    height: Dimensions.get('screen').width * 0.45,
+                    height: Dimensions.get('screen').width * 0.32,
                     borderRadius: 8,
-                    aspectRatio: 1 / 1,
+                    aspectRatio: 1,
                     marginVertical: 20,
                     backgroundColor: Colors.elevated,
                   }}
@@ -351,7 +309,7 @@ export default function Portfolio() {
             style={{
               flexDirection: 'row',
               justifyContent: 'space-between',
-              alignItems: 'center',
+              alignItems: 'flex-start',
             }}
           >
             <View>
@@ -363,7 +321,7 @@ export default function Portfolio() {
               </Text>
             </View>
             <Button
-              title="View All transactions"
+              title="View all"
               textStyle={{
                 fontWeight: '400',
               }}
@@ -373,18 +331,32 @@ export default function Portfolio() {
               }}
             ></Button>
           </View>
-          <ScrollView
-          nestedScrollEnabled
-            contentContainerStyle={{ gap: 10 }}
-            showsVerticalScrollIndicator
-            style={{ maxHeight: Dimensions.get('screen').height * 0.3 }}
+
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-around',
+              alignItems: 'flex-start',
+              paddingVertical: 5,
+            }}
           >
-            <TransactionRow type={'Income'} amount={'+34758 ETH'} status={'Completed'} />
-            <TransactionRow type={''} amount={''} status={''} />
-            <TransactionRow type={''} amount={''} status={''} />
-            <TransactionRow type={''} amount={''} status={''} />
-            <TransactionRow type={''} amount={''} status={''} />
-          </ScrollView>
+            <Text style={[dynamicStyles.smallText, { width: '30%' }]}>
+              Property Name
+            </Text>
+            <Text style={[dynamicStyles.smallText, { width: '30%' }]}>
+              Amount
+            </Text>
+            <Text style={dynamicStyles.smallText}> Date</Text>
+          </View>
+
+          <View style={{ gap: 5, alignItems: 'center' }}>
+            {transactionsResult?.data?.items.map(item => (
+              <TransactionsRow
+                item={item}
+                key={item.transactionId}
+              ></TransactionsRow>
+            ))}
+          </View>
         </View>
       </View>
     </ScrollView>

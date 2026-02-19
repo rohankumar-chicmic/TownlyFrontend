@@ -18,6 +18,7 @@ import useTheme from '@hooks/useTheme';
 import { useInvestInPropertyMutation } from '@redux/PropertyApiReducer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useAppNavigation } from '@hooks/useNavigation';
+import Toast from 'react-native-toast-message';
 
 interface Props {
   visible: boolean;
@@ -45,6 +46,11 @@ export default function InvestPropertyModal({
     try {
       await investInProperty({ propertyId: id, shares: Number(shares) });
       navigation.navigate('Drawer');
+      Toast.show({
+        type: 'info',
+        text1: 'Invested in property: ' + id,
+      });
+      onClose();
     } catch (error) {
       console.error(error);
     }

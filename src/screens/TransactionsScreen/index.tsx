@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, ActivityIndicator, FlatList } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  FlatList,
+  Dimensions,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -8,11 +14,13 @@ import useTheme from '@hooks/useTheme';
 
 import SearchInput from '@components/molecules/SearchInput';
 import BackButton from '@components/atoms/BackButton';
-import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
+import CardContainer2 from '@components/molecules/CardContainer2';
 
-import { useLazyGetMyInvestedPropertiesQuery } from '@redux/PropertyApiReducer';
+import { useLazyGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
 
-const InvestedPropertiesScreen = () => {
+const CARD_WIDTH = Dimensions.get('window').width * 0.75;
+
+const ListedProperiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
@@ -23,11 +31,10 @@ const InvestedPropertiesScreen = () => {
   const [list, setList] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
-  // ================= LAZY QUERY =================
   const [trigger, { data, isLoading, isFetching }] =
-    useLazyGetMyInvestedPropertiesQuery();
+    useLazyGetMyPropertiesQuery();
 
-  // ================= DEBOUNCE INPUT =================
+  // ================= DEBOUNCE =================
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearch(text);
@@ -36,53 +43,59 @@ const InvestedPropertiesScreen = () => {
     return () => clearTimeout(handler);
   }, [text]);
 
-  // ================= FETCH ON SEARCH =================
+  // ================= FETCH =================
+  const fetchData = useCallback(
+    (pageNumber: number, search: string) => {
+      trigger({
+        page: pageNumber,
+        pageSize: 10,
+        search,
+      });
+    },
+    [trigger],
+  );
+
+  // ================= RESET ON SEARCH =================
   useEffect(() => {
     setPage(1);
     setList([]);
     setHasMore(true);
+    fetchData(1, debouncedSearch);
+  }, [debouncedSearch, fetchData]);
 
-    trigger({
-      page: 1,
-      pageSize: 10,
-      search: debouncedSearch,
-    });
-  }, [debouncedSearch, trigger]);
-
-  // ================= FETCH ON PAGINATION =================
+  // ================= LOAD MORE =================
   useEffect(() => {
     if (page > 1) {
-      trigger({
-        page,
-        pageSize: 10,
-        search: debouncedSearch,
-      });
+      fetchData(page, debouncedSearch);
     }
-  }, [page, debouncedSearch, trigger]);
+  }, [page, fetchData]);
 
   // ================= SYNC DATA =================
   useEffect(() => {
     if (data) {
-      setList(prev => (page === 1 ? data.items : [...prev, ...data.items]));
+      setList(prev =>
+        page === 1 ? data.items : [...prev, ...data.items],
+      );
       setHasMore(data.hasMore);
     }
   }, [data, page]);
 
-  // ================= LOAD MORE =================
+  // ================= PAGINATION =================
   const loadMore = () => {
     if (!isFetching && hasMore) {
       setPage(prev => prev + 1);
     }
   };
 
-  // ================= RENDER =================
+
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* HEADER */}
       <View style={{ padding: 10 }}>
         <BackButton />
         <Text style={[dynamicStyles.heroText, { alignSelf: 'center' }]}>
-          Your Invested Properties
+          My Listed Properties
         </Text>
       </View>
 
@@ -95,48 +108,27 @@ const InvestedPropertiesScreen = () => {
       {isLoading && page === 1 ? (
         <View style={dynamicStyles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
-          <Text style={dynamicStyles.loadingText}>Loading portfolio...</Text>
+          <Text style={dynamicStyles.loadingText}>
+            Loading properties...
+          </Text>
         </View>
       ) : (
         <FlatList
           data={list}
-          keyExtractor={(item, index) => `${item.investmentId}-${index}`}
+          keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
-            <View style={{ width: '100%' }}>
-              <HoldingPropertyCard {...item} />
+            <View style={{ width: CARD_WIDTH }}>
+              <CardContainer2 userOwned {...item} />
             </View>
           )}
-          contentContainerStyle={{
-            padding: 12,
-            gap: 10,
-            alignItems: 'center',
-          }}
+          contentContainerStyle={{ padding: 12, gap: 12 }}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
-          ListFooterComponent={
-            isFetching && page > 1 ? (
-              <ActivityIndicator
-                size="small"
-                color={Colors.primary}
-                style={{ marginVertical: 15 }}
-              />
-            ) : !hasMore && list.length > 0 ? (
-              <Text
-                style={{
-                  textAlign: 'center',
-                  marginVertical: 15,
-                  color: Colors.textSecondary,
-                }}
-              >
-                No more invested properties
-              </Text>
-            ) : null
-          }
         />
       )}
     </SafeAreaView>
   );
 };
 
-export default InvestedPropertiesScreen;
+export default ListedProperiesScreen;

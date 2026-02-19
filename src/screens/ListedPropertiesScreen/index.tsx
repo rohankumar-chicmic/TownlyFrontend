@@ -18,7 +18,7 @@ import CardContainer2 from '@components/molecules/CardContainer2';
 
 import { useLazyGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
 
-const CARD_WIDTH = Dimensions.get('window').width * 0.75;
+const CARD_WIDTH = Dimensions.get('window').width * 0.8;
 
 const ListedProperiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
@@ -73,9 +73,7 @@ const ListedProperiesScreen = () => {
   // ================= SYNC DATA =================
   useEffect(() => {
     if (data) {
-      setList(prev =>
-        page === 1 ? data.items : [...prev, ...data.items],
-      );
+      setList(prev => (page === 1 ? data.items : [...prev, ...data.items]));
       setHasMore(data.hasMore);
     }
   }, [data, page]);
@@ -86,17 +84,6 @@ const ListedProperiesScreen = () => {
       setPage(prev => prev + 1);
     }
   };
-
-  // ================= FOOTER =================
-  const footer = isFetching ? (
-    <View style={dynamicStyles.footerContainer}>
-      <ActivityIndicator size="large" color={Colors.primary} />
-    </View>
-  ) : !hasMore && list.length > 0 ? (
-    <View style={dynamicStyles.footerContainer}>
-      <Text style={dynamicStyles.endText}>No more properties</Text>
-    </View>
-  ) : null;
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -112,16 +99,14 @@ const ListedProperiesScreen = () => {
       <View style={dynamicStyles.container}>
         <SearchInput text={text} setText={setText} />
       </View>
-
-      {/* LIST */}
-      {isLoading && page === 1 ? (
-        <View style={dynamicStyles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
-          <Text style={dynamicStyles.loadingText}>
-            Loading properties...
-          </Text>
-        </View>
-      ) : (
+      <View
+        style={{
+          bottom: 0,
+          height: '85%',
+          borderTopColor: Colors.border,
+          borderTopWidth: 1,
+        }}
+      >
         <FlatList
           data={list}
           keyExtractor={item => item.id.toString()}
@@ -130,13 +115,17 @@ const ListedProperiesScreen = () => {
               <CardContainer2 userOwned {...item} />
             </View>
           )}
-          ListFooterComponent={footer}
-          contentContainerStyle={{ padding: 12, gap: 12 }}
+          style={{ flex: 1 }}
+          contentContainerStyle={{
+            padding: 12,
+            gap: 12,
+            alignItems: 'center',
+          }}
           showsVerticalScrollIndicator={false}
           onEndReached={loadMore}
           onEndReachedThreshold={0.5}
         />
-      )}
+      </View>
     </SafeAreaView>
   );
 };

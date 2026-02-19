@@ -22,7 +22,6 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id: props.id });
   };
 
-  console.log(props.imageUrl);
   const getBadgeConfig = (status?: number) => {
     switch (status) {
       case 1:
@@ -109,7 +108,10 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
 
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Estimated Yield</Text>
-          <Text style={[dynamicStyles.values]}>{props.annualYieldPercent}{'%'}</Text>
+          <Text style={[dynamicStyles.values]}>
+            {props.annualYieldPercent}
+            {'%'}
+          </Text>
         </View>
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Availability</Text>

@@ -25,14 +25,14 @@ export default function Header({
 }: Readonly<HeaderProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const insets = useSafeAreaInsets();
+  // const insets = useSafeAreaInsets();
   return (
     <View
       style={[
         dynamicStyles.container,
         {
-          paddingTop: insets.top,
-          height: 60 + insets.top,
+          paddingVertical: 10,
+
           width: '100%',
         },
       ]}

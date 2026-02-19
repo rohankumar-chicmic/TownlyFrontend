@@ -23,7 +23,6 @@ const Home = () => {
   const navigation = useAppNavigation();
 
   const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery();
-
   const [showModal, setShowModal] = useState(false);
 
   const handleClick = () => {

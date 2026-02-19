@@ -161,7 +161,7 @@ export default function PropertyDetails() {
 
         <Button
           title="Invest"
-          disabled={!userToken}
+          disabled={!userToken || data?.userOwned}
           onPress={() => setShowModal(true)}
           size="lg"
           style={{ margin: 15 }}

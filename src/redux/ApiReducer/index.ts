@@ -23,6 +23,7 @@ const authApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+
     getBalance: builder.query<any, void>({
       query: () => ({
         url: '/tokens/balance',
@@ -53,6 +54,13 @@ const authApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
+
+    getTransactions: builder.query({
+      query: ({ page = 1, pageSize = 5, type = 1 }) => ({
+        url: `/transactions/me?page=${page}&pageSize=${pageSize}&type=${type}`,
+        method: 'GET',
+      }),
+    }),
   }),
 
   overrideExisting: false,
@@ -64,6 +72,7 @@ export const {
   useGetMyInvestmentDetailsQuery,
   useRequestCurrencyMutation,
   useGetBalanceQuery,
+  useLazyGetTransactionsQuery,
   useGetLineGraphDataQuery,
   useGetDonutGraphDataQuery,
 } = authApi;

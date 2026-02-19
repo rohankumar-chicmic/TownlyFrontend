@@ -32,13 +32,13 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
-  if (!data || data.length === 0) return null;
+  // if (!data || data.length === 0) return null;
 
   const lineData = (data ?? []).map((item, index) => ({
-    value: Number(item.value),
-    label: item.label,
+    value: Number(item.value) || 0,
+    label: item.label || index,
   }));
-  console.log(lineData);
+
   const values = data.map(d => Number(d.value) || 0);
   const { maxValue, minValue } = getYAxisScale(values, 4);
 
@@ -65,6 +65,7 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             initialSpacing={10}
             endSpacing={0}
             color={Colors.primary}
+            height={Dimensions.get('window').height * 0.15}
             dataPointsHeight={8}
             dataPointsWidth={8}
             dataPointsColor={Colors.primary}
@@ -80,9 +81,6 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             showVerticalLines
             verticalLinesColor={Colors.border}
             noOfSections={4}
-
-            // formatYLabel={formatYAxisLabel}
-            // onPress={(item, index) => setSelectedIndex(index)}
           />
         </View>
       </View>
