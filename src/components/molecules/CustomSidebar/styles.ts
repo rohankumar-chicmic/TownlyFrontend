@@ -30,7 +30,7 @@ const styles = (Colors: ThemeColors) =>
     menuItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent:'space-evenly',
+      justifyContent: 'space-evenly',
       paddingVertical: 14,
       paddingHorizontal: 10,
       borderRadius: 8,

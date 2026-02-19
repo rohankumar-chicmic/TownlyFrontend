@@ -9,7 +9,10 @@ import Button from '@components/atoms/Button';
 import { useAppNavigation } from '@hooks/useNavigation';
 
 import { useAppDispatch, useAppSelector } from '@redux/store';
-import { useGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
+import {
+  useGetMyPropertiesQuery,
+  useGetMyInvestedPropertiesQuery,
+} from '@redux/PropertyApiReducer';
 import {
   useGetDonutGraphDataQuery,
   useGetLineGraphDataQuery,
@@ -23,6 +26,7 @@ import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
 import CardContainer2 from '@components/molecules/CardContainer2';
 import { ROUTES } from 'src/navigation/constants';
+import TransactionRow from '@components/atoms/TransactionsRow';
 
 const InvestPropertyData = {
   id: 'property-001',
@@ -100,9 +104,18 @@ export default function Portfolio() {
     undefined,
     { skip: !userToken },
   );
+
+  const {
+    data: investedList,
+    isLoading: investedLoading,
+    error: investedError,
+    refetch: investedRefetch,
+  } = useGetMyInvestedPropertiesQuery(undefined, { skip: !userToken });
+
   const InvestmentDetails = useGetMyInvestmentDetailsQuery(undefined, {
     skip: !userToken,
   });
+
   const {
     data: lineData,
     isLoading: lineLoading,
@@ -140,7 +153,7 @@ export default function Portfolio() {
   if (kycStatus !== 2) {
     return <KYCpendingPortfolio />;
   }
-
+  console.log(data);
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -236,7 +249,7 @@ export default function Portfolio() {
           </Text>
           <FlatList
             keyExtractor={item => item.id}
-            data={data}
+            data={data?.items}
             horizontal
             contentContainerStyle={{
               flexDirection: 'row',
@@ -247,23 +260,29 @@ export default function Portfolio() {
                 <CardContainer2 userOwned {...item} />
               </View>
             )}
-            ListFooterComponent={() => (
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  paddingHorizontal: 10,
-                  width: Dimensions.get('screen').width * 0.5,
-                  aspectRatio: 1 / 1,
-                  backgroundColor: Colors.elevated,
-                }}
-              >
-                <Button
-                  title="View All"
-                  onPress={() => navigation.navigate(ROUTES.LISTED_PROPERTIES)}
-                />
-              </View>
-            )}
+            ListFooterComponent={() =>
+              data?.hasMore ? (
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 10,
+                    width: Dimensions.get('screen').width * 0.5,
+                    aspectRatio: 1 / 1,
+                    borderRadius: 8,
+
+                    backgroundColor: Colors.elevated,
+                  }}
+                >
+                  <Button
+                    title="View All"
+                    onPress={() =>
+                      navigation.navigate(ROUTES.LISTED_PROPERTIES)
+                    }
+                  />
+                </View>
+              ) : null
+            }
           />
         </View>
         <View
@@ -283,37 +302,89 @@ export default function Portfolio() {
             Properties you&apos;ve created and tokenized
           </Text>
           <FlatList
-            data={DUMMY_PORTFOLIO}
+            data={investedList?.items}
             horizontal
             initialNumToRender={3}
-            keyExtractor={item => item.propertyId}
+            keyExtractor={item => item.investmentId.toString()}
             renderItem={({ item }) => <HoldingPropertyCard {...item} />}
             contentContainerStyle={{
               flexDirection: 'row',
               gap: 10,
               paddingHorizontal: 5,
             }}
-            ListFooterComponent={() => (
-              <View
-                style={{
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                  paddingHorizontal: 10,
-                  height: Dimensions.get('screen').width * 0.5,
-                  aspectRatio: 1 / 1,
-                  marginVertical: 20,
-                  backgroundColor: Colors.elevated,
-                }}
-              >
-                <Button
-                  onPress={() =>
-                    navigation.navigate(ROUTES.INVESTED_PROPERTIES)
-                  }
-                  title="View All"
-                />
-              </View>
-            )}
+            ListFooterComponent={() =>
+              investedList?.hasMore ? (
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 10,
+                    height: Dimensions.get('screen').width * 0.45,
+                    borderRadius: 8,
+                    aspectRatio: 1 / 1,
+                    marginVertical: 20,
+                    backgroundColor: Colors.elevated,
+                  }}
+                >
+                  <Button
+                    onPress={() =>
+                      navigation.navigate(ROUTES.INVESTED_PROPERTIES)
+                    }
+                    title="View All"
+                  />
+                </View>
+              ) : null
+            }
           />
+        </View>
+        <View
+          style={{
+            marginVertical: 5,
+            padding: 10,
+            borderRadius: 4,
+            borderWidth: 1,
+            backgroundColor: Colors.surface,
+            borderColor: Colors.border,
+          }}
+        >
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <View>
+              <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
+                Recent Transactions
+              </Text>
+              <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
+                Your latest investment activity
+              </Text>
+            </View>
+            <Button
+              title="View All transactions"
+              textStyle={{
+                fontWeight: '400',
+              }}
+              size="sm"
+              onPress={function (): void {
+                console.log('Function not implemented.');
+              }}
+            ></Button>
+          </View>
+          <ScrollView
+          nestedScrollEnabled
+            contentContainerStyle={{ gap: 10 }}
+            showsVerticalScrollIndicator
+            style={{ maxHeight: Dimensions.get('screen').height * 0.3 }}
+          >
+            <TransactionRow type={'Income'} amount={'+34758 ETH'} status={'Completed'} />
+            <TransactionRow type={''} amount={''} status={''} />
+            <TransactionRow type={''} amount={''} status={''} />
+            <TransactionRow type={''} amount={''} status={''} />
+            <TransactionRow type={''} amount={''} status={''} />
+          </ScrollView>
         </View>
       </View>
     </ScrollView>

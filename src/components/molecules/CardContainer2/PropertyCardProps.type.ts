@@ -13,6 +13,7 @@ interface PropertyCardProps {
   description?: string;
   userOwned?: boolean;
   status?: number;
+  onClick?: () => void;
 }
 
 export default PropertyCardProps;

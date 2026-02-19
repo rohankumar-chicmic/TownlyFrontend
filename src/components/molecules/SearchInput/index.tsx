@@ -11,12 +11,10 @@ import useTheme from '@hooks/useTheme';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
-import Button from '@components/atoms/Button';
-
 interface searchPropsType {
   text: string;
   setText: Dispatch<SetStateAction<string>>;
-  onPress: () => void;
+  onPress?: () => void;
 }
 
 export default function SearchInput(props: searchPropsType) {
@@ -61,23 +59,6 @@ export default function SearchInput(props: searchPropsType) {
           value={props.text}
           style={dynamicStyles.input}
         />
-        <Button
-          onPress={props.onPress}
-          size="sm"
-          style={{
-            marginHorizontal: 4,
-          }}
-        >
-          <Text
-            style={{
-              color: Colors.background,
-              fontWeight: '600',
-              fontSize: 12,
-            }}
-          >
-            Search
-          </Text>
-        </Button>
       </View>
     </View>
   );

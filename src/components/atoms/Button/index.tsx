@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  Text,
-  Pressable,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import { Text, Pressable, ViewStyle, TextStyle } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 
@@ -54,11 +49,7 @@ export default function Button({
         style,
       ]}
     >
-      {title && (
-        <Text style={[dynamicStyles.text, textStyle]}>
-          {title}
-        </Text>
-      )}
+      {title && <Text style={[dynamicStyles.text, textStyle]}>{title}</Text>}
       {children}
     </Pressable>
   );

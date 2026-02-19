@@ -4,7 +4,7 @@ export default interface InvestedPropertyCardProps {
   imageUrl: string;
   name: string;
   location: string;
-  propertyType: string, 
+  propertyType: string;
 
   tokensOwned: number;
   totalInvestedEth: number;

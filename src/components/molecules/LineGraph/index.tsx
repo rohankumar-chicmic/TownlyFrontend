@@ -34,11 +34,11 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
 
   if (!data || data.length === 0) return null;
 
-  const lineData = (data ?? []).map(item => ({
-    value: Number(item.value) || 0,
+  const lineData = (data ?? []).map((item, index) => ({
+    value: Number(item.value),
     label: item.label,
   }));
-
+  console.log(lineData);
   const values = data.map(d => Number(d.value) || 0);
   const { maxValue, minValue } = getYAxisScale(values, 4);
 
@@ -54,14 +54,14 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             maxValue={maxValue}
             yAxisOffset={minValue}
             curved
-            curvature={0.1}
+            curvature={0.04}
             data={lineData}
-            height={140}
             width={Dimensions.get('window').width * 0.7}
+            overflowBottom={20}
             thickness={2}
             isAnimated
             onDataChangeAnimationDuration={0.3}
-            spacing={Dimensions.get('window').width * 0.13}
+            spacing={Dimensions.get('window').width * 0.11}
             initialSpacing={10}
             endSpacing={0}
             color={Colors.primary}

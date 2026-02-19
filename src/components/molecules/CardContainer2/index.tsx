@@ -15,9 +15,14 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   const [isPressed, setIsPressed] = useState(false);
 
   const handlePressed = () => {
+    if (props.onClick) {
+      props.onClick();
+      return;
+    }
     navigation.push(ROUTES.PROPERTY_DETAILS, { id: props.id });
   };
 
+  console.log(props.imageUrl);
   const getBadgeConfig = (status?: number) => {
     switch (status) {
       case 1:
@@ -34,7 +39,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   };
 
   const renderBadge = () => {
-    const config = getBadgeConfig(props.status); // Assuming 'status' exists in PropertyCardProps
+    const config = getBadgeConfig(props.status);
     if (!config) return null;
 
     return (
@@ -63,19 +68,26 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         },
       ]}
     >
-      <Image
-        src={props.imageUrl}
-        width={'40%'}
-        style={{ borderBottomLeftRadius: 7, borderTopLeftRadius: 7 }}
-      ></Image>
+      <View style={{ width: '40%' }}>
+        <Image
+          source={{
+            uri: props.imageUrl,
+          }}
+          style={{
+            borderBottomLeftRadius: 7,
+            borderTopLeftRadius: 7,
+            height: '100%',
+          }}
+        ></Image>
+      </View>
 
       {props.userOwned && renderBadge()}
 
       <View style={dynamicStyles.detailsContainer}>
-        <Text numberOfLines={3} style={dynamicStyles.title}>
+        <Text numberOfLines={1} style={dynamicStyles.title}>
           {props.name}
         </Text>
-        <Text style={dynamicStyles.location} numberOfLines={2}>
+        <Text style={dynamicStyles.location} numberOfLines={1}>
           <Icons.Location width={10} height={10} borderColor={Colors.primary} />{' '}
           {props.location}
         </Text>
@@ -97,7 +109,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
 
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Estimated Yield</Text>
-          <Text style={[dynamicStyles.values]}>{props.annualYieldPercent}</Text>
+          <Text style={[dynamicStyles.values]}>{props.annualYieldPercent}{'%'}</Text>
         </View>
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Availability</Text>

@@ -64,8 +64,8 @@ export const {
   useGetMyInvestmentDetailsQuery,
   useRequestCurrencyMutation,
   useGetBalanceQuery,
-  useGetLineGraphDataQuery, 
-  useGetDonutGraphDataQuery
+  useGetLineGraphDataQuery,
+  useGetDonutGraphDataQuery,
 } = authApi;
 
 export { authApi };

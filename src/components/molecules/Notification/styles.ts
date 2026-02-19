@@ -28,7 +28,7 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 10,
       color: Colors.textSecondary,
     },
-   dataPanelCard: {
+    dataPanelCard: {
       borderRadius: 4,
       borderWidth: 1,
       backgroundColor: Colors.surface,

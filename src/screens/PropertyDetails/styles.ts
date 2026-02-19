@@ -43,7 +43,6 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 12,
     },
 
-    
     investCard: {
       margin: 16,
       padding: 16,
@@ -57,8 +56,8 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '600',
       marginBottom: 12,
       alignSelf: 'center',
-      borderBottomColor: Colors.border, 
-      borderBottomWidth:1
+      borderBottomColor: Colors.border,
+      borderBottomWidth: 1,
     },
 
     inputRow: {
@@ -84,12 +83,12 @@ const styles = (Colors: ThemeColors) =>
     },
     sectionTitle: {
       fontSize: 18,
-      fontWeight:'500',
+      fontWeight: '500',
       color: Colors.textPrimary,
       marginBottom: 10,
     },
     containerStyle: {
-      flex: 1, 
+      flex: 1,
       borderRadius: 4,
       borderWidth: 1,
       backgroundColor: Colors.surface,

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingHorizontal: 40,
-    marginTop: height * 0.15, // Centers it visually in the scroll area
+    marginTop: height * 0.15,
   },
   iconCircle: {
     width: 120,
@@ -64,7 +64,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     textAlign: 'center',
-    marginBottom: 8,
   },
   description: {
     fontSize: 15,

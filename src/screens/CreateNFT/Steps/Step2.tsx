@@ -60,7 +60,7 @@ export default function Step2(props: StepProps) {
 
   useEffect(() => {
     reset({
-      totalPropertyValue: props.formData.totalPropertyValue ,
+      totalPropertyValue: props.formData.totalPropertyValue,
       numberOfShares: props.formData.numberOfShares,
       rentalIncome: props.formData.rentalIncome,
       expectedAnnualYield: props.formData.expectedAnnualYield,

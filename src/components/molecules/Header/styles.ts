@@ -34,7 +34,7 @@ const styles = (Colors: ThemeColors) =>
       paddingHorizontal: 10,
       borderRadius: 20,
       borderWidth: 0.5,
-      borderColor: Colors.primary, 
+      borderColor: Colors.primary,
     },
     walletIconCircle: {
       width: 16,

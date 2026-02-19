@@ -130,6 +130,7 @@ const RootNavigator = () => {
             headerShown: false,
             contentStyle: { backgroundColor: Colors.background },
           }}
+          // initialRouteName={ROUTES.INVESTED_PROPERTIES}
         >
           <Stack.Screen name={ROUTES.DRAWER} component={MainDrawerNavigation} />
           <Stack.Screen name={ROUTES.WALLET} component={WalletScreen} />

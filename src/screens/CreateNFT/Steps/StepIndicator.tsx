@@ -30,8 +30,8 @@ export default function StepIndicator({
                 ? Colors.primaryDark
                 : Colors.surface,
           borderRadius: 15,
-          justifyContent: 'center', 
-          alignItems: 'center'
+          justifyContent: 'center',
+          alignItems: 'center',
         }}
       >
         {children}

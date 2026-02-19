@@ -39,7 +39,7 @@ const styles = (Colors: ThemeColors) =>
       borderColor: 'white',
       justifyContent: 'center',
       alignItems: 'center',
-      alignSelf: 'flex-end'
+      alignSelf: 'flex-end',
     },
   });
 

@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  Dimensions,
+  FlatList,
+} from 'react-native';
 
 import PagerView from 'react-native-pager-view';
 import useTheme from '@hooks/useTheme';
@@ -12,7 +19,9 @@ import {
 } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
-import PropertyListing from '@components/molecules/PropertyListing';
+import CardContainer from '@components/molecules/CardContainer2';
+import ListEmptyComponent from '@components/molecules/PropertyListing/ListEmptyComponent';
+
 import { Icons } from '@utils/icons';
 import {
   useGetPropertyDetailsQuery,
@@ -162,10 +171,19 @@ export default function PropertyDetails() {
           <Text style={[dynamicStyles.sectionTitle, { paddingHorizontal: 10 }]}>
             Related Properties
           </Text>
-          <PropertyListing
+          <FlatList
             horizontal
-            data={relatedProperties.data}
-          ></PropertyListing>
+            data={relatedProperties.data ?? []}
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            renderItem={({ item }) => (
+              <View style={{ width: Dimensions.get('screen').width * 0.8 }}>
+                <CardContainer {...item} />
+              </View>
+            )}
+            ListEmptyComponent={() => <ListEmptyComponent />}
+            contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
+            showsHorizontalScrollIndicator={false}
+          />
         </View>
         {kycStatus === 2 ? (
           <InvestPropertyModal

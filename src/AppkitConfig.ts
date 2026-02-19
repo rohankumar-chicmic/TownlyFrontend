@@ -10,14 +10,13 @@ const projectId = '9e773ea4be62417831636eb61b17c107';
 
 const APP_NAME = IS_DEV ? 'townly-dev' : 'townly';
 const APP_SCHEME = IS_DEV ? 'townly-dev' : 'townly';
-const APP_URL = 'https://townly.app'; 
-const UNIVERSAL_LINK = 'townly.app'; 
+const APP_URL = 'https://townly.app';
+const UNIVERSAL_LINK = 'townly.app';
 
 export const wagmiAdapter = new WagmiAdapter({
   projectId,
   networks: [mainnet, sepolia],
 });
-
 
 export const appKit = createAppKit({
   projectId,

@@ -1,6 +1,5 @@
 import * as yup from 'yup';
-import { KYCFormData } from './form.type';
-import { DocumentFile } from './form.type';
+import { KYCFormData, DocumentFile } from './form.type';
 
 export const kycSchema: yup.ObjectSchema<KYCFormData> = yup.object({
   fullName: yup.string().required('Full name is required'),

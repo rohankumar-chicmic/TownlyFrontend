@@ -54,7 +54,7 @@ const styles = (Colors: ThemeColors) =>
       borderWidth: 1,
       backgroundColor: Colors.surface,
       borderColor: Colors.border,
-      borderRadius: 4
+      borderRadius: 4,
     },
     emptyContainer: {
       padding: 40,

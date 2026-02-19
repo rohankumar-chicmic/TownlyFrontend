@@ -3,24 +3,26 @@ import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import { Icons } from '@utils/icons';
 
+// 1. Updated interface to match your specific JSON keys
 interface PropertyPortfolioData {
   propertyId: string;
   propertyName: string;
-  imageUrl: string;
+  propertyImageUrl: string;
   location: string;
-  tokensOwned: number;
-  investedEth: number;
-  currentValueEth: number;
-  unrealizedPnLEth: number;
-  unrealizedPnLPercent: number;
-  monthlyIncomeEth: number;
-  riskScore: number;
+  sharesPurchased: number;  
+  ethAmountAtExecution: number;
+  totalAmountUsd: number;
+  ethUsdRateAtExecution: number;
+  investedAt: string;
+  investmentId: string;
+  pricePerShareUsd: number;
 }
 
 const HoldingPropertyCard = (data: PropertyPortfolioData) => {
   const { Colors } = useTheme();
 
-  const DataItem = ({ label, value, isSuccess, isSecondary }) => (
+  // Helper component for the data grid
+  const DataItem = ({ label, value, isSuccess }: any) => (
     <View style={styles.dataItem}>
       <Text style={[styles.label, { color: Colors.textSecondary }]}>
         {label}
@@ -29,7 +31,6 @@ const HoldingPropertyCard = (data: PropertyPortfolioData) => {
         style={[
           styles.value,
           { color: isSuccess ? Colors.success : Colors.textPrimary },
-          isSecondary && { fontSize: 12, fontWeight: '500' },
         ]}
       >
         {value}
@@ -44,47 +45,47 @@ const HoldingPropertyCard = (data: PropertyPortfolioData) => {
         {
           backgroundColor: Colors.surface,
           borderColor: Colors.border,
-          width: Dimensions.get('screen').width * 0.8,
         },
       ]}
     >
       <View style={styles.headerRow}>
-        <Image source={{ uri: data.imageUrl }} style={styles.propertyImage} />
+        {/* Fixed the typo: propertyImageUrl matches your JSON */}
+        <Image
+          source={{ uri: data?.propertyImageUrl }}
+          style={styles.propertyImage}
+          resizeMode="cover"
+        />
 
         <View style={styles.mainInfoColumn}>
-          {/* 1. Title */}
           <Text
             style={[styles.title, { color: Colors.textPrimary }]}
             numberOfLines={1}
           >
-            {data.propertyName}
+            {data?.propertyName || 'Unknown Property'}
           </Text>
 
-          {/* 2. Location */}
           <View style={styles.locationRow}>
             <Icons.Location width={12} height={12} color={Colors.primary} />
             <Text
               style={[styles.locationText, { color: Colors.textMuted }]}
               numberOfLines={1}
             >
-              {data.location}
+              {data?.location}
             </Text>
           </View>
 
-          {/* 3. Tag (Hardcoded 'Commercial' for Burger King or logic based on ID) */}
           <View style={[styles.badge, { backgroundColor: Colors.background }]}>
             <Text style={[styles.badgeText, { color: Colors.textPrimary }]}>
               COMMERCIAL
             </Text>
           </View>
 
-          {/* 4. Risk Score */}
           <View style={styles.riskRow}>
             <Text style={[styles.riskLabel, { color: Colors.textMuted }]}>
-              Final Risk Score
+              Shares Owned
             </Text>
             <Text style={[styles.riskValue, { color: Colors.textPrimary }]}>
-              {data.riskScore.toFixed(1)}/10
+              {data?.sharesPurchased}
             </Text>
           </View>
         </View>
@@ -92,33 +93,19 @@ const HoldingPropertyCard = (data: PropertyPortfolioData) => {
 
       <View style={[styles.divider, { backgroundColor: Colors.border }]} />
 
-      {/* Data Grid mapped to your API fields */}
+      {/* 2. Grid now uses the correct JSON fields */}
       <View style={styles.grid}>
         <DataItem
-          label="Tokens Owned"
-          value={data.tokensOwned.toLocaleString()}
+          label="Invested"
+          value={`${data?.ethAmountAtExecution?.toFixed(3)} ETH`}
         />
         <DataItem
-          label="Total Invested"
-          value={`${data.investedEth.toFixed(2)} ETH`}
+          label="Value (USD)"
+          value={`$${(data?.totalAmountUsd / 1000).toFixed(1)}k`}
         />
         <DataItem
-          label="Current Value"
-          value={`${data.currentValueEth.toFixed(2)} ETH`}
-        />
-        <DataItem
-          label="Unrealized PnL"
-          value={`+${data.unrealizedPnLEth.toFixed(3)} ETH`}
-          isSuccess={data.unrealizedPnLEth > 0}
-        />
-        <DataItem
-          label="PnL %"
-          value={`${data.unrealizedPnLPercent.toFixed(2)}%`}
-          isSuccess={data.unrealizedPnLPercent > 0}
-        />
-        <DataItem
-          label="Monthly Income"
-          value={`${data.monthlyIncomeEth.toFixed(4)} ETH`}
+          label="Price/Share"
+          value={`$${data?.pricePerShareUsd?.toLocaleString()}`}
         />
       </View>
     </View>
@@ -127,29 +114,32 @@ const HoldingPropertyCard = (data: PropertyPortfolioData) => {
 
 const styles = StyleSheet.create({
   card: {
+    width: '100%',
     borderRadius: 16,
-    padding: 16,
-    marginVertical: 8,
+    padding: 8,
     borderWidth: 1,
+    alignSelf: 'center',
+    // iOS Shadow
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowRadius: 8,
+    // Android Shadow
+    elevation: 3,
   },
   headerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
   propertyImage: {
-    width: 100,
-    height: 100,
+    width: 90,
+    height: 90,
     borderRadius: 12,
   },
   mainInfoColumn: {
     flex: 1,
     paddingLeft: 16,
-    height: 100, // Matches image height to allow space-between
+    height: 90,
     justifyContent: 'space-between',
   },
   title: {
@@ -161,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   locationText: {
-    fontSize: 13,
+    fontSize: 12,
     marginLeft: 4,
     flex: 1,
   },
@@ -171,7 +161,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: 'rgba(0,0,0,0.05)',
   },
   badgeText: {
     fontSize: 10,
@@ -201,19 +191,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   dataItem: {
-    width: '32%',
-    marginBottom: 12,
+    width: '30%',
   },
   label: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: '600',
     marginBottom: 2,
     textTransform: 'uppercase',
-    letterSpacing: 0.3,
   },
   value: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '700',
   },
 });
+
 export default HoldingPropertyCard;

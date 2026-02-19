@@ -5,9 +5,9 @@ import { ThemeColors } from '@theme/constants';
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
-      flex:1,
+      flex: 1,
       backgroundColor: Colors.background,
-      paddingHorizontal:20
+      paddingHorizontal: 20,
     },
     heroPrimarytext: {
       fontSize: 40,
@@ -27,7 +27,7 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 15,
       color: Colors.textSecondary,
     },
-    tag:{
+    tag: {
       margin: 10,
       alignSelf: 'flex-start',
       backgroundColor: Colors.outline,

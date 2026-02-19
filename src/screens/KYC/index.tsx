@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, Platform, Image, Dimensions, StatusBar } from 'react-native';
+import {
+  View,
+  Text,
+  Platform,
+  Image,
+  Dimensions,
+  StatusBar,
+} from 'react-native';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';

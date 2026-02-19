@@ -21,8 +21,6 @@ export const saveSiwxSession = async (session: SIWXSession, token?: string) => {
   }
 };
 
-
-
 export const getSiwxSession = async (): Promise<SIWXSession | null> => {
   try {
     const sessionData = await AsyncStorage.getItem(SIWX_SESSION_KEY);
