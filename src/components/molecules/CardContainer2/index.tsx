@@ -96,14 +96,13 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
             dynamicStyles.smallText,
             {
               color: Colors.textPrimary,
+              justifyContent: 'space-between',
             },
           ]}
         >
+          <Text style={dynamicStyles.smallText}>Final risk Score: </Text>
           {props.riskScore ?? 0}
           {'/10 '}
-          {/* <Text style={[dynamicStyles.smallText]}>
-              {props.riskData.label}
-            </Text> */}
         </Text>
 
         <View style={dynamicStyles.column}>

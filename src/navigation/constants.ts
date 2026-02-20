@@ -10,4 +10,5 @@ export enum ROUTES {
   CREATE_NFT = 'CreateNft',
   LISTED_PROPERTIES = 'ListedProperties',
   INVESTED_PROPERTIES = 'InvestedProperties',
+  TRANSACTIONS = 'Transactions',
 }

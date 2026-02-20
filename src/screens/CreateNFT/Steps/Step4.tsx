@@ -10,6 +10,8 @@ import { viewDocument } from '@react-native-documents/viewer';
 import { useMakePropertyMutation } from '@redux/PropertyApiReducer';
 import { useAppSelector } from '@redux/store';
 import { useAppNavigation } from '@hooks/useNavigation';
+import Toast from 'react-native-toast-message';
+import { ROUTES } from 'src/navigation/constants';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -74,7 +76,19 @@ export default function Step4(props: StepProps) {
         data: props.formData,
         token: userToken,
       }).unwrap();
-      navigation.navigate('Portfolio');
+      if (isSuccess) {
+        navigation.navigate(ROUTES.DRAWER);
+        Toast.show({
+          type: 'info',
+          text1: 'Your property creation request has been sent successfully',
+        });
+      }
+      if(isError) {
+        Toast.show({
+          type: 'info',
+          text1: 'Sorry, cannot create property.',
+        });
+      }
       console.log('Property created successfully!', result);
     } catch (err: any) {
       console.error('Failed to create property:', err);

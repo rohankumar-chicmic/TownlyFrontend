@@ -2,22 +2,6 @@ import api from '@redux/store/api';
 import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
 import { NFTFormData } from '@screens/CreateNFT/types';
 import { PropertyDetailsType } from '@utils/types';
-import { RootState, useAppSelector } from '@redux/store';
-import { fetchBaseQuery } from '@reduxjs/toolkit/query';
-
-// const MOCK_INVESTED = Array.from({ length: 42 }).map((_, i) => ({
-//   investmentId: i + 1,
-//   propertyName: `Property ${i + 1}`,
-//   location: `City ${i % 5}`,
-//   imageUrl: 'https://picsum.photos/200',
-//   tokensOwned: Math.floor(Math.random() * 1000),
-//   investedEth: Math.random() * 5,
-//   currentValueEth: Math.random() * 6,
-//   unrealizedPnLEth: Math.random(),
-//   unrealizedPnLPercent: Math.random() * 10,
-//   monthlyIncomeEth: Math.random() * 0.1,
-//   riskScore: Math.random() * 10,
-// }));
 
 const propertyApi = api.injectEndpoints({
   endpoints: builder => ({
@@ -73,46 +57,28 @@ const propertyApi = api.injectEndpoints({
           url: '/properties',
           method: 'POST',
           body: formData,
-          Headers: {
+          headers: {
             Authorization: `Bearer ${token}`,
           },
         };
       },
     }),
 
-    getMyProperties: builder.query<PropertyCardProps[], void>({
-      query: () => ({
-        url: '/properties/me',
+    getMyProperties: builder.query({
+      query: params => ({
+        url: `/properties/me`,
         method: 'GET',
+        params,
       }),
     }),
 
     getMyInvestedProperties: builder.query({
-      query: ({ page, pageSize, search = '', propertyType }) => ({
-        url: `/investments/me?page=${page}&pageSize=${pageSize}&search=${search}&propertyType=${propertyType}`,
+      query: params => ({
+        url: `/investments/me`,
         method: 'GET',
+        params,
       }),
     }),
-
-    // getMyInvestedProperties: builder.query({
-    //   async queryFn({ page, pageSize, search }) {
-    //     const filtered = MOCK_INVESTED.filter(p =>
-    //       p.propertyName.toLowerCase().includes(search?.toLowerCase() ?? ''),
-    //     );
-
-    //     const start = (page - 1) * pageSize;
-    //     const end = start + pageSize;
-
-    //     await new Promise(r => setTimeout(r, 500));
-
-    //     return {
-    //       data: {
-    //         items: filtered.slice(start, end),
-    //         hasMore: end < filtered.length,
-    //       },
-    //     };
-    //   },
-    // }),
 
     getFeaturedProperties: builder.query<PropertyCardProps[], void>({
       query: () => ({
@@ -139,10 +105,32 @@ const propertyApi = api.injectEndpoints({
       { hasMore: boolean; items: PropertyCardProps[] },
       { search: string; propertyType: string; page: number; pageSize: number }
     >({
-      query: ({ search, propertyType, page, pageSize }) => ({
-        url: `/properties/marketplace?page=${page}&pageSize=${pageSize}&search=${search}&propertyType=${propertyType}`,
+      query: params => ({
+        url: `/properties/marketplace`,
         method: 'GET',
+        params,
       }),
+
+      serializeQueryArgs: ({ endpointName, queryArgs }) => {
+        return `${endpointName}-${queryArgs.search}-${queryArgs.propertyType}`;
+      },
+
+      // 2. Decide how to update the cache when new data arrives
+      merge: (currentCache, newItemData, { arg }) => {
+        if (arg.page === 1) {
+          // If the user started a new search or changed a filter (page 1),
+          // throw away the old list and start fresh.
+          return newItemData;
+        }
+        // If it's page 2, 3, etc., append the items to the existing list.
+        currentCache.items.push(...newItemData.items);
+        currentCache.hasMore = newItemData.hasMore;
+      },
+
+      // 3. Ensure that changing the page number actually triggers a network request
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
     }),
 
     getRelatedProperties: builder.query({
@@ -179,7 +167,7 @@ export const {
   useMakePropertyMutation,
   useGetFeaturedPropertiesQuery,
   useGetPropertyDetailsQuery,
-  useLazySearchPropertiesQuery,
+  useSearchPropertiesQuery,
   useGetRelatedPropertiesQuery,
   useInvestInPropertyMutation,
   useLazyGetMyPropertiesQuery,

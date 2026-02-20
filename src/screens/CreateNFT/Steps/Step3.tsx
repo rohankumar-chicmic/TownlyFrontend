@@ -18,7 +18,11 @@ interface StepProps {
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
 }
 
-export default function Step3({ setStep, setFormData, formData }: StepProps) {
+export default function Step3({
+  setStep,
+  setFormData,
+  formData,
+}: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
 

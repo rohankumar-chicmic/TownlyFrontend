@@ -44,6 +44,9 @@ export default function PropertyDetails() {
     params.id,
   );
 
+
+  console.log(data?.imageUrl);
+
   const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();

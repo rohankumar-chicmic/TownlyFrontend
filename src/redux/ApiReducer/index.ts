@@ -56,10 +56,37 @@ const authApi = api.injectEndpoints({
     }),
 
     getTransactions: builder.query({
-      query: ({ page = 1, pageSize = 5, type = 1 }) => ({
-        url: `/transactions/me?page=${page}&pageSize=${pageSize}&type=${type}`,
+      query: params => ({
+        url: `/transactions/me`,
         method: 'GET',
+        params,
       }),
+
+      serializeQueryArgs: ({ queryArgs }) => {
+        // If it's the main transactions screen (pageSize 10),
+        // we cache it by type so we can merge pages.
+        if (queryArgs.pageSize > 5) {
+          return `infinite-list-${queryArgs.type}`;
+        }
+        // For the portfolio preview (pageSize 4),
+        // keep it as a separate cache entry.
+        return `preview-list`;
+      },
+
+      merge: (currentCache, newItemData, { arg }) => {
+        if (arg.page === 1) {
+          return newItemData;
+        }
+        return {
+          ...currentCache,
+          items: [...currentCache.items, ...newItemData.items],
+          hasMore: newItemData.hasMore,
+        };
+      },
+
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
     }),
   }),
 
@@ -72,7 +99,7 @@ export const {
   useGetMyInvestmentDetailsQuery,
   useRequestCurrencyMutation,
   useGetBalanceQuery,
-  useLazyGetTransactionsQuery,
+  useGetTransactionsQuery,
   useGetLineGraphDataQuery,
   useGetDonutGraphDataQuery,
 } = authApi;

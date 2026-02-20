@@ -1,90 +1,81 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  FlatList,
-  Dimensions,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, FlatList, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 
-import SearchInput from '@components/molecules/SearchInput';
 import BackButton from '@components/atoms/BackButton';
 import CardContainer2 from '@components/molecules/CardContainer2';
+import FilterButton from '@components/atoms/FilterButton';
 
 import { useLazyGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
 
-const CARD_WIDTH = Dimensions.get('window').width * 0.8;
+const CARD_WIDTH = Dimensions.get('window').width * 0.9;
 
 const ListedProperiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
   // ================= STATE =================
-  const [text, setText] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
   const [list, setList] = useState<any[]>([]);
   const [hasMore, setHasMore] = useState(true);
 
-  const [trigger, { data, isLoading, isFetching }] =
+  const [trigger, { data, isFetching, isLoading }] =
     useLazyGetMyPropertiesQuery();
 
-  // ================= DEBOUNCE =================
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(text);
-    }, 500);
+  // ================= FETCH FUNCTION =================
+  const fetchData = (pageNumber: number, statusValue: string) => {
+    trigger({
+      page: pageNumber,
+      pageSize: 10,
+      status: statusValue,
+    });
+  };
 
-    return () => clearTimeout(handler);
-  }, [text]);
-
-  // ================= FETCH =================
-  const fetchData = useCallback(
-    (pageNumber: number, search: string) => {
-      trigger({
-        page: pageNumber,
-        pageSize: 10,
-        search,
-      });
-    },
-    [trigger],
-  );
-
-  // ================= RESET ON SEARCH =================
+  // ================= INITIAL + STATUS CHANGE =================
   useEffect(() => {
     setPage(1);
     setList([]);
     setHasMore(true);
-    fetchData(1, debouncedSearch);
-  }, [debouncedSearch, fetchData]);
+    fetchData(1, status);
+  }, [status]);
 
-  // ================= LOAD MORE =================
+  // ================= PAGE CHANGE =================
   useEffect(() => {
     if (page > 1) {
-      fetchData(page, debouncedSearch);
+      fetchData(page, status);
     }
-  }, [page, fetchData]);
+  }, [page]);
 
   // ================= SYNC DATA =================
   useEffect(() => {
     if (data) {
-      setList(prev => (page === 1 ? data.items : [...prev, ...data.items]));
-      setHasMore(data.hasMore);
-    }
-  }, [data, page]);
+      // If backend returns array only:
+      const items = Array.isArray(data) ? data : data.items || [];
 
-  // ================= PAGINATION =================
-  const loadMore = () => {
+      setList(prev => (page === 1 ? items : [...prev, ...items]));
+
+      // If backend sends hasMore:
+      if (!Array.isArray(data) && data.hasMore !== undefined) {
+        setHasMore(data.hasMore);
+      } else {
+        // fallback: assume no more when less than pageSize returned
+        setHasMore(items.length === 10);
+      }
+    }
+  }, [data]);
+
+  // ================= LOAD MORE =================
+  const handleEndReached = () => {
     if (!isFetching && hasMore) {
       setPage(prev => prev + 1);
     }
   };
-
+  console.log(data);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* HEADER */}
@@ -95,37 +86,84 @@ const ListedProperiesScreen = () => {
         </Text>
       </View>
 
-      {/* SEARCH */}
-      <View style={dynamicStyles.container}>
-        <SearchInput text={text} setText={setText} />
-      </View>
+      {/* FILTERS */}
       <View
         style={{
-          bottom: 0,
-          height: '85%',
-          borderTopColor: Colors.border,
-          borderTopWidth: 1,
+          flexDirection: 'row',
+          borderBottomColor: Colors.border,
+          borderBottomWidth: 1,
+          marginTop: 10,
         }}
       >
-        <FlatList
-          data={list}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={{ width: CARD_WIDTH }}>
-              <CardContainer2 userOwned {...item} />
-            </View>
-          )}
-          style={{ flex: 1 }}
-          contentContainerStyle={{
-            padding: 12,
-            gap: 12,
-            alignItems: 'center',
-          }}
-          showsVerticalScrollIndicator={false}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
+        <FilterButton
+          label="All"
+          value={''}
+          currentValue={status}
+          onPress={() => setStatus('')}
+        />
+
+        <FilterButton
+          label="Pending"
+          value={1}
+          currentValue={status}
+          onPress={() => setStatus(1)}
+        />
+
+        <FilterButton
+          label="Active"
+          value={2}
+          currentValue={status}
+          onPress={() => setStatus(2)}
+        />
+
+        <FilterButton
+          label="Sold out"
+          value={3}
+          currentValue={status}
+          onPress={() => setStatus(3)}
+        />
+
+        <FilterButton
+          label="Rejected"
+          value={4}
+          currentValue={status}
+          onPress={() => setStatus(4)}
         />
       </View>
+
+      {/* LOADER */}
+      {isLoading && page === 1 && (
+        <Text style={[dynamicStyles.heroText, { textAlign: 'center' }]}>
+          Loading Properties...
+        </Text>
+      )}
+
+      {/* LIST */}
+      <FlatList
+        data={list}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={{ width: CARD_WIDTH }}>
+            <CardContainer2 userOwned {...item} />
+          </View>
+        )}
+        contentContainerStyle={{
+          padding: 10,
+          gap: 12,
+          alignItems: 'center',
+        }}
+        showsVerticalScrollIndicator={false}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetching && page > 1 ? (
+            <Text style={{ textAlign: 'center', padding: 10 }}>
+              Loading more...
+            </Text>
+          ) : null
+        }
+        style={{ backgroundColor: Colors.background }}
+      />
     </SafeAreaView>
   );
 };

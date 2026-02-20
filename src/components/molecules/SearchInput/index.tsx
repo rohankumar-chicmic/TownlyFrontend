@@ -1,23 +1,15 @@
-import { View, TextInput, Text, Pressable, Keyboard } from 'react-native';
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { View, TextInput, Keyboard, TextInputProps } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
-interface searchPropsType {
+interface SearchPropsType extends TextInputProps {
   text: string;
-  setText: Dispatch<SetStateAction<string>>;
-  onPress?: () => void;
 }
 
-export default function SearchInput(props: searchPropsType) {
+export default function SearchInput(props: Readonly<SearchPropsType>) {
   const { dynamicStyles } = useStyles(styles);
   const [isFocused, setIsFocused] = useState(false);
   const ref = useRef<TextInput>(null);
@@ -50,10 +42,11 @@ export default function SearchInput(props: searchPropsType) {
           />
         </View>
         <TextInput
+          {...props}
           ref={ref}
           placeholder="Search by location or property name..."
           placeholderTextColor={Colors.textMuted}
-          onChangeText={props.setText}
+          onChangeText={props.onChangeText}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           value={props.text}

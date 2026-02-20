@@ -3,9 +3,19 @@ import { View, Text, StyleSheet } from 'react-native';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
-const TransactionRow = ({ item }) => {
-  const isIncome = item.type === 2;
-  const isPurchase = item.type === 1;
+const TransactionRow = ({
+  item,
+}: {
+  item: {
+    type?: undefined;
+    propertyName: string;
+    tokens?: number;
+    amountUsd: number;
+    createdAt: string;
+  };
+}) => {
+  const isIncome = item?.type === 2;
+  const isPurchase = item?.type === 1;
   const { dynamicStyles } = useStyles(styles);
   return (
     <View style={dynamicStyles.row}>
@@ -14,7 +24,7 @@ const TransactionRow = ({ item }) => {
         <Text style={dynamicStyles.propertyTitle} numberOfLines={1}>
           {item.propertyName}
         </Text>
-        {item.tokens && (
+        {item?.tokens && (
           <Text style={dynamicStyles.tokenText}>{item.tokens} tokens</Text>
         )}
       </View>

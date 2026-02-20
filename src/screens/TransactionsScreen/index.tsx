@@ -1,93 +1,44 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  FlatList,
-  Dimensions,
-} from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 
-import SearchInput from '@components/molecules/SearchInput';
 import BackButton from '@components/atoms/BackButton';
-import CardContainer2 from '@components/molecules/CardContainer2';
+import FilterButton from '@components/atoms/FilterButton';
+import { useGetTransactionsQuery } from '@redux/ApiReducer';
+import TransactionRow from '@components/atoms/TransactionsRow';
+const PAGE_SIZE = 10;
 
-import { useLazyGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
-
-const CARD_WIDTH = Dimensions.get('window').width * 0.75;
-
-const ListedProperiesScreen = () => {
+const TransactionsScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
-  // ================= STATE =================
-  const [text, setText] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [type, setType] = useState<number | undefined>(undefined);
   const [page, setPage] = useState(1);
-  const [list, setList] = useState<any[]>([]);
-  const [hasMore, setHasMore] = useState(true);
 
-  const [trigger, { data, isLoading, isFetching }] =
-    useLazyGetMyPropertiesQuery();
+  const { data, isFetching, isLoading } = useGetTransactionsQuery({
+    page,
+    type,
+    pageSize: PAGE_SIZE,
+  });
 
-  // ================= DEBOUNCE =================
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(text);
-    }, 500);
+  const transactions = data?.items ?? [];
+  const hasMore = data?.hasMore ?? false;
 
-    return () => clearTimeout(handler);
-  }, [text]);
-
-  // ================= FETCH =================
-  const fetchData = useCallback(
-    (pageNumber: number, search: string) => {
-      trigger({
-        page: pageNumber,
-        pageSize: 10,
-        search,
-      });
-    },
-    [trigger],
-  );
-
-  // ================= RESET ON SEARCH =================
-  useEffect(() => {
+  const handleTypeChange = (newType?: number) => {
+    setType(newType);
     setPage(1);
-    setList([]);
-    setHasMore(true);
-    fetchData(1, debouncedSearch);
-  }, [debouncedSearch, fetchData]);
+  };
 
-  // ================= LOAD MORE =================
-  useEffect(() => {
-    if (page > 1) {
-      fetchData(page, debouncedSearch);
-    }
-  }, [page, fetchData]);
-
-  // ================= SYNC DATA =================
-  useEffect(() => {
-    if (data) {
-      setList(prev =>
-        page === 1 ? data.items : [...prev, ...data.items],
-      );
-      setHasMore(data.hasMore);
-    }
-  }, [data, page]);
-
-  // ================= PAGINATION =================
-  const loadMore = () => {
+  console.log(data);
+  const handleEndReached = () => {
     if (!isFetching && hasMore) {
       setPage(prev => prev + 1);
     }
   };
-
-
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -95,40 +46,71 @@ const ListedProperiesScreen = () => {
       <View style={{ padding: 10 }}>
         <BackButton />
         <Text style={[dynamicStyles.heroText, { alignSelf: 'center' }]}>
-          My Listed Properties
+          Transactions
         </Text>
       </View>
 
-      {/* SEARCH */}
-      <View style={dynamicStyles.container}>
-        <SearchInput text={text} setText={setText} />
+      {/* FILTERS */}
+      <View
+        style={{
+          flexDirection: 'row',
+          borderBottomColor: Colors.border,
+          borderBottomWidth: 1,
+          marginTop: 10,
+        }}
+      >
+        <FilterButton
+          label="All"
+          // value={undefined}
+          currentValue={type}
+          onPress={() => handleTypeChange()}
+        />
+
+        <FilterButton
+          label="Income"
+          value={1}
+          currentValue={type}
+          onPress={() => handleTypeChange(1)}
+        />
+
+        <FilterButton
+          label="purchase"
+          value={2}
+          currentValue={type}
+          onPress={() => handleTypeChange(2)}
+        />
       </View>
 
-      {/* LIST */}
-      {isLoading && page === 1 ? (
-        <View style={dynamicStyles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
-          <Text style={dynamicStyles.loadingText}>
-            Loading properties...
-          </Text>
-        </View>
-      ) : (
-        <FlatList
-          data={list}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={{ width: CARD_WIDTH }}>
-              <CardContainer2 userOwned {...item} />
-            </View>
-          )}
-          contentContainerStyle={{ padding: 12, gap: 12 }}
-          showsVerticalScrollIndicator={false}
-          onEndReached={loadMore}
-          onEndReachedThreshold={0.5}
-        />
+      {/* LOADER */}
+      {isLoading && page === 1 && (
+        <Text style={[dynamicStyles.heroText, { textAlign: 'center' }]}>
+          Loading transactions...
+        </Text>
       )}
+
+      {/* LIST */}
+      <FlatList
+        data={transactions}
+        keyExtractor={item => item.transactionId.toString()}
+        renderItem={({ item }) => <TransactionRow {...item} />}
+        contentContainerStyle={{
+          padding: 10,
+          gap: 12,
+        }}
+        showsVerticalScrollIndicator={false}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          isFetching && page > 1 ? (
+            <Text style={{ textAlign: 'center', padding: 10 }}>
+              Loading more...
+            </Text>
+          ) : null
+        }
+        style={{ backgroundColor: Colors.background }}
+      />
     </SafeAreaView>
   );
 };
 
-export default ListedProperiesScreen;
+export default TransactionsScreen;

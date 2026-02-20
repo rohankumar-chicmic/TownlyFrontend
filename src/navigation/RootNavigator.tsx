@@ -25,6 +25,7 @@ import { StatusBar } from 'react-native';
 import { THEME } from '@theme/constants';
 import InvestedPropertiesScreen from '@screens/InvestedPropertiesScreen';
 import ListedPropertiesScreen from '@screens/ListedPropertiesScreen';
+import TransactionsScreen from '@screens/TransactionsScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
@@ -141,6 +142,10 @@ const RootNavigator = () => {
           <Stack.Screen
             name={ROUTES.INVESTED_PROPERTIES}
             component={InvestedPropertiesScreen}
+          />
+          <Stack.Screen
+            name={ROUTES.TRANSACTIONS}
+            component={TransactionsScreen}
           />
 
           <Stack.Screen

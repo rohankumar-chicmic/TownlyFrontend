@@ -10,4 +10,5 @@ export type RootStackParamList = {
   Notifications: undefined;
   ListedProperties: undefined;
   InvestedProperties: undefined;
+  Transactions: undefined;
 };

@@ -45,7 +45,7 @@ export const formatCompactNumber = (
   return formatter.format(value);
 };
 
-const sanitizeSearch = (input: string) => {
+export const sanitizeSearch = (input: string) => {
   if (!input) return '';
 
   // Trim + collapse multiple spaces
@@ -56,3 +56,22 @@ const sanitizeSearch = (input: string) => {
 
   return cleaned;
 };
+
+export function debounce<T extends (...args: any[]) => void>(
+  func: T,
+  delay: number = 300,
+): (...args: Parameters<T>) => void {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  return function (this: any, ...args: Parameters<T>): void {
+    // Clear existing timer
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    // Start a new timer
+    timeoutId = setTimeout(() => {
+      func.apply(this, args);
+    }, delay);
+  };
+}

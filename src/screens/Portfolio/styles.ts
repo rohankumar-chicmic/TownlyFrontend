@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -8,6 +8,12 @@ const styles = (Colors: ThemeColors) =>
       backgroundColor: Colors.background,
       padding: 20,
       margin: 5,
+    },
+    flatListContainerStyle: {
+      flexDirection: 'row',
+      gap: 10,
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     heroPrimarytext: {
       fontSize: 25,

@@ -8,7 +8,7 @@ import LineGraph from '@components/molecules/LineGraph';
 import Button from '@components/atoms/Button';
 import { useAppNavigation } from '@hooks/useNavigation';
 
-import { useAppDispatch, useAppSelector } from '@redux/store';
+import { useAppSelector } from '@redux/store';
 import {
   useLazyGetMyPropertiesQuery,
   useLazyGetMyInvestedPropertiesQuery,
@@ -17,7 +17,7 @@ import {
   useGetDonutGraphDataQuery,
   useGetLineGraphDataQuery,
   useGetMyInvestmentDetailsQuery,
-  useLazyGetTransactionsQuery,
+  useGetTransactionsQuery,
 } from '@redux/ApiReducer';
 import KYCpendingPortfolio from './KYCpendingPortfolio';
 import PortfolioWithoutAuth from './PortfolioWithoutAuth';
@@ -41,8 +41,10 @@ export default function Portfolio() {
   const [triggerMyProperties, myPropertiesResult] =
     useLazyGetMyPropertiesQuery();
 
-  const [triggerTransactions, transactionsResult] =
-    useLazyGetTransactionsQuery();
+  const { data: transactionsResult } = useGetTransactionsQuery({
+    page: 1,
+    pageSize: 4,
+  });
 
   const [triggerInvested, investedResult] =
     useLazyGetMyInvestedPropertiesQuery();
@@ -50,8 +52,6 @@ export default function Portfolio() {
   const InvestmentDetails = useGetMyInvestmentDetailsQuery(undefined, {
     skip: !userToken,
   });
-
-  console.log(investedResult.data);
 
   const {
     data: lineData,
@@ -90,7 +90,8 @@ export default function Portfolio() {
 
       triggerMyProperties({
         page: 1,
-        pageSize: 5,
+        pageSize: 4,
+        status: '',
       });
 
       triggerInvested({
@@ -98,12 +99,7 @@ export default function Portfolio() {
         pageSize: 3,
         propertyType: 'commercial',
       });
-
-      triggerTransactions({
-        page: 1,
-        pageSize: 4,
-      });
-    }, [userToken]),
+    }, [userToken, triggerMyProperties, triggerInvested]),
   );
 
   return (
@@ -182,63 +178,6 @@ export default function Portfolio() {
           onPress={() => navigation.navigate('CreateNft')}
           style={{ marginVertical: 5 }}
         ></Button>
-
-        <View
-          style={{
-            marginVertical: 5,
-            padding: 10,
-            borderRadius: 4,
-            borderWidth: 1,
-            backgroundColor: Colors.surface,
-            borderColor: Colors.border,
-          }}
-        >
-          <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
-            My Listed Properties
-          </Text>
-          <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
-            Properties you&apos;ve created and tokenized
-          </Text>
-          <FlatList
-            keyExtractor={item => {
-              return item.id.toString();
-            }}
-            data={myPropertiesResult.data?.items}
-            horizontal
-            contentContainerStyle={{
-              flexDirection: 'row',
-              gap: 10,
-            }}
-            renderItem={({ item }) => (
-              <View style={{ width: CARD_WIDTH }}>
-                <CardContainer2 userOwned {...item} />
-              </View>
-            )}
-            ListFooterComponent={() =>
-              myPropertiesResult.data?.hasMore ? (
-                <View
-                  style={{
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    paddingHorizontal: 10,
-                    width: Dimensions.get('screen').width * 0.5,
-                    aspectRatio: 1,
-                    borderRadius: 8,
-
-                    backgroundColor: Colors.elevated,
-                  }}
-                >
-                  <Button
-                    title="View All"
-                    onPress={() =>
-                      navigation.navigate(ROUTES.LISTED_PROPERTIES)
-                    }
-                  />
-                </View>
-              ) : null
-            }
-          />
-        </View>
         <View
           style={{
             marginVertical: 5,
@@ -265,11 +204,8 @@ export default function Portfolio() {
                 <HoldingPropertyCard {...item} />
               </View>
             )}
-            contentContainerStyle={{
-              flexDirection: 'row',
-              gap: 10,
-              paddingHorizontal: 5,
-            }}
+            style={{ width: '100%', padding: 10 }}
+            contentContainerStyle={dynamicStyles.flatListContainerStyle}
             ListFooterComponent={() =>
               investedResult.data?.hasMore ? (
                 <View
@@ -305,6 +241,60 @@ export default function Portfolio() {
             borderColor: Colors.border,
           }}
         >
+          <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
+            My Listed Properties
+          </Text>
+          <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
+            Properties you&apos;ve created and tokenized
+          </Text>
+          <FlatList
+            keyExtractor={item => {
+              return item.id.toString();
+            }}
+            data={myPropertiesResult.data?.items}
+            horizontal
+            contentContainerStyle={dynamicStyles.flatListContainerStyle}
+            style={{ width: '100%', padding: 8 }}
+            renderItem={({ item }) => (
+              <View style={{ width: CARD_WIDTH }}>
+                <CardContainer2 userOwned {...item} />
+              </View>
+            )}
+            ListFooterComponent={() =>
+              myPropertiesResult.data?.hasMore && false ? (
+                <View
+                  style={{
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    paddingHorizontal: 10,
+                    width: Dimensions.get('screen').width * 0.5,
+                    aspectRatio: 1,
+                    borderRadius: 8,
+                    backgroundColor: Colors.elevated,
+                  }}
+                >
+                  <Button
+                    title="View All"
+                    onPress={() =>
+                      navigation.navigate(ROUTES.LISTED_PROPERTIES)
+                    }
+                  />
+                </View>
+              ) : null
+            }
+          />
+        </View>
+
+        <View
+          style={{
+            marginVertical: 5,
+            padding: 10,
+            borderRadius: 4,
+            borderWidth: 1,
+            backgroundColor: Colors.surface,
+            borderColor: Colors.border,
+          }}
+        >
           <View
             style={{
               flexDirection: 'row',
@@ -320,16 +310,18 @@ export default function Portfolio() {
                 Your latest investment activity
               </Text>
             </View>
-            <Button
-              title="View all"
-              textStyle={{
-                fontWeight: '400',
-              }}
-              size="sm"
-              onPress={function (): void {
-                console.log('Function not implemented.');
-              }}
-            ></Button>
+            {transactionsResult?.hasMore && (
+              <Button
+                title="View all"
+                textStyle={{
+                  fontWeight: '400',
+                }}
+                size="sm"
+                onPress={function (): void {
+                  navigation.navigate(ROUTES.TRANSACTIONS);
+                }}
+              ></Button>
+            )}
           </View>
 
           <View
@@ -350,7 +342,7 @@ export default function Portfolio() {
           </View>
 
           <View style={{ gap: 5, alignItems: 'center' }}>
-            {transactionsResult?.data?.items.map(item => (
+            {transactionsResult?.items.map(item => (
               <TransactionsRow
                 item={item}
                 key={item.transactionId}

@@ -129,7 +129,7 @@ const Home = () => {
         {/* Section Heading */}
         <View style={dynamicStyles.headingSection}>
           <Text style={dynamicStyles.heading}>Featured Properties</Text>
-          <Text style={dynamicStyles.smallText}>
+          <Text style={[dynamicStyles.smallText, { textAlign: 'center' }]}>
             Explore our latest tokenized real estate opportunities
           </Text>
         </View>

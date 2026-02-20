@@ -5,8 +5,6 @@ import {
   Text,
   Pressable,
   TextInput,
-  KeyboardAvoidingView,
-  Platform,
   Keyboard,
   ScrollView,
 } from 'react-native';
@@ -33,26 +31,49 @@ export default function InvestPropertyModal({
   id,
   pricePerShare,
 }: Readonly<Props>) {
-  const [shares, setShares] = useState(0);
+  const MAX_LIMIT = 10000;
+  const MIN_LIMIT = 1;
+  const [shares, setShares] = useState('');
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
   const totalCost = Number(shares || 0) * pricePerShare;
-  const [investInProperty, { isError, isSuccess }] =
-    useInvestInPropertyMutation();
+  const [investInProperty] = useInvestInPropertyMutation();
 
   const { dynamicStyles } = useStyles(styles);
 
   const handleSubmit = async () => {
-    try {
-      await investInProperty({ propertyId: id, shares: Number(shares) });
-      navigation.navigate('Drawer');
+    const sharesNum = Number(shares);
+
+    // 4. Enforce Minimum Limit on submission
+    if (sharesNum < MIN_LIMIT) {
       Toast.show({
-        type: 'info',
-        text1: 'Invested in property: ' + id,
+        type: 'error',
+        text1: 'Minimum 1 share required',
       });
-      onClose();
+      return;
+    }
+
+    try {
+      await investInProperty({ propertyId: id, shares: sharesNum });
+      // ... rest of your success logic
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  const handleSharesChange = (value: string) => {
+    let cleanValue = value.replaceAll(/\D/g, '');
+
+    if (cleanValue.length > 1 && cleanValue.startsWith('0')) {
+      cleanValue = Number(cleanValue).toString();
+    }
+
+    const numericValue = Number(cleanValue);
+
+    if (numericValue > MAX_LIMIT) {
+      setShares(MAX_LIMIT.toString());
+    } else {
+      setShares(cleanValue);
     }
   };
 
@@ -90,9 +111,10 @@ export default function InvestPropertyModal({
 
             <TextInput
               value={shares}
-              onChangeText={setShares}
-              keyboardType="numeric"
+              onChangeText={handleSharesChange}
+              keyboardType="number-pad"
               style={dynamicStyles.input}
+              placeholder="0"
             />
 
             <Text style={dynamicStyles.hint}>Min: 1 • Max: 10,000 shares</Text>
