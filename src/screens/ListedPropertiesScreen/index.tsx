@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, FlatList, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,73 +9,74 @@ import useTheme from '@hooks/useTheme';
 import BackButton from '@components/atoms/BackButton';
 import CardContainer2 from '@components/molecules/CardContainer2';
 import FilterButton from '@components/atoms/FilterButton';
+import SearchInput from '@components/molecules/SearchInput';
 
-import { useLazyGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
+import { useGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
+import { debounce, sanitizeSearch } from '@utils/utility';
+import { useAppNavigation } from '@hooks/useNavigation';
+import { ROUTES } from 'src/navigation/constants';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.9;
+const PAGE_SIZE = 10;
 
 const ListedProperiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-
+  const navigation = useAppNavigation();
   // ================= STATE =================
   const [status, setStatus] = useState('');
-  const [page, setPage] = useState(1);
-  const [list, setList] = useState<any[]>([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [text, setText] = useState('');
+  const [params, setParams] = useState({
+    search: '',
+    page: 1,
+  });
 
-  const [trigger, { data, isFetching, isLoading }] =
-    useLazyGetMyPropertiesQuery();
+  // ================= QUERY =================
+  const { data, isFetching, isLoading } = useGetMyPropertiesQuery({
+    page: params.page,
+    pageSize: PAGE_SIZE,
+    status,
+    search: params.search,
+  });
 
-  // ================= FETCH FUNCTION =================
-  const fetchData = (pageNumber: number, statusValue: string) => {
-    trigger({
-      page: pageNumber,
-      pageSize: 10,
-      status: statusValue,
-    });
+  const list = data?.items ?? [];
+  const hasMore = data?.hasMore ?? false;
+
+  // ================= DEBOUNCED SEARCH =================
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        const clean = sanitizeSearch(value);
+        setParams({ search: clean, page: 1 });
+      }, 300),
+    [],
+  );
+
+  const handleTextChange = (val: string) => {
+    setText(val);
+
+    const hasIllegalChars = /[^a-zA-Z0-9\s,-]/.test(val);
+    if (hasIllegalChars) {
+      setParams({ search: '___INVALID_SEARCH___', page: 1 });
+      return;
+    }
+
+    debouncedSearch(val);
   };
 
-  // ================= INITIAL + STATUS CHANGE =================
-  useEffect(() => {
-    setPage(1);
-    setList([]);
-    setHasMore(true);
-    fetchData(1, status);
-  }, [status]);
+  // ================= FILTER =================
+  const handleStatusChange = (newStatus: string | number) => {
+    setStatus(newStatus as any);
+    setParams(prev => ({ ...prev, page: 1 }));
+  };
 
-  // ================= PAGE CHANGE =================
-  useEffect(() => {
-    if (page > 1) {
-      fetchData(page, status);
-    }
-  }, [page]);
-
-  // ================= SYNC DATA =================
-  useEffect(() => {
-    if (data) {
-      // If backend returns array only:
-      const items = Array.isArray(data) ? data : data.items || [];
-
-      setList(prev => (page === 1 ? items : [...prev, ...items]));
-
-      // If backend sends hasMore:
-      if (!Array.isArray(data) && data.hasMore !== undefined) {
-        setHasMore(data.hasMore);
-      } else {
-        // fallback: assume no more when less than pageSize returned
-        setHasMore(items.length === 10);
-      }
-    }
-  }, [data]);
-
-  // ================= LOAD MORE =================
+  // ================= PAGINATION =================
   const handleEndReached = () => {
     if (!isFetching && hasMore) {
-      setPage(prev => prev + 1);
+      setParams(prev => ({ ...prev, page: prev.page + 1 }));
     }
   };
-  console.log(data);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* HEADER */}
@@ -84,6 +85,11 @@ const ListedProperiesScreen = () => {
         <Text style={[dynamicStyles.heroText, { alignSelf: 'center' }]}>
           My Listed Properties
         </Text>
+      </View>
+
+      {/* SEARCH */}
+      <View style={{ paddingHorizontal: 10 }}>
+        <SearchInput text={text} onChangeText={handleTextChange} />
       </View>
 
       {/* FILTERS */}
@@ -97,73 +103,88 @@ const ListedProperiesScreen = () => {
       >
         <FilterButton
           label="All"
-          value={''}
+          value=""
           currentValue={status}
-          onPress={() => setStatus('')}
+          onPress={() => handleStatusChange('')}
         />
-
         <FilterButton
           label="Pending"
           value={1}
           currentValue={status}
-          onPress={() => setStatus(1)}
+          onPress={() => handleStatusChange(1)}
         />
-
         <FilterButton
           label="Active"
           value={2}
           currentValue={status}
-          onPress={() => setStatus(2)}
+          onPress={() => handleStatusChange(2)}
         />
-
         <FilterButton
           label="Sold out"
           value={3}
           currentValue={status}
-          onPress={() => setStatus(3)}
+          onPress={() => handleStatusChange(3)}
         />
-
         <FilterButton
           label="Rejected"
           value={4}
           currentValue={status}
-          onPress={() => setStatus(4)}
+          onPress={() => handleStatusChange(4)}
         />
       </View>
 
-      {/* LOADER */}
-      {isLoading && page === 1 && (
+      {/* LOADING FIRST PAGE */}
+      {isLoading && params.page === 1 ? (
         <Text style={[dynamicStyles.heroText, { textAlign: 'center' }]}>
           Loading Properties...
         </Text>
+      ) : (
+        <FlatList
+          data={list}
+          keyExtractor={item => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={{ width: CARD_WIDTH }}>
+              <CardContainer2
+                userOwned
+                {...item}
+                onClick={() => {
+                  console.log(item.status)
+                  return navigation.navigate(ROUTES.OWNED_PROPERTY, {
+                    id: item.id,
+                    status: item.status,
+                  });
+                }}
+              />
+            </View>
+          )}
+          contentContainerStyle={{
+            padding: 10,
+            gap: 12,
+            alignItems: 'center',
+          }}
+          showsVerticalScrollIndicator={false}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          style={{ backgroundColor: Colors.background }}
+          ListFooterComponent={
+            isFetching && params.page > 1 ? (
+              <Text style={{ textAlign: 'center', padding: 10 }}>
+                Loading more...
+              </Text>
+            ) : !hasMore && list.length > 0 ? (
+              <Text
+                style={{
+                  textAlign: 'center',
+                  padding: 10,
+                  color: Colors.textMuted,
+                }}
+              >
+                No more properties
+              </Text>
+            ) : null
+          }
+        />
       )}
-
-      {/* LIST */}
-      <FlatList
-        data={list}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <View style={{ width: CARD_WIDTH }}>
-            <CardContainer2 userOwned {...item} />
-          </View>
-        )}
-        contentContainerStyle={{
-          padding: 10,
-          gap: 12,
-          alignItems: 'center',
-        }}
-        showsVerticalScrollIndicator={false}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          isFetching && page > 1 ? (
-            <Text style={{ textAlign: 'center', padding: 10 }}>
-              Loading more...
-            </Text>
-          ) : null
-        }
-        style={{ backgroundColor: Colors.background }}
-      />
     </SafeAreaView>
   );
 };

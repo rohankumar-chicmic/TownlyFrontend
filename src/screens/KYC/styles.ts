@@ -66,12 +66,13 @@ const styles = (Colors: ThemeColors) =>
     label: {
       marginBottom: 6,
       fontSize: 14,
-      paddingHorizontal: 5,
+      paddingHorizontal: 10,
       color: Colors.textPrimary,
     },
     input: {
       borderRadius: 10,
       padding: 12,
+      marginHorizontal: 5,
       borderWidth: 1,
       marginBottom: 15,
       height: Dimensions.get('screen').height * 0.047,

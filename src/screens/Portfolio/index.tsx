@@ -8,10 +8,10 @@ import LineGraph from '@components/molecules/LineGraph';
 import Button from '@components/atoms/Button';
 import { useAppNavigation } from '@hooks/useNavigation';
 
-import { useAppSelector } from '@redux/store';
+import { useAppDispatch, useAppSelector } from '@redux/store';
 import {
-  useLazyGetMyPropertiesQuery,
-  useLazyGetMyInvestedPropertiesQuery,
+  useGetMyPropertiesQuery,
+  useGetMyInvestedPropertiesQuery,
 } from '@redux/PropertyApiReducer';
 import {
   useGetDonutGraphDataQuery,
@@ -21,13 +21,14 @@ import {
 } from '@redux/ApiReducer';
 import KYCpendingPortfolio from './KYCpendingPortfolio';
 import PortfolioWithoutAuth from './PortfolioWithoutAuth';
-import { useFocusEffect } from '@react-navigation/native';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
+import { propertyApi } from '@redux/PropertyApiReducer';
 
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
 import CardContainer2 from '@components/molecules/CardContainer2';
 import { ROUTES } from 'src/navigation/constants';
 import TransactionsRow from '@components/atoms/TransactionsRow';
+import { useFocusEffect } from '@react-navigation/native';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.75;
 
@@ -35,19 +36,13 @@ export default function Portfolio() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-
+  const dispatch = useAppDispatch();
   const userToken = useAppSelector(state => state.auth.userToken);
-
-  const [triggerMyProperties, myPropertiesResult] =
-    useLazyGetMyPropertiesQuery();
 
   const { data: transactionsResult } = useGetTransactionsQuery({
     page: 1,
     pageSize: 4,
   });
-
-  const [triggerInvested, investedResult] =
-    useLazyGetMyInvestedPropertiesQuery();
 
   const InvestmentDetails = useGetMyInvestmentDetailsQuery(undefined, {
     skip: !userToken,
@@ -55,19 +50,35 @@ export default function Portfolio() {
 
   const {
     data: lineData,
-    isLoading: lineLoading,
-    error: lineError,
   } = useGetLineGraphDataQuery(undefined, {
     skip: !userToken,
   });
 
   const {
     data: donutData,
-    isLoading: donutLoading,
-    error: donutError,
   } = useGetDonutGraphDataQuery(undefined, {
     skip: !userToken,
   });
+
+  const { data: myPropertiesResult, isFetching: myPropertiesFetching } =
+    useGetMyPropertiesQuery(
+      { page: 1, pageSize: 4, search: '', status: '' },
+      { skip: !userToken, refetchOnMountOrArgChange: true },
+    );
+
+  const { data: investedResult, isFetching: investedFetching } =
+    useGetMyInvestedPropertiesQuery(
+      { page: 1, pageSize: 3, search: '', propertyType: '' },
+      { skip: !userToken, refetchOnMountOrArgChange: true },
+    );
+
+  const previewItems = investedResult?.items?.slice(0, 3) ?? [];
+  const listedPreview = myPropertiesResult?.items?.slice(0, 4) ?? [];
+
+  // FIX: items are already sliced so length check never exceeded 4.
+  // hasMore from the API is the correct source of truth.
+  const showListedViewAll = myPropertiesResult?.hasMore ?? false;
+  const showViewAll = investedResult?.hasMore ?? false;
 
   const address = useAppSelector(state => state.auth.userData?.walletAddress);
   const kycStatus = useAppSelector(state => state.kyc.status);
@@ -76,6 +87,32 @@ export default function Portfolio() {
     skip: !userToken,
   });
 
+  // FIX: Invalidate both lists every time Portfolio comes into focus.
+  // Back-navigation does not remount the screen in React Navigation, so
+  // refetchOnMountOrArgChange never fires. useFocusEffect + invalidateTags
+  // forces a fresh fetch every time the screen is focused (including on back).
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(propertyApi.util.invalidateTags(['MyProperties']));
+      dispatch(propertyApi.util.invalidateTags(['MyInvestedProperties']));
+    }, [dispatch]),
+  );
+
+  const EmptyState = ({ message }: { message: string }) => {
+    const { Colors } = useTheme();
+    return (
+      <View
+        style={{
+          padding: 20,
+          alignItems: 'center',
+          width: Dimensions.get('window').width * 0.8,
+        }}
+      >
+        <Text style={{ color: Colors.textMuted, fontSize: 14 }}>{message}</Text>
+      </View>
+    );
+  };
+
   if (!userToken) {
     return <PortfolioWithoutAuth />;
   }
@@ -83,24 +120,6 @@ export default function Portfolio() {
   if (kycStatus !== 2) {
     return <KYCpendingPortfolio />;
   }
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!userToken) return;
-
-      triggerMyProperties({
-        page: 1,
-        pageSize: 4,
-        status: '',
-      });
-
-      triggerInvested({
-        page: 1,
-        pageSize: 3,
-        propertyType: 'commercial',
-      });
-    }, [userToken, triggerMyProperties, triggerInvested]),
-  );
 
   return (
     <ScrollView
@@ -138,46 +157,45 @@ export default function Portfolio() {
             marginVertical: 6,
           }}
         >
-          {/* <View style={dynamicStyles.dataPanel}> */}
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Total Invested</Text>
             <Text style={dynamicStyles.heading}>
               {InvestmentDetails.data?.totalInvestedEth.toFixed(3)}
+              {' ETH'}
             </Text>
-            {/* <Text style={dynamicStyles.smallText}></Text> */}
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Current Value</Text>
             <Text style={dynamicStyles.heading}>
               {InvestmentDetails.data?.currentValueEth.toFixed(3)}
+              {' ETH'}
             </Text>
-            {/* <Text
-              style={[dynamicStyles.smallText, { color: Colors.primary }]}
-            ></Text> */}
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Total Returns</Text>
-            <Text style={dynamicStyles.heading}>
+            <Text style={[dynamicStyles.heading, { color: Colors.success }]}>
+              {'+'}
               {InvestmentDetails.data?.totalReturnEth.toFixed(3)}
+              {' ETH'}
             </Text>
-            {/* <Text style={dynamicStyles.smallText}></Text> */}
           </View>
           <View style={dynamicStyles.containerStyle}>
             <Text style={dynamicStyles.heroText}>Monthly Income</Text>
             <Text style={dynamicStyles.heading}>
               {InvestmentDetails.data?.monthlyIncomeEth.toFixed(3)}
+              {' ETH'}
             </Text>
-            {/* <Text style={dynamicStyles.smallText}></Text> */}
-            {/* </View> */}
           </View>
         </ScrollView>
-        {donutData && <DonutGraph data={donutData}></DonutGraph>}
-        {lineData && <LineGraph data={lineData}></LineGraph>}
+        {donutData && <DonutGraph data={donutData} />}
+        {lineData && <LineGraph data={lineData} />}
         <Button
           title="Create Property"
           onPress={() => navigation.navigate('CreateNft')}
           style={{ marginVertical: 5 }}
-        ></Button>
+        />
+
+        {/* Invested Properties */}
         <View
           style={{
             marginVertical: 5,
@@ -192,10 +210,10 @@ export default function Portfolio() {
             Your Property Portfolio
           </Text>
           <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
-            Properties you&apos;ve created and tokenized
+            Active tokenized property holdings
           </Text>
           <FlatList
-            data={investedResult.data?.items}
+            data={previewItems}
             horizontal
             initialNumToRender={3}
             keyExtractor={item => item.propertyId.toString()}
@@ -204,10 +222,13 @@ export default function Portfolio() {
                 <HoldingPropertyCard {...item} />
               </View>
             )}
-            style={{ width: '100%', padding: 10 }}
+            ListEmptyComponent={
+              <EmptyState message="No Investments Made yet" />
+            }
+            style={{ padding: 10 }}
             contentContainerStyle={dynamicStyles.flatListContainerStyle}
             ListFooterComponent={() =>
-              investedResult.data?.hasMore ? (
+              showViewAll ? (
                 <View
                   style={{
                     justifyContent: 'center',
@@ -231,6 +252,8 @@ export default function Portfolio() {
             }
           />
         </View>
+
+        {/* My Listed Properties */}
         <View
           style={{
             marginVertical: 5,
@@ -248,20 +271,28 @@ export default function Portfolio() {
             Properties you&apos;ve created and tokenized
           </Text>
           <FlatList
-            keyExtractor={item => {
-              return item.id.toString();
-            }}
-            data={myPropertiesResult.data?.items}
+            keyExtractor={item => item.id.toString()}
+            data={listedPreview}
             horizontal
             contentContainerStyle={dynamicStyles.flatListContainerStyle}
+            ListEmptyComponent={<EmptyState message="No Properties Here" />}
             style={{ width: '100%', padding: 8 }}
             renderItem={({ item }) => (
               <View style={{ width: CARD_WIDTH }}>
-                <CardContainer2 userOwned {...item} />
+                <CardContainer2
+                  userOwned
+                  {...item}
+                  onClick={() => {
+                    navigation.navigate(ROUTES.OWNED_PROPERTY, {
+                      id: item.id,
+                      status: item.status,
+                    });
+                  }}
+                />
               </View>
             )}
             ListFooterComponent={() =>
-              myPropertiesResult.data?.hasMore && false ? (
+              showListedViewAll ? (
                 <View
                   style={{
                     justifyContent: 'center',
@@ -285,6 +316,7 @@ export default function Portfolio() {
           />
         </View>
 
+        {/* Recent Transactions */}
         <View
           style={{
             marginVertical: 5,
@@ -313,41 +345,43 @@ export default function Portfolio() {
             {transactionsResult?.hasMore && (
               <Button
                 title="View all"
-                textStyle={{
-                  fontWeight: '400',
-                }}
+                textStyle={{ fontWeight: '400' }}
                 size="sm"
-                onPress={function (): void {
-                  navigation.navigate(ROUTES.TRANSACTIONS);
-                }}
-              ></Button>
+                onPress={() => navigation.navigate(ROUTES.TRANSACTIONS)}
+              />
             )}
           </View>
 
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
-              alignItems: 'flex-start',
-              paddingVertical: 5,
-            }}
-          >
-            <Text style={[dynamicStyles.smallText, { width: '30%' }]}>
-              Property Name
-            </Text>
-            <Text style={[dynamicStyles.smallText, { width: '30%' }]}>
-              Amount
-            </Text>
-            <Text style={dynamicStyles.smallText}> Date</Text>
-          </View>
+          {transactionsResult?.items && transactionsResult.items.length > 0 && (
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-around',
+                alignItems: 'flex-start',
+                paddingVertical: 5,
+              }}
+            >
+              <Text style={[dynamicStyles.smallText, { width: '30%' }]}>
+                Property Name
+              </Text>
+              <Text style={[dynamicStyles.smallText, { width: '30%' }]}>
+                Amount
+              </Text>
+              <Text style={dynamicStyles.smallText}>Date</Text>
+            </View>
+          )}
 
           <View style={{ gap: 5, alignItems: 'center' }}>
-            {transactionsResult?.items.map(item => (
-              <TransactionsRow
-                item={item}
-                key={item.transactionId}
-              ></TransactionsRow>
-            ))}
+            {transactionsResult?.items &&
+            transactionsResult.items.length > 0 ? (
+              transactionsResult.items.map((item: any) => (
+                <TransactionsRow item={item} key={item.transactionId} />
+              ))
+            ) : (
+              <Text style={{ color: Colors.textMuted, marginVertical: 20 }}>
+                No Transactions yet
+              </Text>
+            )}
           </View>
         </View>
       </View>

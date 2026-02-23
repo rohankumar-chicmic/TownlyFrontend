@@ -35,9 +35,6 @@ const PropertyListing = ({
       contentContainerStyle={[{ gap: 10 }, contentContainerStyle]}
       style={style}
       horizontal={horizontal}
-      ListEmptyComponent={() =>
-        EmptyComponent ? <EmptyComponent /> : <ListEmptyComponent />
-      }
       renderItem={({ item }) => <CardContainer {...item} />}
       keyExtractor={(item, index) => `${item.id}-${index}`}
       onEndReached={onEndReached}

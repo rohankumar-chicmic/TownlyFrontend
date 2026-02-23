@@ -36,8 +36,8 @@ export default function Step2(props: StepProps) {
       expectedAnnualYield: undefined,
     },
   });
-  const totalPropertyValue = watch('totalPropertyValue');
-  const numberOfShares = watch('numberOfShares');
+  const totalPropertyValue = Number(watch('totalPropertyValue'));
+  const numberOfShares = Number(watch('numberOfShares'));
 
   const pricePerShare =
     totalPropertyValue && numberOfShares && numberOfShares > 0
@@ -52,7 +52,7 @@ export default function Step2(props: StepProps) {
     props.setFormData(prev => ({
       ...prev,
       ...data,
-      pricePerShare,
+      pricePerUnit: pricePerShare,
     }));
 
     props.setStep(prev => prev + 1);

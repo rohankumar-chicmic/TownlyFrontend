@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 8,
     // Android Shadow
-    elevation: 3,
+    elevation: 5,
   },
   headerRow: {
     flexDirection: 'row',

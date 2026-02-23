@@ -15,7 +15,7 @@ const FilterButton = ({
   value,
   currentValue,
   onPress,
-}: FilterButtonProps) => {
+}: FilterButtonProps<string | number>) => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
@@ -25,7 +25,7 @@ const FilterButton = ({
         dynamicStyles.tag,
         {
           borderWidth: 1,
-          borderColor: currentValue === value ? Colors.primary : Colors.border,
+          borderColor: currentValue === value ? Colors.primaryDark : Colors.border,
         },
       ]}
       onPress={onPress}
@@ -35,7 +35,7 @@ const FilterButton = ({
           dynamicStyles.tagText,
           {
             color:
-              currentValue === value ? Colors.primary : Colors.textSecondary,
+              currentValue === value ? Colors.primaryDark : Colors.textSecondary,
           },
         ]}
       >

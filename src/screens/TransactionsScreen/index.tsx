@@ -10,7 +10,7 @@ import BackButton from '@components/atoms/BackButton';
 import FilterButton from '@components/atoms/FilterButton';
 import { useGetTransactionsQuery } from '@redux/ApiReducer';
 import TransactionRow from '@components/atoms/TransactionsRow';
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 20;
 
 const TransactionsScreen = () => {
   const { dynamicStyles } = useStyles(styles);
@@ -33,7 +33,6 @@ const TransactionsScreen = () => {
     setPage(1);
   };
 
-  console.log(data);
   const handleEndReached = () => {
     if (!isFetching && hasMore) {
       setPage(prev => prev + 1);
@@ -56,7 +55,6 @@ const TransactionsScreen = () => {
           flexDirection: 'row',
           borderBottomColor: Colors.border,
           borderBottomWidth: 1,
-          marginTop: 10,
         }}
       >
         <FilterButton
@@ -90,9 +88,9 @@ const TransactionsScreen = () => {
 
       {/* LIST */}
       <FlatList
-        data={transactions}
+        data={transactions }
         keyExtractor={item => item.transactionId.toString()}
-        renderItem={({ item }) => <TransactionRow {...item} />}
+        renderItem={({ item }) => <TransactionRow item={item} />}
         contentContainerStyle={{
           padding: 10,
           gap: 12,

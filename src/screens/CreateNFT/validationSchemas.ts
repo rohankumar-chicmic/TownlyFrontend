@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 import { Step1FormData, DocumentFile } from './types';
-import customParseNumber from '@utils/parseNumber';
+import { customParseNumber } from '@utils/utility';
 
 export const step1Schema: yup.ObjectSchema<Step1FormData> = yup.object({
   propertyName: yup
@@ -39,33 +39,35 @@ export const step1Schema: yup.ObjectSchema<Step1FormData> = yup.object({
     .required(),
 });
 
+const max10Digits = (field: string) =>
+  yup
+    .number()
+    .transform(customParseNumber)
+    .typeError(`${field} must be a number`)
+    .required(`${field} is required`)
+    .test(
+      'maxDigits',
+      `${field} cannot exceed 10 digits`,
+      value => value !== undefined && value.toString().length <= 10,
+    );
+
 export const step2Schema = yup.object({
-  totalPropertyValue: yup
-    .number()
-    .transform(customParseNumber)
-    .typeError('Total property value must be a number')
-    .required('Total property value is required')
-    .min(1000, 'Total property value must be at least $1000'),
+  totalPropertyValue: max10Digits('Total property value').min(
+    1000,
+    'Total property value must be at least $1000',
+  ),
 
-  numberOfShares: yup
-    .number()
-    .transform(customParseNumber)
-    .typeError('Number of shares must be a number')
-    .required('Number of shares is required')
-    .min(100, 'Number of shares must be at least 100'),
+  numberOfShares: max10Digits('Number of shares').min(
+    100,
+    'Number of shares must be at least 100',
+  ),
 
-  rentalIncome: yup
-    .number()
-    .transform(customParseNumber)
-    .typeError('Rental income must be a number')
-    .required('Rental income is required')
-    .min(0, 'Rental income cannot be negative'),
+  rentalIncome: max10Digits('Rental income').min(
+    0,
+    'Rental income cannot be negative',
+  ),
 
-  expectedAnnualYield: yup
-    .number()
-    .transform(customParseNumber)
-    .typeError('Expected annual yield must be a number')
-    .required('Expected annual yield is required')
+  expectedAnnualYield: max10Digits('Expected annual yield')
     .min(0, 'Expected annual yield must be at least 0%')
     .max(100, 'Expected annual yield must be at most 100%'),
 });

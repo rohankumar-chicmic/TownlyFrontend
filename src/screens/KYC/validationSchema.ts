@@ -1,26 +1,46 @@
 import * as yup from 'yup';
-import { KYCFormData, DocumentFile } from './form.type';
 
-export const kycSchema: yup.ObjectSchema<KYCFormData> = yup.object({
-  fullName: yup.string().required('Full name is required'),
+export const kycSchema = yup.object().shape({
+  fullName: yup
+    .string()
+    .trim()
+    .required('Full name is required')
+    .matches(/^[a-zA-Z\s]+$/, 'Full name must contain only letters')
+    .min(2, 'Full name must be at least 2 characters')
+    .max(100, 'Full name must not exceed 100 characters'),
 
   dateOfBirth: yup
     .string()
-    .required('Date of birth is required')
-    .test(
-      'valid-date',
-      'Invalid date',
-      value => !!value && !isNaN(Date.parse(value)),
-    ),
+    .trim()
+    .required('Date of birth is required'),
 
-  fullAddress: yup.string().required('Address is required'),
+  fullAddress: yup
+    .string()
+    .trim()
+    .required('Full address is required')
+    .min(5, 'Address must be at least 5 characters')
+    .max(255, 'Address must not exceed 255 characters'),
 
-  documentType: yup.string().required('Document type is required'),
+  documentType: yup
+    .string()
+    .trim()
+    .required('Document type is required')
+    .matches(/^[a-zA-Z\s]+$/, 'Document type must contain only letters')
+    .max(50, 'Document type must not exceed 50 characters'),
 
   document: yup
-    .mixed<DocumentFile>()
+    .object()
+    .shape({
+      name: yup.string().required(),
+      uri: yup.string().required(),
+      type: yup.string().required(),
+      size: yup.number().nullable(),
+    })
     .nullable()
     .required('Document is required'),
 
-  selfieUrl: yup.string().required('Selfie is required'),
+  selfieUrl: yup
+    .string()
+    .trim()
+    .required('Selfie is required'),
 });

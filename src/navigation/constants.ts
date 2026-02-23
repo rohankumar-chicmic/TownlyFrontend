@@ -11,4 +11,5 @@ export enum ROUTES {
   LISTED_PROPERTIES = 'ListedProperties',
   INVESTED_PROPERTIES = 'InvestedProperties',
   TRANSACTIONS = 'Transactions',
+  OWNED_PROPERTY = 'UserOwnedProperty',
 }

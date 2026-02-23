@@ -25,13 +25,6 @@ const Home = () => {
   const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery();
   const [showModal, setShowModal] = useState(false);
 
-  const handleClick = () => {
-    Toast.show({
-      type: 'info',
-      text1: 'this is an info message',
-    });
-  };
-
   /**
    * Memoized Header — prevents full FlatList re-render
    */
@@ -64,8 +57,8 @@ const Home = () => {
           style={{ marginBottom: 5 }}
           textStyle={{ margin: 10 }}
           size="lg"
-          onPress={handleClick}
-          // onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
+          // onPress={handleClick}
+          onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
         >
           <Icons.Arrow
             height={12}

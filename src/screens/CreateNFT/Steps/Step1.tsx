@@ -93,18 +93,33 @@ export default function Step1(props: StepProps) {
     },
   });
 
-  useEffect(() => {
-    reset({
-      propertyName: props.formData.propertyName ?? '',
-      description: props.formData.description ?? '',
-      location: props.formData.location ?? '',
-      propertyType: props.formData.propertyType ?? '',
-      documents:
-        props.formData.documents?.length > 0
-          ? props.formData.documents
-          : [{ documentName: '', file: null }],
-    });
-  }, [props.formData, reset]);
+useEffect(() => {
+  const existingDocuments =
+    props.formData.documents?.length > 0
+      ? props.formData.documents
+      : [{ documentName: '', file: null }];
+
+  reset({
+    propertyName: props.formData.propertyName ?? '',
+    description: props.formData.description ?? '',
+    location: props.formData.location ?? '',
+    propertyType: props.formData.propertyType ?? '',
+    documents: existingDocuments,
+  });
+
+  const existingFile = existingDocuments[0]?.file;
+
+  if (existingFile) {
+    setPickedFile({
+      name: existingFile.name,
+      uri: existingFile.uri,
+      type: existingFile.type,
+      size: existingFile.size,
+    } as DocumentPickerResponse);
+  } else {
+    setPickedFile(null);
+  }
+}, [props.formData, reset]);
 
   return (
     <View style={dynamicStyles.containerSurface}>

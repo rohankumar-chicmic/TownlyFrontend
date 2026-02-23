@@ -70,7 +70,7 @@ export default function WalletScreen() {
   );
   const userToken = useAppSelector(state => state.auth.userToken);
 
-  const { data, isloading, error, refetch } = useGetBalanceQuery(undefined, {
+  const { data, error, refetch } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
@@ -129,7 +129,7 @@ export default function WalletScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.e }}>
+    <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         style={{ backgroundColor: Colors.background }}

@@ -14,7 +14,7 @@ export const LightColors = {
   textMuted: '#64748B', // Darkest "muted" gray that still meets contrast standards
 
   // Status & Feedback (More intense saturation)
-  success: '#166534', // Deep Forest Green
+  success: '#3d985f', // Positive growth/Profit
   error: '#991B1B', // Deep Crimson
   warning: '#854D0E', // Dark Ochre
 

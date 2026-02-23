@@ -10,7 +10,7 @@ import {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { logoutAndDisconnect } from './logoutAndDisconnect';
-// your real baseQuery (wrapped for 401 handling)
+
 const baseQuery = fetchBaseQuery({
   baseUrl: API_BASE_URL,
   prepareHeaders: (headers, { getState }) => {
@@ -49,6 +49,7 @@ const baseQueryWithInterceptor: BaseQueryFn<
 const api = createApi({
   baseQuery: baseQueryWithInterceptor,
   endpoints: () => ({}),
+  tagTypes: ['MyInvestedProperties', 'MyProperties', 'MyPropertyDetail'],
 });
 
 export default api;

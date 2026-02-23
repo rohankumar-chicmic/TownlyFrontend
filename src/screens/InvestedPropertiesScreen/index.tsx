@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, ActivityIndicator, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -6,72 +6,72 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 
+import InvestedPropertyCard from '@components/molecules/InvestedPropertyCard';
 import SearchInput from '@components/molecules/SearchInput';
 import BackButton from '@components/atoms/BackButton';
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
+import FilterButton from '@components/atoms/FilterButton';
 
-import { useLazyGetMyInvestedPropertiesQuery } from '@redux/PropertyApiReducer';
+import { useGetMyInvestedPropertiesQuery } from '@redux/PropertyApiReducer';
+import { debounce, sanitizeSearch } from '@utils/utility';
+
+const PAGE_SIZE = 10;
 
 const InvestedPropertiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
   // ================= STATE =================
+  const [filter, setFilter] = useState('');
   const [text, setText] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  const [page, setPage] = useState(1);
-  const [list, setList] = useState<any[]>([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [params, setParams] = useState({
+    search: '',
+    page: 1,
+  });
 
-  // ================= LAZY QUERY =================
-  const [trigger, { data, isLoading, isFetching }] =
-    useLazyGetMyInvestedPropertiesQuery();
+  // ================= QUERY =================
+  const { data, isFetching, isLoading } = useGetMyInvestedPropertiesQuery({
+    search: params.search,
+    page: params.page,
+    pageSize: PAGE_SIZE,
+    propertyType: filter,
+  });
 
-  // ================= DEBOUNCE INPUT =================
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearch(text);
-    }, 500);
+  const list = data?.items ?? [];
+  const hasMore = data?.hasMore ?? false;
 
-    return () => clearTimeout(handler);
-  }, [text]);
+  // ================= DEBOUNCED SEARCH =================
+  const debouncedSearch = useMemo(
+    () =>
+      debounce((value: string) => {
+        const clean = sanitizeSearch(value);
+        setParams({ search: clean, page: 1 });
+      }, 300),
+    [],
+  );
 
-  // ================= FETCH ON SEARCH =================
-  useEffect(() => {
-    setPage(1);
-    setList([]);
-    setHasMore(true);
+  const handleTextChange = (val: string) => {
+    setText(val);
 
-    trigger({
-      page: 1,
-      pageSize: 10,
-      search: debouncedSearch,
-    });
-  }, [debouncedSearch, trigger]);
-
-  // ================= FETCH ON PAGINATION =================
-  useEffect(() => {
-    if (page > 1) {
-      trigger({
-        page,
-        pageSize: 10,
-        search: debouncedSearch,
-      });
+    const hasIllegalChars = /[^a-zA-Z0-9\s,-]/.test(val);
+    if (hasIllegalChars) {
+      setParams({ search: '___INVALID_SEARCH___', page: 1 });
+      return;
     }
-  }, [page, debouncedSearch, trigger]);
 
-  // ================= SYNC DATA =================
-  useEffect(() => {
-    if (data) {
-      setList(prev => (page === 1 ? data.items : [...prev, ...data.items]));
-      setHasMore(data.hasMore);
-    }
-  }, [data, page]);
+    debouncedSearch(val);
+  };
 
-  // ================= LOAD MORE =================
-  const loadMore = () => {
+  // ================= FILTER =================
+  const handleFilterChange = (newVal: string) => {
+    setFilter(newVal);
+    setParams(prev => ({ ...prev, page: 1 }));
+  };
+
+  // ================= PAGINATION =================
+  const handleEndReached = () => {
     if (!isFetching && hasMore) {
-      setPage(prev => prev + 1);
+      setParams(prev => ({ ...prev, page: prev.page + 1 }));
     }
   };
 
@@ -88,11 +88,45 @@ const InvestedPropertiesScreen = () => {
 
       {/* SEARCH */}
       <View style={dynamicStyles.container}>
-        <SearchInput text={text} setText={setText} />
+        <SearchInput text={text} onChangeText={handleTextChange} />
       </View>
 
-      {/* LIST */}
-      {isLoading && page === 1 ? (
+      {/* FILTER TABS */}
+      <View
+        style={{
+          flexDirection: 'row',
+          borderBottomColor: Colors.border,
+          borderBottomWidth: 1,
+        }}
+      >
+        <FilterButton
+          label="All"
+          value=""
+          currentValue={filter}
+          onPress={() => handleFilterChange('')}
+        />
+        <FilterButton
+          label="Land"
+          value="land"
+          currentValue={filter}
+          onPress={() => handleFilterChange('land')}
+        />
+        <FilterButton
+          label="Commercial"
+          value="commercial"
+          currentValue={filter}
+          onPress={() => handleFilterChange('commercial')}
+        />
+        <FilterButton
+          label="Residential"
+          value="residential"
+          currentValue={filter}
+          onPress={() => handleFilterChange('residential')}
+        />
+      </View>
+
+      {/* LOADING (FIRST PAGE) */}
+      {isLoading && params.page === 1 ? (
         <View style={dynamicStyles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.primary} />
           <Text style={dynamicStyles.loadingText}>Loading portfolio...</Text>
@@ -102,20 +136,23 @@ const InvestedPropertiesScreen = () => {
           data={list}
           keyExtractor={(item, index) => `${item.investmentId}-${index}`}
           renderItem={({ item }) => (
-            <View style={{ width: '100%' }}>
-              <HoldingPropertyCard {...item} />
-            </View>
+            <InvestedPropertyCard
+              investmentId={item.investmentId}
+              propertyName={item.propertyName}
+              propertyType={item.propertyType}
+              location={item.location}
+              totalInvested={item.totalInvested}
+              expectedYield={item.expectedYield}
+              imageUrl={item.imageUrl}
+            />
           )}
-          contentContainerStyle={{
-            padding: 12,
-            gap: 10,
-            alignItems: 'center',
-          }}
+          contentContainerStyle={{ gap: 10, padding: 10 }}
           showsVerticalScrollIndicator={false}
-          onEndReached={loadMore}
+          onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
+          style={{ backgroundColor: Colors.background }}
           ListFooterComponent={
-            isFetching && page > 1 ? (
+            isFetching && params.page > 1 ? (
               <ActivityIndicator
                 size="small"
                 color={Colors.primary}

@@ -20,7 +20,6 @@ import {
 import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import CardContainer from '@components/molecules/CardContainer2';
-import ListEmptyComponent from '@components/molecules/PropertyListing/ListEmptyComponent';
 
 import { Icons } from '@utils/icons';
 import {
@@ -43,9 +42,6 @@ export default function PropertyDetails() {
   const { data, isLoading, error, refetch } = useGetPropertyDetailsQuery(
     params.id,
   );
-
-
-  console.log(data?.imageUrl);
 
   const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
@@ -164,7 +160,7 @@ export default function PropertyDetails() {
 
         <Button
           title="Invest"
-          disabled={!userToken || data?.userOwned}
+          disabled={!userToken || !data?.availableUnits}
           onPress={() => setShowModal(true)}
           size="lg"
           style={{ margin: 15 }}
@@ -183,7 +179,7 @@ export default function PropertyDetails() {
                 <CardContainer {...item} />
               </View>
             )}
-            ListEmptyComponent={() => <ListEmptyComponent />}
+            // ListEmptyComponent={() => <ListEmptyComponent />}
             contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
             showsHorizontalScrollIndicator={false}
           />

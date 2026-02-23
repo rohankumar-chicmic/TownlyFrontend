@@ -6,6 +6,7 @@ import useTheme from '@hooks/useTheme';
 import { Icons } from '@utils/icons';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
+import { InvestmentCardType } from '@utils/types';
 
 import styles from './styles';
 import InvestedPropertyCardProps from './InvestedPropertyCard.type';

@@ -11,6 +11,13 @@ const styles = (Colors: ThemeColors) =>
       flexDirection: 'row',
       borderRadius: 10,
       overflow: 'hidden',
+      // iOS Shadow
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      // Android Shadow
+      elevation: 5,
     },
     detailsContainer: {
       padding: 10,
@@ -51,36 +58,6 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '400',
       color: Colors.primary,
     },
-    badgeContainer: {
-      position: 'absolute',
-      top: 8,
-      left: 8,
-      paddingHorizontal: 10,
-      paddingVertical: 4,
-      borderRadius: 12,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 2,
-      elevation: 3,
-    },
-    badgeText: {
-      fontSize: 10,
-      fontWeight: '700',
-      textTransform: 'uppercase',
-      letterSpacing: 0.5,
-    },
-    // detailsContainer: {
-    //   flex: 1,
-    //   padding: 12,
-    //   justifyContent: 'space-between',
-    // },
-    // column: {
-    //   flexDirection: 'row',
-    //   justifyContent: 'space-between',
-    //   alignItems: 'center',
-    //   marginTop: 4,
-    // },
   });
 
 export default styles;

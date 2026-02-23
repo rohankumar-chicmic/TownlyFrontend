@@ -123,7 +123,7 @@ export default function InvestPropertyModal({
               <Row label="Shares" value={shares} />
               <Row label="Price per Share" value={`${pricePerShare} ETH`} />
               <View style={dynamicStyles.divider} />
-              <Row label="Total Cost" value={`${totalCost} ETH`} bold large />
+              <Row label="Total Cost" value={`${totalCost.toFixed(3)} ETH`} bold large />
             </View>
 
             <View style={dynamicStyles.info}>
@@ -144,7 +144,7 @@ export default function InvestPropertyModal({
               ></Button>
 
               <Button
-                title={`Invest ${totalCost} ETH`}
+                title={`Invest ${totalCost.toFixed(3)} ETH`}
                 onPress={handleSubmit}
               ></Button>
             </View>

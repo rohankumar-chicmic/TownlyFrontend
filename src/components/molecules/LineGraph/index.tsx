@@ -36,7 +36,7 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
 
   const lineData = (data ?? []).map((item, index) => ({
     value: Number(item.value) || 0,
-    label: item.label || index,
+    label: item.label || String(index),
   }));
 
   const values = data.map(d => Number(d.value) || 0);

@@ -7,6 +7,8 @@ import useTheme from '@hooks/useTheme';
 import PropertyCardProps from './PropertyCardProps.type';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
+import Badge from '@components/atoms/Badge';
+import { debounce } from '@utils/utility';
 
 export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
@@ -22,42 +24,11 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id: props.id });
   };
 
-  const getBadgeConfig = (status?: number) => {
-    switch (status) {
-      case 1:
-        return { label: 'Pending', color: Colors.warning || '#FFA500' };
-      case 2:
-        return { label: 'Active', color: Colors.success || '#4CAF50' };
-      case 3:
-        return { label: 'Sold Out', color: Colors.error || '#F44336' };
-      case 4:
-        return { label: 'Rejected', color: Colors.textSecondary || '#757575' };
-      default:
-        return null;
-    }
-  };
-
-  const renderBadge = () => {
-    const config = getBadgeConfig(props.status);
-    if (!config) return null;
-
-    return (
-      <View
-        style={[
-          dynamicStyles.badgeContainer,
-          { backgroundColor: config.color },
-        ]}
-      >
-        <Text style={[dynamicStyles.badgeText, { color: Colors.background }]}>
-          {config.label}
-        </Text>
-      </View>
-    );
-  };
+  const debouncedHandlePressed = debounce(handlePressed, 250);
 
   return (
     <Pressable
-      onPress={handlePressed}
+      onPress={debouncedHandlePressed}
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
       style={[
@@ -80,7 +51,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         ></Image>
       </View>
 
-      {props.userOwned && renderBadge()}
+      {props.userOwned && props.status && <Badge status={props.status}/>}
 
       <View style={dynamicStyles.detailsContainer}>
         <Text numberOfLines={1} style={dynamicStyles.title}>

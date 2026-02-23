@@ -20,12 +20,14 @@ import { ROUTES } from './constants';
 import { RootStackParamList } from './types';
 import { useAppSelector } from '@redux/store';
 import useNotification from '@hooks/useNotification';
+import { useAppToastConfig } from '@hooks/useAppToastConfig';
 import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
 import { StatusBar } from 'react-native';
 import { THEME } from '@theme/constants';
 import InvestedPropertiesScreen from '@screens/InvestedPropertiesScreen';
 import ListedPropertiesScreen from '@screens/ListedPropertiesScreen';
 import TransactionsScreen from '@screens/TransactionsScreen';
+import UserOwnedProperty from '@screens/UserOwnedProperty';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const Drawer = createDrawerNavigator();
@@ -57,61 +59,7 @@ const RootNavigator = () => {
   });
   useNotification();
   const { Colors, currentTheme } = useTheme();
-
-  const toastConfig = {
-    success: props => (
-      <BaseToast
-        {...props}
-        style={{ borderLeftColor: Colors.success }}
-        contentContainerStyle={{ paddingHorizontal: 15 }}
-        text1Style={{
-          fontSize: 15,
-          fontWeight: '400',
-          color: Colors.text,
-        }}
-      />
-    ),
-
-    error: props => (
-      <ErrorToast
-        {...props}
-        style={{ borderLeftColor: Colors.error }}
-        text1Style={{
-          fontSize: 17,
-          color: Colors.text,
-        }}
-        text2Style={{
-          fontSize: 15,
-          color: Colors.textSecondary,
-        }}
-      />
-    ),
-
-    info: props => (
-      <BaseToast
-        {...props}
-        style={{
-          width: '90%',
-          borderLeftColor: Colors.primaryDark,
-          borderRightColor: Colors.primaryDark,
-          backgroundColor: Colors.border,
-          borderColor: Colors.border,
-          shadowColor: 'grey',
-          shadowOffset: {
-            width: 0,
-            height: 10,
-          },
-          shadowOpacity: 0.7,
-          shadowRadius: 4.65,
-          elevation: 8,
-        }}
-        text1Style={{
-          color: Colors.textPrimary,
-          fontSize: 20,
-        }}
-      />
-    ),
-  };
+  const toastConfig = useAppToastConfig();
 
   return (
     <SafeAreaProvider style={{ backgroundColor: Colors.background }}>
@@ -131,7 +79,7 @@ const RootNavigator = () => {
             headerShown: false,
             contentStyle: { backgroundColor: Colors.background },
           }}
-          // initialRouteName={ROUTES.INVESTED_PROPERTIES}
+          // initialRouteName={ROUTES.KYC}
         >
           <Stack.Screen name={ROUTES.DRAWER} component={MainDrawerNavigation} />
           <Stack.Screen name={ROUTES.WALLET} component={WalletScreen} />
@@ -143,6 +91,12 @@ const RootNavigator = () => {
             name={ROUTES.INVESTED_PROPERTIES}
             component={InvestedPropertiesScreen}
           />
+
+          <Stack.Screen
+            name={ROUTES.OWNED_PROPERTY}
+            component={UserOwnedProperty}
+          /> 
+
           <Stack.Screen
             name={ROUTES.TRANSACTIONS}
             component={TransactionsScreen}

@@ -5,6 +5,7 @@ export type RootStackParamList = {
   Drawer: undefined;
   WalletScreen: undefined;
   PropertyDetails: { id: string };
+  UserOwnedProperty: { id: string, status?: number };
   CreateNft: undefined;
   KycScreen: undefined;
   Notifications: undefined;

@@ -57,15 +57,8 @@ export default function Step4(props: StepProps) {
     useMakePropertyMutation();
 
   const navigation = useAppNavigation();
-  if (isSuccess) {
-    navigation.navigate('Home');
-  }
   const userToken = useAppSelector(state => state.auth.userToken);
   const handleSubmitProperty = async () => {
-    console.log('Token being sent:', userToken);
-    console.log('Token type:', typeof userToken);
-    console.log('Token length:', userToken?.length);
-
     if (!userToken) {
       console.error('No token available!');
       return;
@@ -76,24 +69,24 @@ export default function Step4(props: StepProps) {
         data: props.formData,
         token: userToken,
       }).unwrap();
-      if (isSuccess) {
-        navigation.navigate(ROUTES.DRAWER);
-        Toast.show({
-          type: 'info',
-          text1: 'Your property creation request has been sent successfully',
-        });
-      }
-      if(isError) {
-        Toast.show({
-          type: 'info',
-          text1: 'Sorry, cannot create property.',
-        });
-      }
+
       console.log('Property created successfully!', result);
+
+      navigation.navigate(ROUTES.DRAWER);
+
+      Toast.show({
+        type: 'success',
+        text1: 'Success!',
+        text2: 'Your property creation request has been sent successfully',
+      });
     } catch (err: any) {
       console.error('Failed to create property:', err);
-      console.error('Error status:', err.status);
-      console.error('Error data:', err.data);
+
+      Toast.show({
+        type: 'error',
+        text1: 'Submission Failed',
+        text2: err.data?.message || 'Sorry, cannot create property.',
+      });
     }
   };
 
@@ -178,7 +171,12 @@ export default function Step4(props: StepProps) {
           {props.formData.documents?.map((document, index) => (
             <View
               key={document.documentName}
-              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+              style={{
+                flexDirection: 'row',
+                width:'100%',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+              }}
             >
               <Text
                 style={{
@@ -189,9 +187,7 @@ export default function Step4(props: StepProps) {
               </Text>
               <Pressable
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  marginTop: 6,
+                  width:'60%',
                 }}
                 onPress={() => viewDocument({ uri: document.file?.uri ?? '' })}
               >
@@ -200,7 +196,7 @@ export default function Step4(props: StepProps) {
                     marginLeft: 6,
                     color: Colors.primary,
                     fontSize: 13,
-                    width: '60%',
+                    textAlign: 'right',
                     fontWeight: '600',
                   }}
                 >
@@ -244,7 +240,7 @@ export default function Step4(props: StepProps) {
           value={
             <Text style={{ fontSize: 18, color: Colors.primary }}>
               {'$'}
-              {props.formData.pricePerUnit || 0}
+              {props.formData.pricePerUnit.toFixed(3) || 0}
             </Text>
           }
         />
@@ -252,7 +248,7 @@ export default function Step4(props: StepProps) {
           field="Expected Annual Yield"
           value={
             <Text style={{ fontSize: 18, color: Colors.primaryDark }}>
-              {props.formData.expectedAnnualYield.toFixed(1)}
+              {props.formData.expectedAnnualYield?.toFixed(1)}
               {'%'}
             </Text>
           }
@@ -269,7 +265,8 @@ export default function Step4(props: StepProps) {
         ></Button>
 
         <Button
-          title="Submit"
+          title={isLoading ? 'Submitting' : 'Submit'}
+          disabled={isLoading}
           onPress={handleSubmitProperty}
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
           textStyle={{ marginHorizontal: 10 }}

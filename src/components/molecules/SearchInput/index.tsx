@@ -44,6 +44,7 @@ export default function SearchInput(props: Readonly<SearchPropsType>) {
         <TextInput
           {...props}
           ref={ref}
+          cursorColor={Colors.primary}
           placeholder="Search by location or property name..."
           placeholderTextColor={Colors.textMuted}
           onChangeText={props.onChangeText}

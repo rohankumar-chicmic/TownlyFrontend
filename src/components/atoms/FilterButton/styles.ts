@@ -30,7 +30,7 @@ const styles = (Colors: ThemeColors) =>
     tag: {
       margin: 10,
       alignSelf: 'flex-start',
-      backgroundColor: Colors.outline,
+      backgroundColor: Colors.border,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 6,
