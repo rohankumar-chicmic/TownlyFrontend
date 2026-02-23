@@ -1,7 +1,4 @@
 import { API_BASE_URL } from '@utils/constants';
-
-import store, { RootState } from '../store';
-
 import {
   BaseQueryFn,
   createApi,
@@ -11,10 +8,17 @@ import {
 } from '@reduxjs/toolkit/query/react';
 import { logoutAndDisconnect } from './logoutAndDisconnect';
 
+interface LocalRootState {
+  auth: {
+    userToken: string | null;
+  };
+}
+
 const baseQuery = fetchBaseQuery({
   baseUrl: API_BASE_URL,
   prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.userToken;
+    // Cast to LocalRootState to avoid importing store.ts
+    const token = (getState() as LocalRootState).auth.userToken;
     if (token) headers.set('authorization', `Bearer ${token}`);
     return headers;
   },
@@ -35,7 +39,8 @@ const baseQueryWithInterceptor: BaseQueryFn<
 
     if (status === 401) {
       console.error('Unauthorized access');
-      store.dispatch(logoutAndDisconnect());
+      // 2. Use api.dispatch (local) instead of store.dispatch (global)
+      api.dispatch(logoutAndDisconnect());
     } else {
       console.error(
         `API Error: ${status} - ${errorData?.message || errorData?.error}`,

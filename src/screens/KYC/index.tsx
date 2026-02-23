@@ -1,16 +1,10 @@
 import React, { useRef, useState } from 'react';
-import {
-  View,
-  Text,
-  Platform,
-  Image,
-  ScrollView,
-} from 'react-native';
+import { View, Text, Platform, Image } from 'react-native';
 
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, Resolver, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
   DocumentPickerResponse,
@@ -30,18 +24,20 @@ import { DocumentFile, KYCFormData } from './form.type';
 import { kycSchema } from './validationSchema';
 import styles from './styles';
 import { useAppNavigation } from '@hooks/useNavigation';
+import { ROUTES } from 'src/navigation/constants';
 
 export default function KYCVerificationScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(null);
+  const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(
+    null,
+  );
 
   const navigation = useAppNavigation();
   const [selfieUploaded, setSelfieUploaded] = useState(false);
   const [submitKYC, { isLoading, isSuccess }] = useSubmitKYCMutation();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // Ref for KeyboardAwareScrollView to programmatically scroll
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null);
 
   if (isSuccess) {
@@ -54,8 +50,7 @@ export default function KYCVerificationScreen() {
     setValue,
     formState: { errors },
   } = useForm<KYCFormData>({
-    resolver: yupResolver(kycSchema),
-    // FIX: use 'onChange' mode so errors appear as the user types/submits
+    resolver: yupResolver(kycSchema) as Resolver<KYCFormData>,
     mode: 'onChange',
     defaultValues: {
       fullName: '',
@@ -104,9 +99,9 @@ export default function KYCVerificationScreen() {
         type: 'image/jpeg',
       } as any);
 
-      // await submitKYC(formData).unwrap();
+      await submitKYC(formData).unwrap();
 
-      navigation.navigate('Home');
+      navigation.navigate(ROUTES.TABS);
     } catch (error) {
       console.error('KYC submission failed:', error);
     }
@@ -114,14 +109,12 @@ export default function KYCVerificationScreen() {
 
   const handleSelfiePick = async () => {
     const result = await uploadImage('selfie');
-
     if (result) {
-      setValue('selfieUrl', result, { shouldValidate: true });
+      setValue('selfieUrl', result.trim(), { shouldValidate: true });
       setSelfieUploaded(true);
     }
   };
 
-  // FIX: Restrict file picker to PDF and DOCX only (not images)
   const handlePickFile = async () => {
     try {
       const [result] = await pick({ type: [types.pdf, types.docx] });
@@ -143,8 +136,6 @@ export default function KYCVerificationScreen() {
   return (
     <SafeAreaProvider style={{ flex: 1 }}>
       <SafeAreaView style={{ flex: 1 }}>
-        {/* FIX: enableAutomaticScroll + enableOnAndroid ensures lower fields
-            auto-scroll into view when tapped/focused on both platforms */}
         <KeyboardAwareScrollView
           ref={scrollViewRef}
           showsVerticalScrollIndicator={false}
@@ -157,7 +148,10 @@ export default function KYCVerificationScreen() {
         >
           <BackButton />
           <Text
-            style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}
+            style={[
+              dynamicStyles.heroPrimarytext,
+              { alignSelf: 'center', textAlign: 'center' },
+            ]}
           >
             Verify Your Identity
           </Text>
@@ -185,10 +179,9 @@ export default function KYCVerificationScreen() {
                 fontSize: 12,
               }}
             >
-              Let's start with the basic information about your identity
+              Let&apos;s start with the basic information about your identity
             </Text>
 
-            {/* FIX: letters-only + max 100 chars validated via Yup schema */}
             <Controller
               control={control}
               name="fullName"
@@ -197,9 +190,10 @@ export default function KYCVerificationScreen() {
                   label="Full Name"
                   required
                   value={value}
-                  onChangeText={onChange}
+                  onChangeText={text => {
+                    if (text.length <= 100) onChange(text);
+                  }}
                   placeholder="Full name"
-                  maxLength={100}
                   error={errors.fullName?.message}
                 />
               )}
@@ -280,7 +274,6 @@ export default function KYCVerificationScreen() {
               }}
             >
               <View style={{ flex: 1 }}>
-                {/* FIX: max 255 chars via Yup schema + trim catches spaces-only */}
                 <Controller
                   control={control}
                   name="fullAddress"
@@ -290,8 +283,11 @@ export default function KYCVerificationScreen() {
                       required
                       value={value}
                       placeholder="Full address"
-                      onChangeText={onChange}
-                      maxLength={255}
+                      // ✅ Guard: reject update instead of using maxLength,
+                      // prevents phantom backspace bug on controlled TextInput
+                      onChangeText={text => {
+                        if (text.length <= 255) onChange(text);
+                      }}
                       error={errors.fullAddress?.message}
                     />
                   )}
@@ -302,11 +298,10 @@ export default function KYCVerificationScreen() {
             <View
               style={{
                 flexDirection: 'row',
-                gap: 10,
+                gap: 8,
               }}
             >
-              <View style={{ flex: 1 }}>
-                {/* FIX: letters-only + max 50 chars via Yup schema */}
+              <View style={{ width: '46%' }}>
                 <Controller
                   control={control}
                   name="documentType"
@@ -316,16 +311,19 @@ export default function KYCVerificationScreen() {
                       required
                       placeholder="e.g. Passport, License"
                       value={value}
-                      onChangeText={onChange}
-                      maxLength={50}
+                      // ✅ Guard: reject update instead of using maxLength,
+                      // prevents phantom backspace bug on controlled TextInput
+                      onChangeText={text => {
+                        if (text.length <= 50) onChange(text);
+                      }}
                       error={errors.documentType?.message}
                     />
                   )}
                 />
               </View>
-              <View style={{ flex: 1, marginTop: 6 }}>
-                <Text style={dynamicStyles.label}>
-                  Upload Document{' '}
+              <View style={{ width: '51%', marginTop: 6 }}>
+                <Text style={[dynamicStyles.label]}>
+                  Upload Document
                   <Text style={{ color: Colors.primary }}> *</Text>
                 </Text>
                 <Button
@@ -354,7 +352,6 @@ export default function KYCVerificationScreen() {
                     {errors.document.message}
                   </Text>
                 )}
-                {/* FIX: hint text updated to reflect actual accepted types */}
                 <Text
                   style={{
                     color: Colors.textSecondary,
@@ -363,7 +360,7 @@ export default function KYCVerificationScreen() {
                     marginTop: 4,
                   }}
                 >
-                  Accepted: Image 
+                  Accepted: PDF, DOCX
                 </Text>
               </View>
             </View>

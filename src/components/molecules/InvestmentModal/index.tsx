@@ -17,12 +17,14 @@ import { useInvestInPropertyMutation } from '@redux/PropertyApiReducer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useAppNavigation } from '@hooks/useNavigation';
 import Toast from 'react-native-toast-message';
+import { ROUTES } from 'src/navigation/constants';
 
 interface Props {
   visible: boolean;
   onClose: () => void;
   id: string;
   pricePerShare: number;
+  availableUnits: number;
 }
 
 export default function InvestPropertyModal({
@@ -30,8 +32,9 @@ export default function InvestPropertyModal({
   onClose,
   id,
   pricePerShare,
+  availableUnits,
 }: Readonly<Props>) {
-  const MAX_LIMIT = 10000;
+  const MAX_LIMIT = Math.min(10000, availableUnits);
   const MIN_LIMIT = 1;
   const [shares, setShares] = useState('');
   const { Colors } = useTheme();
@@ -44,7 +47,6 @@ export default function InvestPropertyModal({
   const handleSubmit = async () => {
     const sharesNum = Number(shares);
 
-    // 4. Enforce Minimum Limit on submission
     if (sharesNum < MIN_LIMIT) {
       Toast.show({
         type: 'error',
@@ -55,7 +57,8 @@ export default function InvestPropertyModal({
 
     try {
       await investInProperty({ propertyId: id, shares: sharesNum });
-      // ... rest of your success logic
+      onClose();
+      navigation.navigate(ROUTES.TABS);
     } catch (error) {
       console.error(error);
     }
@@ -117,13 +120,19 @@ export default function InvestPropertyModal({
               placeholder="0"
             />
 
-            <Text style={dynamicStyles.hint}>Min: 1 • Max: 10,000 shares</Text>
-
+            <Text style={dynamicStyles.hint}>
+              Min: 1 • Max: {MAX_LIMIT} shares
+            </Text>
             <View style={dynamicStyles.card}>
               <Row label="Shares" value={shares} />
               <Row label="Price per Share" value={`${pricePerShare} ETH`} />
               <View style={dynamicStyles.divider} />
-              <Row label="Total Cost" value={`${totalCost.toFixed(3)} ETH`} bold large />
+              <Row
+                label="Total Cost"
+                value={`${totalCost.toFixed(3)} ETH`}
+                bold
+                large
+              />
             </View>
 
             <View style={dynamicStyles.info}>

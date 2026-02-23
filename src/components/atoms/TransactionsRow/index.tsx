@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 
@@ -7,7 +7,7 @@ const TransactionRow = ({
   item,
 }: {
   item: {
-    type?: undefined;
+    type?: number;
     propertyName: string;
     tokens?: number;
     amountUsd: number;
@@ -15,7 +15,6 @@ const TransactionRow = ({
   };
 }) => {
   const isIncome = item?.type === 2;
-  const isPurchase = item?.type === 1;
   const { dynamicStyles } = useStyles(styles);
   return (
     <View style={dynamicStyles.row}>

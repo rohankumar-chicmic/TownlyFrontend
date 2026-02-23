@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 import { ThemeColors } from '@theme/constants';
 
@@ -6,17 +6,16 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       borderWidth: 1,
-      aspectRatio: 3 / 2, // fixed ratio
+      aspectRatio: 3 / 2,
+      minHeight: 200,
       borderColor: Colors.border,
       flexDirection: 'row',
       borderRadius: 10,
       overflow: 'hidden',
-      // iOS Shadow
       shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
-      // Android Shadow
       elevation: 5,
     },
     detailsContainer: {

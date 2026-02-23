@@ -2,7 +2,7 @@ export enum ROUTES {
   HOME = 'Home',
   PORTFOLIO = 'Portfolio',
   MARKETPLACE = 'Marketplace',
-  DRAWER = 'Drawer',
+  TABS = 'Tabs',
   PROPERTY_DETAILS = 'PropertyDetails',
   KYC = 'KycScreen',
   NOTIFICATIONS = 'Notifications',

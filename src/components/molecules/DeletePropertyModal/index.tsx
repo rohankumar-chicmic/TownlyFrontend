@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Modal,
-  View,
-  Text,
-  Pressable,
-  Keyboard,
-} from 'react-native';
+import { Modal, View, Text, Pressable, Keyboard } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
@@ -29,11 +23,7 @@ export default function DeletePropertyModal({
   const { dynamicStyles } = useStyles(styles);
 
   return (
-    <Modal
-      animationType="slide"
-      transparent
-      visible={visible}
-    >
+    <Modal animationType="slide" transparent visible={visible}>
       <Pressable
         style={dynamicStyles.backdrop}
         onPress={() => {

@@ -24,10 +24,10 @@ const styles = (Colors: ThemeColors) =>
     input: {
       borderRadius: 10,
       padding: 12,
+      marginHorizontal: 5,
       borderWidth: 1,
-      marginBottom: 15,
-      color: Colors.textPrimary,
-      height: Dimensions.get('screen').height * 0.047,
+      marginBottom: 5,
+      minHeight: Dimensions.get('screen').height * 0.047,
       backgroundColor: Colors.background,
       borderColor: Colors.border,
     },

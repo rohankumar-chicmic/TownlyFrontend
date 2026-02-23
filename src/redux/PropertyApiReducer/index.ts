@@ -16,10 +16,16 @@ const propertyApi = api.injectEndpoints({
         formData.append('Description', data.description ?? '');
         formData.append('Location', data.location ?? '');
         formData.append('PropertyType', data.propertyType ?? '');
-        formData.append('InitialValuation', (data.totalPropertyValue ?? 0).toString());
+        formData.append(
+          'InitialValuation',
+          (data.totalPropertyValue ?? 0).toString(),
+        );
         formData.append('TotalUnits', (data.numberOfShares ?? 0).toString());
         formData.append('rentalIncome', (data.rentalIncome ?? 0).toString());
-        formData.append('AnnualYieldPercent', (data.expectedAnnualYield ?? 0).toString());
+        formData.append(
+          'AnnualYieldPercent',
+          (data.expectedAnnualYield ?? 0).toString(),
+        );
 
         if (data.propertyImage?.uri) {
           formData.append('Image', {
@@ -37,7 +43,10 @@ const propertyApi = api.injectEndpoints({
               type: doc.file.type ?? 'application/pdf',
             } as any);
           }
-          formData.append(`Documents[${idx}][documentName]`, doc.documentName ?? '');
+          formData.append(
+            `Documents[${idx}][documentName]`,
+            doc.documentName ?? '',
+          );
         });
 
         return {
@@ -52,7 +61,12 @@ const propertyApi = api.injectEndpoints({
 
     getMyProperties: builder.query<
       { hasMore: boolean; items: PropertyCardProps[] },
-      { page: number; pageSize: number; status: string | number; search: string }
+      {
+        page: number;
+        pageSize: number;
+        status: string | number;
+        search: string;
+      }
     >({
       query: params => ({
         url: `/properties/me`,

@@ -6,7 +6,6 @@ import {
   ScrollView,
   Modal,
   Pressable,
-  StatusBar,
 } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
@@ -27,7 +26,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useAppKit } from '@reown/appkit-react-native';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
-import { THEME } from '@theme/constants';
 import Toast from 'react-native-toast-message';
 
 const InfoRow = ({
@@ -63,22 +61,21 @@ const InfoRow = ({
 
 export default function WalletScreen() {
   const { dynamicStyles } = useStyles(styles);
-  const { Colors, currentTheme } = useTheme();
+  const { Colors } = useTheme();
   const [amount, setAmount] = useState('');
   const walletAddress = useAppSelector(
     state => state.auth.userData?.walletAddress,
   );
   const userToken = useAppSelector(state => state.auth.userToken);
 
-  const { data, error, refetch } = useGetBalanceQuery(undefined, {
+  const { data, refetch } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const { disconnect } = useAppKit();
   const navigation = useAppNavigation();
   const [inputError, setInputError] = useState('');
-  const [requestCurrency, { isSuccess, isError }] =
-    useRequestCurrencyMutation();
+  const [requestCurrency, { isSuccess }] = useRequestCurrencyMutation();
 
   const handleRequestCurrency = async (rawAmount: string) => {
     try {
@@ -94,7 +91,7 @@ export default function WalletScreen() {
         setInputError('Amount must be between 1 and 999');
         return;
       }
-      // await requestCurrency(rawAmount.toString());
+      await requestCurrency(rawAmount.toString());
       setInputError('');
       setAmount('');
 
@@ -111,21 +108,20 @@ export default function WalletScreen() {
     setTimeout(() => {
       disconnect();
     }, 50);
-    navigation.navigate(ROUTES.DRAWER);
-  };
-
-  const refreshBalance = async () => {
-    try {
-      await refetch();
-    } catch (error) {
-      console.log(error);
-    }
+    navigation.navigate(ROUTES.TABS);
   };
 
   useFocusEffect(
     useCallback(() => {
+      const refreshBalance = async () => {
+        try {
+          await refetch();
+        } catch (error) {
+          console.log(error);
+        }
+      };
       refreshBalance();
-    }, []),
+    }, [refetch]),
   );
 
   return (

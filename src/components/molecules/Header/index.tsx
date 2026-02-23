@@ -1,38 +1,28 @@
 import { View, Text, Pressable } from 'react-native';
-import React, { Dispatch, SetStateAction } from 'react';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React from 'react';
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import ConnectButton from '@components/atoms/ConnectButton';
-import { useAppSelector } from '@redux/store';
-
-interface HeaderProps extends BottomTabHeaderProps {
-  drawerOpened: boolean;
-  setDrawerOpened: Dispatch<SetStateAction<boolean>>;
-  onPress: () => void;
-}
+import AntDesign from '@expo/vector-icons/AntDesign';
+import { THEME } from '@theme/constants';
 
 export default function Header({
   route,
   options,
   navigation,
-  drawerOpened,
-  setDrawerOpened,
-  onPress,
-}: Readonly<HeaderProps>) {
+}: Readonly<BottomTabHeaderProps>) {
   const { dynamicStyles } = useStyles(styles);
-  const { Colors } = useTheme();
-  // const insets = useSafeAreaInsets();
+  const { Colors, toggleTheme, currentTheme } = useTheme();
+
   return (
     <View
       style={[
         dynamicStyles.container,
         {
           paddingVertical: 10,
-
           width: '100%',
         },
       ]}
@@ -44,28 +34,26 @@ export default function Header({
           color={Colors.primary}
           borderColor={Colors.border}
         />
-
         <Text style={dynamicStyles.primaryText}>Townly</Text>
       </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 15,
+        }}
+      >
         <ConnectButton style={dynamicStyles.walletButton} />
         <Pressable
-          onPress={onPress}
-          onPressIn={() => setDrawerOpened(true)}
-          onPressOut={() => setDrawerOpened(false)}
-          style={{
-            marginLeft: 10,
-            borderRadius: 5,
-            backgroundColor: !drawerOpened ? Colors.elevated : Colors.surface,
-          }}
+          onPress={toggleTheme}
+          style={{ backgroundColor: Colors.surface, borderRadius: 15 }}
         >
-          <View style={{ margin: 10 }}>
-            <Icons.Drawer
-              height={18}
-              width={18}
-              color={!drawerOpened ? Colors.primary : Colors.primaryDark}
-            ></Icons.Drawer>
-          </View>
+          <AntDesign
+            name={currentTheme === THEME.LIGHT ? 'sun' : 'moon'}
+            size={24}
+            color={Colors.primary}
+            style={{ padding: 10 }}
+          />
         </Pressable>
       </View>
     </View>

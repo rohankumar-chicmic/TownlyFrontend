@@ -4,25 +4,24 @@ import { useAppKit, useAccount } from '@reown/appkit-react-native';
 import { View, Text, Pressable, ViewStyle, Dimensions } from 'react-native';
 import Button from '../Button';
 
-import React, { useCallback, useEffect } from 'react';
+import React from 'react';
 import { useGetBalanceQuery } from '@redux/ApiReducer';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
-import useNotification from '@hooks/useNotification';
 import { useAppSelector } from '@redux/store';
 
 interface ConnectButtonPropsType {
   style?: ViewStyle;
 }
 
-function ConnectButton(props: ConnectButtonPropsType) {
+function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
   const { Colors } = useTheme();
-  const { open, disconnect } = useAppKit();
-  const { address, isConnected, chainId } = useAccount();
+  const { open } = useAppKit();
+  const { address, isConnected } = useAccount();
   const userToken = useAppSelector(state => state.auth.userToken);
   console.log(userToken);
   const navigation = useAppNavigation();
-  const { data, error } = useGetBalanceQuery(undefined, {
+  const { data, isLoading } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
   useGetKYCStatusQuery(undefined, {
@@ -44,7 +43,8 @@ function ConnectButton(props: ConnectButtonPropsType) {
             }}
             numberOfLines={1}
           >
-            {(data?.available ?? '...') + ' ETH,'}
+            {isLoading && 'loading...'}
+            {data?.available ? data?.available + ' ETH,' : '...'}
             {address ?? ' '}
           </Text>
         </Pressable>

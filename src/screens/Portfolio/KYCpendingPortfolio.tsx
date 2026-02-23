@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import Button from '@components/atoms/Button';
 import useTheme from '@hooks/useTheme';
 import styles from './styles';

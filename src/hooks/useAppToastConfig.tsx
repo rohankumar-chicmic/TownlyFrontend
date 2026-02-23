@@ -6,14 +6,14 @@ export const useAppToastConfig = () => {
   const { Colors } = useTheme();
 
   const config: ToastConfig = {
-    success: (props) => (
+    success: props => (
       <BaseToast
         {...props}
-        style={{ 
-          borderLeftColor: Colors.success, 
+        style={{
+          borderLeftColor: Colors.success,
           backgroundColor: Colors.surface, // Using your surface color
           borderWidth: 1,
-          borderColor: Colors.border 
+          borderColor: Colors.border,
         }}
         contentContainerStyle={{ paddingHorizontal: 15 }}
         text1Style={{
@@ -28,14 +28,14 @@ export const useAppToastConfig = () => {
       />
     ),
 
-    error: (props) => (
+    error: props => (
       <ErrorToast
         {...props}
-        style={{ 
-          borderLeftColor: Colors.error, 
+        style={{
+          borderLeftColor: Colors.error,
           backgroundColor: Colors.surface,
           borderWidth: 1,
-          borderColor: Colors.border 
+          borderColor: Colors.border,
         }}
         text1Style={{
           fontSize: 16,
@@ -49,7 +49,7 @@ export const useAppToastConfig = () => {
       />
     ),
 
-    info: (props) => (
+    info: props => (
       <BaseToast
         {...props}
         style={{
@@ -67,11 +67,11 @@ export const useAppToastConfig = () => {
         text1Style={{
           color: Colors.textPrimary,
           fontSize: 16,
-          fontWeight: 'bold'
+          fontWeight: 'bold',
         }}
         text2Style={{
           color: Colors.textSecondary,
-          fontSize: 13
+          fontSize: 13,
         }}
       />
     ),

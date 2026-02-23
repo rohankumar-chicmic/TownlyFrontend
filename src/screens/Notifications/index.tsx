@@ -56,8 +56,7 @@ const Notifications = () => {
     });
 
   const [readSingleNotification] = useReadNotificationMutation();
-  const [readAllNotifications, { isLoading: isLoadingReadAll, isError }] =
-    useReadAllNotificationMutation();
+  const [readAllNotifications] = useReadAllNotificationMutation();
 
   const unreadCount = unreadNotifications.length;
 

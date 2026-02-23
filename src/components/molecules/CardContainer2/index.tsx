@@ -1,4 +1,4 @@
-import { View, Text, Image, Dimensions, Pressable } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -51,7 +51,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         ></Image>
       </View>
 
-      {props.userOwned && props.status && <Badge status={props.status}/>}
+      {props.userOwned && props.status && <Badge status={props.status} />}
 
       <View style={dynamicStyles.detailsContainer}>
         <Text numberOfLines={1} style={dynamicStyles.title}>

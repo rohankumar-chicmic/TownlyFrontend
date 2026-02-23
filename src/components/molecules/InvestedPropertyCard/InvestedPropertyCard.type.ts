@@ -1,18 +1,22 @@
 export default interface InvestedPropertyCardProps {
-  id: string;
-
-  imageUrl: string;
-  name: string;
+  propertyId: string;
+  propertyName: string;
+  propertyType: 'Commercial' | 'Residential' | string; // Narrowed to Commercial based on data
   location: string;
-  propertyType: string;
+  propertyImageUrl: string;
 
-  tokensOwned: number;
+  // Financial Data (ETH)
   totalInvestedEth: number;
   currentValueEth: number;
-  totalReturnEth: number;
   monthlyIncomeEth: number;
-  annualYield: number;
+  totalReturnEth: number;
 
-  riskScore: number;
-  riskLabel: string;
+  // Financial Data (USD/General)
+  totalAmountUsd: number;
+  sharesPurchased: number;
+  annualYieldPercent: number;
+  riskScore: number; // Based on the 1-10 scale usually seen in Fintech
+
+  // Metadata
+  investedAt: string; // ISO 8601 Date String
 }

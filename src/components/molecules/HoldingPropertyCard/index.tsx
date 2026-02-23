@@ -1,36 +1,45 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import { Icons } from '@utils/icons';
+import { PropertyPortfolioData } from '@utils/types';
+import styles from './styles';
+import useStyles from '@hooks/useStyles';
+import { debounce } from '@utils/utility';
+import { useAppNavigation } from '@hooks/useNavigation';
+import { ROUTES } from 'src/navigation/constants';
 
-// 1. Updated interface to match your specific JSON keys
-interface PropertyPortfolioData {
-  propertyId: string;
-  propertyName: string;
-  propertyImageUrl: string;
-  location: string;
-  sharesPurchased: number;  
-  ethAmountAtExecution: number;
-  totalAmountUsd: number;
-  ethUsdRateAtExecution: number;
-  investedAt: string;
-  investmentId: string;
-  pricePerShareUsd: number;
-}
-
-const HoldingPropertyCard = (data: PropertyPortfolioData) => {
+const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
   const { Colors } = useTheme();
+  const { dynamicStyles } = useStyles(styles);
+  const navigation = useAppNavigation();
 
-  // Helper component for the data grid
-  const DataItem = ({ label, value, isSuccess }: any) => (
-    <View style={styles.dataItem}>
-      <Text style={[styles.label, { color: Colors.textSecondary }]}>
+  const success = data?.totalReturnEth > 0;
+  const negative = data?.totalReturnEth < 0;
+
+  const handlePressed = debounce(() => {
+    if (data.onClick) {
+      data.onClick();
+      return;
+    }
+    navigation.push(ROUTES.PROPERTY_DETAILS, { id: data.propertyId });
+  }, 250);
+
+  const DataItem = ({ label, value, isSuccess, isNegative }: any) => (
+    <View style={dynamicStyles.dataItem}>
+      <Text style={[dynamicStyles.label, { color: Colors.textSecondary }]}>
         {label}
       </Text>
       <Text
         style={[
-          styles.value,
-          { color: isSuccess ? Colors.success : Colors.textPrimary },
+          dynamicStyles.value,
+          {
+            color: isNegative
+              ? Colors.primaryDark
+              : isSuccess
+                ? Colors.success
+                : Colors.textPrimary,
+          },
         ]}
       >
         {value}
@@ -39,170 +48,92 @@ const HoldingPropertyCard = (data: PropertyPortfolioData) => {
   );
 
   return (
-    <View
-      style={[
-        styles.card,
-        {
-          backgroundColor: Colors.surface,
-          borderColor: Colors.border,
-        },
-      ]}
-    >
-      <View style={styles.headerRow}>
-        {/* Fixed the typo: propertyImageUrl matches your JSON */}
+    <Pressable style={[dynamicStyles.card]} onPress={handlePressed}>
+      <View style={dynamicStyles.headerRow}>
         <Image
           source={{ uri: data?.propertyImageUrl }}
-          style={styles.propertyImage}
+          style={dynamicStyles.propertyImage}
           resizeMode="cover"
         />
 
-        <View style={styles.mainInfoColumn}>
+        <View style={dynamicStyles.mainInfoColumn}>
           <Text
-            style={[styles.title, { color: Colors.textPrimary }]}
+            style={[dynamicStyles.title, { color: Colors.textPrimary }]}
             numberOfLines={1}
           >
             {data?.propertyName || 'Unknown Property'}
           </Text>
 
-          <View style={styles.locationRow}>
+          <View style={dynamicStyles.locationRow}>
             <Icons.Location width={12} height={12} color={Colors.primary} />
             <Text
-              style={[styles.locationText, { color: Colors.textMuted }]}
+              style={[dynamicStyles.locationText, { color: Colors.textMuted }]}
               numberOfLines={1}
             >
               {data?.location}
             </Text>
           </View>
 
-          <View style={[styles.badge, { backgroundColor: Colors.background }]}>
-            <Text style={[styles.badgeText, { color: Colors.textPrimary }]}>
-              COMMERCIAL
+          <View
+            style={[
+              dynamicStyles.badge,
+              { backgroundColor: Colors.background },
+            ]}
+          >
+            <Text
+              style={[dynamicStyles.badgeText, { color: Colors.textPrimary }]}
+            >
+              {data.propertyType}
             </Text>
           </View>
 
-          <View style={styles.riskRow}>
-            <Text style={[styles.riskLabel, { color: Colors.textMuted }]}>
+          <View style={dynamicStyles.riskRow}>
+            <Text
+              style={[dynamicStyles.riskLabel, { color: Colors.textMuted }]}
+            >
               Shares Owned
             </Text>
-            <Text style={[styles.riskValue, { color: Colors.textPrimary }]}>
+            <Text
+              style={[dynamicStyles.riskValue, { color: Colors.textPrimary }]}
+            >
               {data?.sharesPurchased}
             </Text>
           </View>
         </View>
       </View>
 
-      <View style={[styles.divider, { backgroundColor: Colors.border }]} />
+      <View
+        style={[dynamicStyles.divider, { backgroundColor: Colors.border }]}
+      />
 
       {/* 2. Grid now uses the correct JSON fields */}
-      <View style={styles.grid}>
+      <View style={dynamicStyles.grid}>
         <DataItem
           label="Invested"
-          value={`${data?.ethAmountAtExecution?.toFixed(3)} ETH`}
+          value={`${data?.totalInvestedEth?.toFixed(3)} ETH`}
         />
         <DataItem
-          label="Value (USD)"
-          value={`$${(data?.totalAmountUsd / 1000).toFixed(1)}k`}
+          label="Current Value"
+          value={`${(data?.currentValueEth / 1000).toFixed(1)} ETH`}
         />
         <DataItem
-          label="Price/Share"
-          value={`$${data?.pricePerShareUsd?.toLocaleString()}`}
+          isNegative={negative}
+          isSuccess={success}
+          label="Total Return"
+          value={(success ? '+' : '') + data.totalReturnEth.toFixed(3)}
         />
       </View>
-    </View>
+
+      <View style={dynamicStyles.grid}>
+        <DataItem
+          label="Monthly Income"
+          value={`${data?.monthlyIncomeEth.toFixed(3)} ETH`}
+        />
+        <DataItem label="Annual Yield" value={`${data?.annualYieldPercent}%`} />
+        <DataItem label="Final Risk Score" value={`${data?.riskScore}/10`} />
+      </View>
+    </Pressable>
   );
 };
-
-const styles = StyleSheet.create({
-  card: {
-    width: '100%',
-    borderRadius: 16,
-    padding: 8,
-    borderWidth: 1,
-    alignSelf: 'center',
-    // iOS Shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    // Android Shadow
-    elevation: 5,
-  },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  propertyImage: {
-    width: 90,
-    height: 90,
-    borderRadius: 12,
-  },
-  mainInfoColumn: {
-    flex: 1,
-    paddingLeft: 16,
-    height: 90,
-    justifyContent: 'space-between',
-  },
-  title: {
-    fontSize: 18,
-    fontWeight: '800',
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  locationText: {
-    fontSize: 12,
-    marginLeft: 4,
-    flex: 1,
-  },
-  badge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.05)',
-  },
-  badgeText: {
-    fontSize: 10,
-    fontWeight: '800',
-  },
-  riskRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  riskLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-  },
-  riskValue: {
-    fontSize: 14,
-    fontWeight: '800',
-  },
-  divider: {
-    height: 1,
-    width: '100%',
-    marginVertical: 14,
-  },
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  dataItem: {
-    width: '30%',
-  },
-  label: {
-    fontSize: 9,
-    fontWeight: '600',
-    marginBottom: 2,
-    textTransform: 'uppercase',
-  },
-  value: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-});
 
 export default HoldingPropertyCard;

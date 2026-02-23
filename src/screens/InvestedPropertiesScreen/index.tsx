@@ -6,7 +6,7 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 
-import InvestedPropertyCard from '@components/molecules/InvestedPropertyCard';
+//unused comment import InvestedPropertyCard from '@components/molecules/InvestedPropertyCard';
 import SearchInput from '@components/molecules/SearchInput';
 import BackButton from '@components/atoms/BackButton';
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
@@ -135,17 +135,7 @@ const InvestedPropertiesScreen = () => {
         <FlatList
           data={list}
           keyExtractor={(item, index) => `${item.investmentId}-${index}`}
-          renderItem={({ item }) => (
-            <InvestedPropertyCard
-              investmentId={item.investmentId}
-              propertyName={item.propertyName}
-              propertyType={item.propertyType}
-              location={item.location}
-              totalInvested={item.totalInvested}
-              expectedYield={item.expectedYield}
-              imageUrl={item.imageUrl}
-            />
-          )}
+          renderItem={({ item }) => <HoldingPropertyCard {...item} />}
           contentContainerStyle={{ gap: 10, padding: 10 }}
           showsVerticalScrollIndicator={false}
           onEndReached={handleEndReached}

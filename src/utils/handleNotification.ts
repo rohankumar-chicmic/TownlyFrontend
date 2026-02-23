@@ -1,5 +1,5 @@
 import { navigate } from './navigationService';
-import { NotificationType, NotificationProps } from './constants';
+import { NotificationType } from './constants';
 import { ROUTES } from '../navigation/constants';
 
 const handleNotification = (data: { type: number; referenceId: string }) => {

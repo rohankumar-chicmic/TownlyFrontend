@@ -1,17 +1,15 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import Button from '@components/atoms/Button';
 import useTheme from '@hooks/useTheme';
 import styles from './styles';
-import { useAppNavigation } from '@hooks/useNavigation';
 import useStyles from '@hooks/useStyles';
 import { useAppKit } from '@reown/appkit-react-native';
 
 export default function PortfolioWithoutAuth() {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
-  const navigation = useAppNavigation();
-  const { open, disconnect } = useAppKit();
+  const { open } = useAppKit();
 
   return (
     <View

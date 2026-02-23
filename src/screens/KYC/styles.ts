@@ -75,7 +75,7 @@ const styles = (Colors: ThemeColors) =>
       marginHorizontal: 5,
       borderWidth: 1,
       marginBottom: 15,
-      height: Dimensions.get('screen').height * 0.047,
+      minHeight: Dimensions.get('screen').height * 0.047,
       backgroundColor: Colors.background,
       borderColor: Colors.border,
     },

@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, Text } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -17,7 +17,13 @@ interface StepProps {
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
 }
 
-export default function Step2(props: StepProps) {
+const sanitizeInput = (text: string) => {
+  const numbersOnly = text.replaceAll(/\D/g, '');
+  const noLeadingZeros = numbersOnly.replace(/^0+(\d)/, '$1');
+  return noLeadingZeros.slice(0, 10);
+};
+
+export default function Step2(props: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const {
@@ -45,7 +51,7 @@ export default function Step2(props: StepProps) {
       : 0;
 
   const formattedPricePerShare = pricePerShare
-    ? `$ ${pricePerShare.toFixed(2)}`
+    ? `$${pricePerShare.toFixed(2)}`
     : '$ 0.00';
 
   const handleContinue = (data: Step2FormData) => {
@@ -83,7 +89,7 @@ export default function Step2(props: StepProps) {
                 placeholder="$ 0.0"
                 keyboardType="number-pad"
                 value={value?.toString() ?? ''}
-                onChangeText={onChange}
+                onChangeText={text => onChange(sanitizeInput(text))}
                 hintText="Minimum Value: $1000"
                 error={errors.totalPropertyValue?.message}
               />
@@ -102,7 +108,7 @@ export default function Step2(props: StepProps) {
                 placeholder="0"
                 keyboardType="number-pad"
                 value={value?.toString() ?? ''}
-                onChangeText={onChange}
+                onChangeText={text => onChange(sanitizeInput(text))}
                 hintText="Minimum: 100 Shares"
                 error={errors.numberOfShares?.message}
               />
@@ -127,7 +133,10 @@ export default function Step2(props: StepProps) {
             Auto-Calculated
           </Text>
           <Text style={{ color: Colors.background }}>Price Per Share</Text>
-          <Text style={{ color: Colors.background }}>Calculated as </Text>
+          <Text style={{ color: Colors.background }}>Calculated as:</Text>
+          <Text style={{ color: Colors.background, fontWeight: '600'}}>
+            {totalPropertyValue + '/' + numberOfShares}
+          </Text>
         </View>
         <View>
           <Text
@@ -152,7 +161,7 @@ export default function Step2(props: StepProps) {
             placeholder="0"
             keyboardType="number-pad"
             value={value?.toString() ?? ''}
-            onChangeText={onChange}
+            onChangeText={text => onChange(sanitizeInput(text))}
             error={errors.rentalIncome?.message}
           />
         )}
@@ -168,7 +177,7 @@ export default function Step2(props: StepProps) {
             placeholder="0"
             keyboardType="number-pad"
             value={value?.toString() ?? ''}
-            onChangeText={onChange}
+            onChangeText={text => onChange(sanitizeInput(text))}
             error={errors.expectedAnnualYield?.message}
           />
         )}

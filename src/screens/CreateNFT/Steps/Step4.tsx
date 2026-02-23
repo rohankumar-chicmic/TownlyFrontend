@@ -1,5 +1,12 @@
 import React, { Dispatch, ReactElement, SetStateAction } from 'react';
-import { View, Text, Image, ViewStyle, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  ViewStyle,
+  Pressable,
+  ActivityIndicator,
+} from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -12,6 +19,7 @@ import { useAppSelector } from '@redux/store';
 import { useAppNavigation } from '@hooks/useNavigation';
 import Toast from 'react-native-toast-message';
 import { ROUTES } from 'src/navigation/constants';
+import { debounce } from '@utils/utility';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -49,16 +57,15 @@ const InfoRow = ({
   );
 };
 
-export default function Step4(props: StepProps) {
+export default function Step4(props: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   console.log(props.formData);
-  const [makeProperty, { isLoading, isError, isSuccess }] =
-    useMakePropertyMutation();
+  const [makeProperty, { isLoading }] = useMakePropertyMutation();
 
   const navigation = useAppNavigation();
   const userToken = useAppSelector(state => state.auth.userToken);
-  const handleSubmitProperty = async () => {
+  const handleSubmitProperty = debounce(async () => {
     if (!userToken) {
       console.error('No token available!');
       return;
@@ -72,7 +79,7 @@ export default function Step4(props: StepProps) {
 
       console.log('Property created successfully!', result);
 
-      navigation.navigate(ROUTES.DRAWER);
+      navigation.navigate(ROUTES.TABS);
 
       Toast.show({
         type: 'success',
@@ -88,7 +95,7 @@ export default function Step4(props: StepProps) {
         text2: err.data?.message || 'Sorry, cannot create property.',
       });
     }
-  };
+  }, 200);
 
   return (
     <View style={dynamicStyles.containerSurface}>
@@ -173,7 +180,7 @@ export default function Step4(props: StepProps) {
               key={document.documentName}
               style={{
                 flexDirection: 'row',
-                width:'100%',
+                width: '100%',
                 justifyContent: 'space-between',
                 alignItems: 'flex-start',
               }}
@@ -187,7 +194,7 @@ export default function Step4(props: StepProps) {
               </Text>
               <Pressable
                 style={{
-                  width:'60%',
+                  width: '60%',
                 }}
                 onPress={() => viewDocument({ uri: document.file?.uri ?? '' })}
               >
@@ -271,11 +278,15 @@ export default function Step4(props: StepProps) {
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
           textStyle={{ marginHorizontal: 10 }}
         >
-          <Icons.Arrow
-            height={15}
-            width={15}
-            color={Colors.background}
-          ></Icons.Arrow>
+          {isLoading ? (
+            <ActivityIndicator />
+          ) : (
+            <Icons.Arrow
+              height={15}
+              width={15}
+              color={Colors.background}
+            ></Icons.Arrow>
+          )}
         </Button>
       </View>
     </View>

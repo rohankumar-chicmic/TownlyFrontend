@@ -6,7 +6,7 @@ import useTheme from '@hooks/useTheme';
 type FilterButtonProps<T> = {
   label: string;
   value?: T;
-  currentValue: T;
+  currentValue?: T;
   onPress: () => void;
 };
 
@@ -25,7 +25,8 @@ const FilterButton = ({
         dynamicStyles.tag,
         {
           borderWidth: 1,
-          borderColor: currentValue === value ? Colors.primaryDark : Colors.border,
+          borderColor:
+            currentValue === value ? Colors.primaryDark : Colors.border,
         },
       ]}
       onPress={onPress}
@@ -35,7 +36,9 @@ const FilterButton = ({
           dynamicStyles.tagText,
           {
             color:
-              currentValue === value ? Colors.primaryDark : Colors.textSecondary,
+              currentValue === value
+                ? Colors.primaryDark
+                : Colors.textSecondary,
           },
         ]}
       >

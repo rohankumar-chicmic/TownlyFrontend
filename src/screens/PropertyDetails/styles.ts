@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { ThemeColors } from '@theme/constants';
 
 const styles = (Colors: ThemeColors) =>
@@ -11,6 +11,29 @@ const styles = (Colors: ThemeColors) =>
     heroImage: {
       width: '100%',
       height: 240,
+    },
+    investmentIcon: {
+      backgroundColor: Colors.primary,
+      padding: 8,
+      borderRadius: 8,
+      marginRight: 12,
+    },
+    investmentTitle: {
+      color: Colors.textSecondary,
+      fontSize: 12,
+      fontWeight: '600',
+      textTransform: 'uppercase',
+    },
+
+    investmentCard: {
+      backgroundColor: Colors.primary + '15',
+      padding: 12,
+      borderRadius: 12,
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 15,
+      borderWidth: 1,
+      borderColor: Colors.primary + '30',
     },
 
     section: {
@@ -32,14 +55,14 @@ const styles = (Colors: ThemeColors) =>
     tag: {
       marginTop: 10,
       alignSelf: 'flex-start',
-      backgroundColor: Colors.outline,
+      backgroundColor: Colors.border,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 6,
     },
 
     tagText: {
-      color: Colors.primary,
+      color: Colors.primaryDark,
       fontSize: 12,
     },
 

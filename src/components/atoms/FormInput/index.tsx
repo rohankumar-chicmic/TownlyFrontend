@@ -22,7 +22,7 @@ interface FormInputType extends TextInputProps {
   error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
 }
 
-export default function FormInput(props: FormInputType) {
+export default function FormInput(props: Readonly<FormInputType>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   return (

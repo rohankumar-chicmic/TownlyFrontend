@@ -2,7 +2,7 @@ import { View, Text } from 'react-native';
 import React from 'react';
 import useTheme from '@hooks/useTheme';
 
-interface indicatorProps {
+interface IndicatorProps {
   step: number;
   children?: React.ReactElement;
   text: string;
@@ -14,7 +14,7 @@ export default function StepIndicator({
   text,
   children,
   currentStep,
-}: indicatorProps) {
+}: Readonly<IndicatorProps>) {
   const { Colors } = useTheme();
   return (
     <View style={{ alignItems: 'center' }}>
@@ -24,7 +24,7 @@ export default function StepIndicator({
           width: 50,
           marginBottom: 5,
           backgroundColor:
-            step == currentStep
+            step === currentStep
               ? Colors.primary
               : currentStep > step
                 ? Colors.primaryDark
@@ -39,7 +39,7 @@ export default function StepIndicator({
       <Text
         style={{
           color:
-            step == currentStep
+            step === currentStep
               ? Colors.textPrimary
               : currentStep > step
                 ? Colors.textSecondary

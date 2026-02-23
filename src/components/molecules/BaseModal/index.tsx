@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { Modal, Pressable, View, Text } from 'react-native';
+import React from 'react';
+import { Modal, Pressable } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import useTheme from '@hooks/useTheme';
 
 interface ModalProps {
   visible: boolean;
@@ -18,7 +17,6 @@ export default function BaseModal({
   requestClose,
 }: Readonly<ModalProps>) {
   const { dynamicStyles } = useStyles(styles);
-  const { Colors } = useTheme();
   return (
     <Modal
       animationType="slide"

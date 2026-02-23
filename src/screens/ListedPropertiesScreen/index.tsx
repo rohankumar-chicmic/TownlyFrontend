@@ -135,7 +135,12 @@ const ListedProperiesScreen = () => {
 
       {/* LOADING FIRST PAGE */}
       {isLoading && params.page === 1 ? (
-        <Text style={[dynamicStyles.heroText, { textAlign: 'center' }]}>
+        <Text
+          style={[
+            dynamicStyles.heroText,
+            { textAlign: 'center', width: '100%' },
+          ]}
+        >
           Loading Properties...
         </Text>
       ) : (
@@ -148,7 +153,7 @@ const ListedProperiesScreen = () => {
                 userOwned
                 {...item}
                 onClick={() => {
-                  console.log(item.status)
+                  console.log(item.status);
                   return navigation.navigate(ROUTES.OWNED_PROPERTY, {
                     id: item.id,
                     status: item.status,
@@ -171,17 +176,20 @@ const ListedProperiesScreen = () => {
               <Text style={{ textAlign: 'center', padding: 10 }}>
                 Loading more...
               </Text>
-            ) : !hasMore && list.length > 0 ? (
-              <Text
-                style={{
-                  textAlign: 'center',
-                  padding: 10,
-                  color: Colors.textMuted,
-                }}
-              >
-                No more properties
-              </Text>
-            ) : null
+            ) : (
+              !hasMore &&
+              list.length > 0 && (
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    padding: 10,
+                    color: Colors.textMuted,
+                  }}
+                >
+                  No more properties
+                </Text>
+              )
+            )
           }
         />
       )}

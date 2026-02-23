@@ -1,10 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-} from 'react-native';
+import { View, Text, Image, ScrollView } from 'react-native';
 
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
@@ -23,6 +18,7 @@ import {
 import { useAppNavigation } from '@hooks/useNavigation';
 import DeletePropertyModal from '@components/molecules/DeletePropertyModal';
 import { ROUTES } from 'src/navigation/constants';
+import Toast from 'react-native-toast-message';
 
 export default function UserOwnedProperty() {
   const { Colors } = useTheme();
@@ -34,26 +30,31 @@ export default function UserOwnedProperty() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
 
-  // FIX: skip the detail query once deletion is confirmed so the
-  // already-deleted property is never re-fetched (which caused the 500).
   const { data } = useGetMyPropertyDetailsQuery(params.id, {
     skip: isDeleted,
   });
 
-  const [deleteProperty, { isLoading: isDeleting }] = useDeletePropertyMutation();
+  const [deleteProperty, { isLoading: isDeleting }] =
+    useDeletePropertyMutation();
 
   const handleDeleteConfirm = async () => {
     try {
       await deleteProperty(params.id).unwrap();
       // Mark as deleted BEFORE navigating so the query is skipped
-      // if anything tries to re-trigger it during the navigation transition.
       setIsDeleted(true);
       setShowDeleteModal(false);
       navigation.navigate(ROUTES.LISTED_PROPERTIES);
+
+      Toast.show({
+        type: 'Success',
+        text1: data?.name + 'has been deleted Successfully',
+      });
     } catch (error) {
       console.error('Delete failed:', error);
     }
   };
+
+  console.log(data);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
@@ -90,7 +91,9 @@ export default function UserOwnedProperty() {
             <View style={dynamicStyles.tag}>
               <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
             </View>
-            <View style={{ height: '85%', width: '25%', alignItems: 'flex-end' }}>
+            <View
+              style={{ height: '85%', width: '25%', alignItems: 'flex-end' }}
+            >
               <Badge status={data?.status} />
             </View>
           </View>
@@ -111,27 +114,59 @@ export default function UserOwnedProperty() {
           }}
         >
           <View style={dynamicStyles.containerStyle}>
-            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Total Value</Text>
-            <Text style={{ color: Colors.textPrimary, fontSize: 18, fontWeight: '500' }}>
-              {'$'}{data?.totalValue}
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Total Value
+            </Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+            >
+              {'$' + data?.totalValue}
             </Text>
           </View>
           <View style={dynamicStyles.containerStyle}>
-            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Price/Share</Text>
-            <Text style={{ color: Colors.textPrimary, fontSize: 18, fontWeight: '500' }}>
-              {Number(data?.pricePerUnitEth ?? 10).toFixed(5)}{' ETH'}
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Price/Share
+            </Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+            >
+              {Number(data?.pricePerUnitEth ?? 10).toFixed(5)}
+              {' ETH'}
             </Text>
           </View>
           <View style={dynamicStyles.containerStyle}>
-            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Annual Yield</Text>
-            <Text style={{ color: Colors.primary, fontSize: 18, fontWeight: '500' }}>
-              {data?.annualYieldPercent}{'%'}
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Annual Yield
+            </Text>
+            <Text
+              style={{ color: Colors.primary, fontSize: 18, fontWeight: '500' }}
+            >
+              {data?.annualYieldPercent}
+              {'%'}
             </Text>
           </View>
           <View style={dynamicStyles.containerStyle}>
-            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>Available Share</Text>
-            <Text style={{ color: Colors.textPrimary, fontSize: 18, fontWeight: '500' }}>
-              {data?.availableUnits}{'/'}{data?.totalUnits}
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Available Share
+            </Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+            >
+              {data?.availableUnits}
+              {'/'}
+              {data?.totalUnits}
             </Text>
           </View>
         </ScrollView>
@@ -142,17 +177,31 @@ export default function UserOwnedProperty() {
             {data?.description}
           </Text>
         </View>
+        {data?.rejectionReason && (
+          <View
+            style={[
+              dynamicStyles.containerStyle,
+              { margin: 20, borderColor: Colors.warning },
+            ]}
+          >
+            <Text style={dynamicStyles.sectionTitle}>Rejection Reason:</Text>
+            <Text style={{ fontSize: 15, color: Colors.warning }}>
+              {data?.rejectionReason}
+            </Text>
+          </View>
+        )}
 
-        <View style={{ width: '90%', alignSelf: 'center', margin: 20 }}>
-          <Button
-            variant="outline"
-            textStyle={{ color: Colors.warning }}
-            title="Delete Property"
-            onPress={() => setShowDeleteModal(true)}
-          />
-        </View>
+        {(data?.status === 1 || data?.status === 4) && (
+          <View style={{ width: '90%', alignSelf: 'center', margin: 20 }}>
+            <Button
+              variant="outline"
+              textStyle={{ color: Colors.warning }}
+              title="Delete Property"
+              onPress={() => setShowDeleteModal(true)}
+            />
+          </View>
+        )}
       </ScrollView>
-
       <DeletePropertyModal
         visible={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

@@ -19,8 +19,8 @@ const styles = (Colors: ThemeColors) =>
     image: {
       borderRadius: 10,
       marginRight: 12,
-      height: '100%', 
-      width: '100%'
+      height: '100%',
+      width: '100%',
     },
 
     metaContainer: {

@@ -1,4 +1,4 @@
-import { createAppKit, ReownAuthentication } from '@reown/appkit-react-native';
+import { createAppKit } from '@reown/appkit-react-native';
 import { WagmiAdapter } from '@reown/appkit-wagmi-react-native';
 import { mainnet, sepolia } from 'wagmi/chains';
 import storage from './storage';

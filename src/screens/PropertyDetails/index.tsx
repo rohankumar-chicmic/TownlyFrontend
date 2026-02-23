@@ -8,15 +8,12 @@ import {
   FlatList,
 } from 'react-native';
 
-import PagerView from 'react-native-pager-view';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { useAppRoute } from '@hooks/useAppRoute';
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import CardContainer from '@components/molecules/CardContainer2';
@@ -37,16 +34,16 @@ export default function PropertyDetails() {
   const { dynamicStyles } = useStyles(styles);
   const route = useAppRoute();
   const params = route.params;
-  const insets = useSafeAreaInsets();
   const [showModal, setShowModal] = useState(false);
-  const { data, isLoading, error, refetch } = useGetPropertyDetailsQuery(
-    params.id,
-  );
+  const { data } = useGetPropertyDetailsQuery(params.id);
 
   const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
+
+  console.log(data);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
@@ -59,13 +56,14 @@ export default function PropertyDetails() {
       >
         <BackButton />
 
-        <PagerView style={dynamicStyles.heroImage} pageMargin={10}>
+        <View style={dynamicStyles.heroImage}>
           <Image
             source={{
               uri: data?.imageUrl,
             }}
+            style={{ width: '100%', height: '100%' }}
           />
-        </PagerView>
+        </View>
 
         <View style={dynamicStyles.section}>
           <Text style={dynamicStyles.title}>{data?.name}</Text>
@@ -76,6 +74,28 @@ export default function PropertyDetails() {
           <View style={dynamicStyles.tag}>
             <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
           </View>
+          {data?.userInvestedAmountEth && (
+            <View style={dynamicStyles.investmentCard}>
+              <View style={dynamicStyles.investmentIcon}>
+                <MaterialIcons name="payments" size={24} color="black" />
+              </View>
+              <View>
+                <Text style={dynamicStyles.investmentTitle}>
+                  Your Investment
+                </Text>
+                <Text
+                  style={{
+                    color: Colors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: '700',
+                  }}
+                >
+                  {data?.userInvestedAmountEth.toFixed(4)}{' '}
+                  <Text style={{ fontSize: 14 }}>ETH</Text>
+                </Text>
+              </View>
+            </View>
+          )}
         </View>
 
         <ScrollView
@@ -159,7 +179,7 @@ export default function PropertyDetails() {
         </View>
 
         <Button
-          title="Invest"
+          title={data?.userInvestedAmountEth ? 'Invest More' : 'Invest'}
           disabled={!userToken || !data?.availableUnits}
           onPress={() => setShowModal(true)}
           size="lg"
@@ -190,6 +210,7 @@ export default function PropertyDetails() {
             onClose={() => setShowModal(false)}
             id={String(data?.id)}
             pricePerShare={Number(data?.pricePerUnitEth)}
+            availableUnits={Number(data?.availableUnits)}
           />
         ) : (
           <KYCStatusModal

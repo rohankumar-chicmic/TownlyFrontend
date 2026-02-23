@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '@redux/store';
 import {
   useGetMyPropertiesQuery,
   useGetMyInvestedPropertiesQuery,
+  propertyApi,
 } from '@redux/PropertyApiReducer';
 import {
   useGetDonutGraphDataQuery,
@@ -22,7 +23,6 @@ import {
 import KYCpendingPortfolio from './KYCpendingPortfolio';
 import PortfolioWithoutAuth from './PortfolioWithoutAuth';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
-import { propertyApi } from '@redux/PropertyApiReducer';
 
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
 import CardContainer2 from '@components/molecules/CardContainer2';
@@ -48,29 +48,23 @@ export default function Portfolio() {
     skip: !userToken,
   });
 
-  const {
-    data: lineData,
-  } = useGetLineGraphDataQuery(undefined, {
+  const { data: lineData } = useGetLineGraphDataQuery(undefined, {
     skip: !userToken,
   });
 
-  const {
-    data: donutData,
-  } = useGetDonutGraphDataQuery(undefined, {
+  const { data: donutData } = useGetDonutGraphDataQuery(undefined, {
     skip: !userToken,
   });
 
-  const { data: myPropertiesResult, isFetching: myPropertiesFetching } =
-    useGetMyPropertiesQuery(
-      { page: 1, pageSize: 4, search: '', status: '' },
-      { skip: !userToken, refetchOnMountOrArgChange: true },
-    );
+  const { data: myPropertiesResult } = useGetMyPropertiesQuery(
+    { page: 1, pageSize: 4, search: '', status: '' },
+    { skip: !userToken, refetchOnMountOrArgChange: true },
+  );
 
-  const { data: investedResult, isFetching: investedFetching } =
-    useGetMyInvestedPropertiesQuery(
-      { page: 1, pageSize: 3, search: '', propertyType: '' },
-      { skip: !userToken, refetchOnMountOrArgChange: true },
-    );
+  const { data: investedResult } = useGetMyInvestedPropertiesQuery(
+    { page: 1, pageSize: 3, search: '', propertyType: '' },
+    { skip: !userToken, refetchOnMountOrArgChange: true },
+  );
 
   const previewItems = investedResult?.items?.slice(0, 3) ?? [];
   const listedPreview = myPropertiesResult?.items?.slice(0, 4) ?? [];
@@ -238,7 +232,6 @@ export default function Portfolio() {
                     borderRadius: 8,
                     aspectRatio: 1,
                     marginVertical: 20,
-                    backgroundColor: Colors.elevated,
                   }}
                 >
                   <Button
@@ -301,7 +294,6 @@ export default function Portfolio() {
                     width: Dimensions.get('screen').width * 0.5,
                     aspectRatio: 1,
                     borderRadius: 8,
-                    backgroundColor: Colors.elevated,
                   }}
                 >
                   <Button

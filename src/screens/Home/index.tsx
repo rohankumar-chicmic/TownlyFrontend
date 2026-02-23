@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Dimensions, FlatList, ScrollView, Text, View } from 'react-native';
 
 import styles from './styles';
@@ -15,15 +15,12 @@ import { ROUTES } from 'src/navigation/constants';
 
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
 
-import Toast from 'react-native-toast-message';
-
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
 
   const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery();
-  const [showModal, setShowModal] = useState(false);
 
   /**
    * Memoized Header — prevents full FlatList re-render
@@ -128,7 +125,7 @@ const Home = () => {
         </View>
       </>
     ),
-    [Colors, dynamicStyles],
+    [Colors, dynamicStyles, navigation],
   );
 
   /**
@@ -158,7 +155,7 @@ const Home = () => {
           style={[
             dynamicStyles.heroPrimarytext,
             {
-              alignSelf: 'center',
+              textAlign: 'center',
               height: Dimensions.get('screen').height * 0.3,
             },
           ]}
@@ -180,14 +177,10 @@ const Home = () => {
       style={{ backgroundColor: Colors.background }}
       keyExtractor={item => item.id.toString()}
       renderItem={({ item }) => <CardContainer {...item} />}
-      ListEmptyComponent={!isLoading ? <ListEmptyComponent /> : null}
+      ListEmptyComponent={isLoading ? null : <ListEmptyComponent />}
       refreshing={isLoading}
       onRefresh={refetch}
       showsVerticalScrollIndicator={false}
-      onEndReachedThreshold={0.5}
-      onEndReached={() => {
-        // Add pagination here later if needed
-      }}
     />
   );
 };

@@ -4,23 +4,20 @@ interface PropertyDetailsType {
   location: string;
   description: string;
   imageUrl: string;
-  propertyType: 'Residental' | 'Commercial'; // Added union type for better safety
-  // Financial Data
+  propertyType: string;
   totalValue: number;
   annualYieldPercent: number;
   pricePerUnitEth: number;
 
-  // Unit Management
   totalUnits: number;
   availableUnits: number;
 
-  // Metrics (Handling the nulls from your JSON)
   demandScore: number | null;
   riskScore: number | null;
-}
 
-interface MyPropertyDetailsType extends PropertyDetailsType{
-  status: number
+  // User Specific (Nullable until invested)
+  userInvestedAmountEth: number | null;
+  userInvestmentAmount: number | null;
 }
 
 interface InvestmentCardType {
@@ -35,24 +32,68 @@ interface InvestmentCardType {
   investedAt: string;
 }
 
-// {
-//   "id": "25c9d4f8-698b-4d9a-be67-9c41479d6d00",
-//   "name": "bn ghjhv jjvc. ghjbc ",
-//   "description": "fhbc hkjcd bnkudc hkkbff gjnvfh ",
-//   "location": "miami ",
-//   "propertyType": "Land",
-//   "imageUrl": "https://testing-akshay-cm.s3.eu-south-1.amazonaws.com/_harmanProperties/902ade06-219d-45ff-a88e-98b24f4a26a9.jpg",
-//   "totalValue": 1000000.00,
-//   "totalUnits": 10000,
-//   "pricePerUnit": 100.00,
-//   "annualYieldPercent": 10.00,
-//   "availableUnits": 10000,
-//   "riskScore": null,
-//   "demandScore": null,
-//   "pricePerUnitEth": 0.05065805,
-//   "userInvestmentAmount": null,
-//   "userInvestedAmountEth": null
-// }
+interface PropertyPortfolioData {
+  propertyId: string;
+  propertyName: string;
+  propertyType: 'Commercial' | 'Residential' | 'Land';
+  location: string;
+  propertyImageUrl: string;
 
+  // Financial Data (ETH)
+  totalInvestedEth: number;
+  currentValueEth: number;
+  monthlyIncomeEth: number;
+  totalReturnEth: number;
 
-export {InvestmentCardType, MyPropertyDetailsType, PropertyDetailsType}
+  // Financial Data (USD/General)
+  totalAmountUsd: number;
+  sharesPurchased: number;
+  annualYieldPercent: number;
+  riskScore: number;
+
+  // Metadata
+  investedAt: string;
+  onClick?: () => void;
+}
+
+export enum PropertyStatus {
+  Draft = 0,
+  Pending = 1,
+  Approved = 2,
+  Active = 3, // Matches your 'status: 3'
+  Rejected = 4,
+}
+
+interface MyPropertyDetailsType {
+  id: string;
+  name: string;
+  description: string;
+  location: string;
+  imageUrl: string;
+  propertyType: 'Commercial' | 'Residential' | 'Land';
+
+  // Market Metrics
+  annualYieldPercent: number;
+  riskScore: number;
+  demandScore: number;
+  status: PropertyStatus | number;
+  rejectionReason: string | null;
+
+  // Inventory & Pricing
+  totalUnits: number;
+  availableUnits: number;
+  totalValue: number;
+  pricePerUnit: number;
+  pricePerUnitEth: number;
+
+  // User Specific (Nullable until invested)
+  userInvestedAmountEth: number | null;
+  userInvestmentAmount: number | null;
+}
+
+export {
+  InvestmentCardType,
+  MyPropertyDetailsType,
+  PropertyDetailsType,
+  PropertyPortfolioData,
+};

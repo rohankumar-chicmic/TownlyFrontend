@@ -59,20 +59,19 @@ const TransactionsScreen = () => {
       >
         <FilterButton
           label="All"
-          // value={undefined}
           currentValue={type}
           onPress={() => handleTypeChange()}
         />
 
         <FilterButton
-          label="Income"
+          label="Purchase"
           value={1}
           currentValue={type}
           onPress={() => handleTypeChange(1)}
         />
 
         <FilterButton
-          label="purchase"
+          label="Income"
           value={2}
           currentValue={type}
           onPress={() => handleTypeChange(2)}
@@ -88,7 +87,7 @@ const TransactionsScreen = () => {
 
       {/* LIST */}
       <FlatList
-        data={transactions }
+        data={transactions}
         keyExtractor={item => item.transactionId.toString()}
         renderItem={({ item }) => <TransactionRow item={item} />}
         contentContainerStyle={{

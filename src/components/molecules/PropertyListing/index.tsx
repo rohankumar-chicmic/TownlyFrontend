@@ -1,8 +1,7 @@
 import React from 'react';
-import { Dimensions, FlatList, Text, View, ViewStyle } from 'react-native';
+import { FlatList, ViewStyle } from 'react-native';
 import CardContainer from '@components/molecules/CardContainer2';
 import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
-import ListEmptyComponent from './ListEmptyComponent';
 
 interface PropertyListingProps {
   data?: PropertyCardProps[];

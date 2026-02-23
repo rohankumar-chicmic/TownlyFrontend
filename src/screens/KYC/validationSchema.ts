@@ -9,10 +9,22 @@ export const kycSchema = yup.object().shape({
     .min(2, 'Full name must be at least 2 characters')
     .max(100, 'Full name must not exceed 100 characters'),
 
+  // ✅ Fix: enforce minimum age of 18
   dateOfBirth: yup
     .string()
     .trim()
-    .required('Date of birth is required'),
+    .required('Date of birth is required')
+    .test('min-age', 'You must be at least 18 years old', value => {
+      if (!value) return false;
+      const dob = new Date(value);
+      const today = new Date();
+      const age = today.getFullYear() - dob.getFullYear();
+      const hasHadBirthdayThisYear =
+        today.getMonth() > dob.getMonth() ||
+        (today.getMonth() === dob.getMonth() &&
+          today.getDate() >= dob.getDate());
+      return age > 18 || (age === 18 && hasHadBirthdayThisYear);
+    }),
 
   fullAddress: yup
     .string()
@@ -36,11 +48,7 @@ export const kycSchema = yup.object().shape({
       type: yup.string().required(),
       size: yup.number().nullable(),
     })
-    .nullable()
     .required('Document is required'),
 
-  selfieUrl: yup
-    .string()
-    .trim()
-    .required('Selfie is required'),
+  selfieUrl: yup.string().trim().required('Selfie is required'),
 });

@@ -8,7 +8,7 @@ const styles = (Colors: ThemeColors) =>
       position: 'absolute',
       justifyContent: 'center',
       borderRadius: 5,
-      borderColor: Colors.outline, 
+      borderColor: Colors.outline,
       borderWidth: 1,
       alignItems: 'center',
       zIndex: 100,

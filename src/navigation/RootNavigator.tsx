@@ -1,6 +1,4 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createDrawerNavigator } from '@react-navigation/drawer';
-
 import { NavigationContainer } from '@react-navigation/native';
 import useTheme from '@hooks/useTheme';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -14,14 +12,13 @@ import PropertyDetails from '@screens/PropertyDetails';
 import CreateNFTScreen from '@screens/CreateNFT';
 import KYC from '@screens/KYC';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
-import CustomSidebar from '@components/molecules/CustomSidebar';
 import WalletScreen from '@screens/WalletScreen';
 import { ROUTES } from './constants';
 import { RootStackParamList } from './types';
 import { useAppSelector } from '@redux/store';
 import useNotification from '@hooks/useNotification';
 import { useAppToastConfig } from '@hooks/useAppToastConfig';
-import Toast, { BaseToast, ErrorToast } from 'react-native-toast-message';
+import Toast from 'react-native-toast-message';
 import { StatusBar } from 'react-native';
 import { THEME } from '@theme/constants';
 import InvestedPropertiesScreen from '@screens/InvestedPropertiesScreen';
@@ -30,33 +27,11 @@ import TransactionsScreen from '@screens/TransactionsScreen';
 import UserOwnedProperty from '@screens/UserOwnedProperty';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-const Drawer = createDrawerNavigator();
-
-function MainDrawerNavigation() {
-  return (
-    <Drawer.Navigator
-      screenOptions={{
-        headerShown: false,
-        drawerStyle: {
-          width: '55%',
-        },
-        drawerPosition: 'right',
-        drawerType: 'back',
-      }}
-      drawerContent={props => <CustomSidebar {...props} />}
-    >
-      <Drawer.Screen name="Tabs" component={Tabs} />
-    </Drawer.Navigator>
-  );
-}
 
 const RootNavigator = () => {
-  // const navigationRef = useNavigationContainerRef();
   useReactNavigationDevTools(navigationRef);
   const userToken = useAppSelector(state => state.auth.userToken);
-  useGetKYCStatusQuery(undefined, {
-    skip: !userToken,
-  });
+  useGetKYCStatusQuery(undefined, { skip: !userToken });
   useNotification();
   const { Colors, currentTheme } = useTheme();
   const toastConfig = useAppToastConfig();
@@ -79,9 +54,8 @@ const RootNavigator = () => {
             headerShown: false,
             contentStyle: { backgroundColor: Colors.background },
           }}
-          // initialRouteName={ROUTES.KYC}
         >
-          <Stack.Screen name={ROUTES.DRAWER} component={MainDrawerNavigation} />
+          <Stack.Screen name={ROUTES.TABS} component={Tabs} />
           <Stack.Screen name={ROUTES.WALLET} component={WalletScreen} />
           <Stack.Screen
             name={ROUTES.LISTED_PROPERTIES}
@@ -91,17 +65,14 @@ const RootNavigator = () => {
             name={ROUTES.INVESTED_PROPERTIES}
             component={InvestedPropertiesScreen}
           />
-
           <Stack.Screen
             name={ROUTES.OWNED_PROPERTY}
             component={UserOwnedProperty}
-          /> 
-
+          />
           <Stack.Screen
             name={ROUTES.TRANSACTIONS}
             component={TransactionsScreen}
           />
-
           <Stack.Screen
             name={ROUTES.PROPERTY_DETAILS}
             component={PropertyDetails}
@@ -114,4 +85,5 @@ const RootNavigator = () => {
     </SafeAreaProvider>
   );
 };
+
 export default RootNavigator;

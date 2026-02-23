@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, Text } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -32,7 +32,7 @@ const propertyTypeOptions = [
   { label: 'Commercial', value: 'Commercial' },
 ];
 
-export default function Step1(props: StepProps) {
+export default function Step1(props: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(
@@ -93,33 +93,33 @@ export default function Step1(props: StepProps) {
     },
   });
 
-useEffect(() => {
-  const existingDocuments =
-    props.formData.documents?.length > 0
-      ? props.formData.documents
-      : [{ documentName: '', file: null }];
+  useEffect(() => {
+    const existingDocuments =
+      props.formData.documents?.length > 0
+        ? props.formData.documents
+        : [{ documentName: '', file: null }];
 
-  reset({
-    propertyName: props.formData.propertyName ?? '',
-    description: props.formData.description ?? '',
-    location: props.formData.location ?? '',
-    propertyType: props.formData.propertyType ?? '',
-    documents: existingDocuments,
-  });
+    reset({
+      propertyName: props.formData.propertyName ?? '',
+      description: props.formData.description ?? '',
+      location: props.formData.location ?? '',
+      propertyType: props.formData.propertyType ?? '',
+      documents: existingDocuments,
+    });
 
-  const existingFile = existingDocuments[0]?.file;
+    const existingFile = existingDocuments[0]?.file;
 
-  if (existingFile) {
-    setPickedFile({
-      name: existingFile.name,
-      uri: existingFile.uri,
-      type: existingFile.type,
-      size: existingFile.size,
-    } as DocumentPickerResponse);
-  } else {
-    setPickedFile(null);
-  }
-}, [props.formData, reset]);
+    if (existingFile) {
+      setPickedFile({
+        name: existingFile.name,
+        uri: existingFile.uri,
+        type: existingFile.type,
+        size: existingFile.size,
+      } as DocumentPickerResponse);
+    } else {
+      setPickedFile(null);
+    }
+  }, [props.formData, reset]);
 
   return (
     <View style={dynamicStyles.containerSurface}>
@@ -132,7 +132,7 @@ useEffect(() => {
           fontSize: 12,
         }}
       >
-        Let's start with the basic information about your property
+        Let&apos;s start with the basic information about your property
       </Text>
 
       <Controller
@@ -143,7 +143,7 @@ useEffect(() => {
             label="Property Name"
             required
             placeholder="e.g., Sunset Villa, Downtown Loft"
-            hintText="0/100 characters"
+            hintText={(value.length ?? '0') + '/100 characters'}
             value={value}
             onChangeText={onChange}
             error={errors.propertyName?.message}
@@ -159,7 +159,7 @@ useEffect(() => {
             label="Property Description"
             required
             multiline
-            hintText="0/500 characters"
+            hintText={(value.length ?? '0') + '/500 characters'}
             placeholder="Describe the Property"
             value={value}
             onChangeText={onChange}
@@ -186,7 +186,6 @@ useEffect(() => {
                 placeholder="e.g., Miami, Florida"
                 value={value}
                 onChangeText={onChange}
-                style={dynamicStyles.input}
                 error={errors.location?.message}
               />
             )}

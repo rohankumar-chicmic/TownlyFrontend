@@ -1,7 +1,8 @@
-import { StyleSheet } from "react-native";
-import { ThemeColors } from "@theme/constants";
+import { StyleSheet } from 'react-native';
+import { ThemeColors } from '@theme/constants';
 
-const styles = (Colors : ThemeColors) => StyleSheet.create({
+const styles = (Colors: ThemeColors) =>
+  StyleSheet.create({
     badgeContainer: {
       position: 'absolute',
       top: 8,
@@ -21,6 +22,6 @@ const styles = (Colors : ThemeColors) => StyleSheet.create({
       textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
-})
+  });
 
-export default styles
+export default styles;

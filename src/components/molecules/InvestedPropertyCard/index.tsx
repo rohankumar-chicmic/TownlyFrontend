@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Image, Pressable, Dimensions } from 'react-native';
+import { View, Text, Image, Pressable } from 'react-native';
 
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import { Icons } from '@utils/icons';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
-import { InvestmentCardType } from '@utils/types';
 
 import styles from './styles';
 import InvestedPropertyCardProps from './InvestedPropertyCard.type';
@@ -22,7 +21,7 @@ export default function InvestedPropertyCard(
   return (
     <Pressable
       onPress={() =>
-        navigation.navigate(ROUTES.PROPERTY_DETAILS, { id: props.id })
+        navigation.navigate(ROUTES.PROPERTY_DETAILS, { id: props.propertyId })
       }
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
@@ -90,11 +89,11 @@ function Stat({
   label,
   value,
   highlight,
-}: {
+}: Readonly<{
   label: string;
   value: string | number;
   highlight?: boolean;
-}) {
+}>) {
   const { Colors } = useTheme();
 
   return (

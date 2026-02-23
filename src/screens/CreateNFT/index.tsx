@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  KeyboardAvoidingView,
-  Platform,
-  StatusBar,
-} from 'react-native';
+import { View, Text } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import Step1 from './Steps/Step1';
@@ -20,11 +14,10 @@ import BackButton from '@components/atoms/BackButton';
 import { Icons } from '@utils/icons';
 import { NFTFormData } from './types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { THEME } from '@theme/constants';
 
 export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
-  const { Colors, currentTheme } = useTheme();
+  const { Colors } = useTheme();
   const [step, setStep] = useState(0);
   const [formData, setFormData] = useState<NFTFormData>({
     propertyName: '',
@@ -51,7 +44,10 @@ export default function CreateNFTScreen() {
         <View style={[dynamicStyles.container, { flexGrow: 1 }]}>
           <BackButton />
           <Text
-            style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}
+            style={[
+              dynamicStyles.heroPrimarytext,
+              { alignSelf: 'center', textAlign: 'center' },
+            ]}
           >
             Create Property NFT
           </Text>
