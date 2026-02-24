@@ -1,4 +1,4 @@
-import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
+import { PropertyCardProps } from '@utils/types';
 export const DUMMY_PROPERTIES: PropertyCardProps[] = [
   {
     id: '396df4fc-d2e6-4348-86e8-f6ce7d546e55',
@@ -13,6 +13,7 @@ export const DUMMY_PROPERTIES: PropertyCardProps[] = [
     riskScore: 3.4,
     description:
       'Traditional Japanese cottage with modern fractional ownership.',
+    pricePerUnitEth: 0,
   },
   {
     id: 'a46dbec5-739f-4449-b46d-5b16fd82a134',
@@ -27,6 +28,7 @@ export const DUMMY_PROPERTIES: PropertyCardProps[] = [
     totalUnits: 5000,
     riskScore: 4.1,
     description: 'Luxury estate located near prime coastal attractions.',
+    pricePerUnitEth: 0,
   },
   {
     id: '4ca8c9ff-8466-4db3-8361-9b302a0b4fa7',
@@ -41,6 +43,7 @@ export const DUMMY_PROPERTIES: PropertyCardProps[] = [
     totalUnits: 1200,
     riskScore: 2.5,
     description: 'High-yield commercial hotel project in the heart of Tokyo.',
+    pricePerUnitEth: 0,
   },
   {
     id: '9a9f94ae-9e6b-411f-b4aa-3a8cd8cb48ad',
@@ -54,6 +57,7 @@ export const DUMMY_PROPERTIES: PropertyCardProps[] = [
     availableUnits: 2000,
     totalUnits: 2000,
     riskScore: 3.8,
+    pricePerUnitEth: 0,
   },
   {
     id: '75151fa5-b30b-4be2-94f3-4df384536b03',
@@ -69,5 +73,6 @@ export const DUMMY_PROPERTIES: PropertyCardProps[] = [
     riskScore: 5.0,
     description:
       'Spacious villa with stable rental returns in a premium district.',
+    pricePerUnitEth: 0,
   },
 ];

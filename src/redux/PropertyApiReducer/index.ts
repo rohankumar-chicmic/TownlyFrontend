@@ -1,7 +1,10 @@
 import api from '@redux/store/api';
-import PropertyCardProps from '@components/molecules/CardContainer2/PropertyCardProps.type';
 import { NFTFormData } from '@screens/CreateNFT/types';
-import { MyPropertyDetailsType, PropertyDetailsType } from '@utils/types';
+import {
+  MyPropertyDetailsType,
+  PropertyDetailsType,
+  PropertyCardProps,
+} from '@utils/types';
 
 const propertyApi = api.injectEndpoints({
   endpoints: builder => ({

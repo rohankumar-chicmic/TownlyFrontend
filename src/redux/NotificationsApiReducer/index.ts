@@ -1,14 +1,5 @@
 import api from '@redux/store/api';
-
-export interface NotificationItem {
-  id: string;
-  userId: string;
-  title: string;
-  message: string;
-  isRead: boolean;
-  type: number;
-  createdAt: string;
-}
+import { NotificationItem } from '@utils/types';
 
 const NotificationApi = api.injectEndpoints({
   endpoints: builder => ({

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Dimensions, FlatList, ScrollView, Text, View } from 'react-native';
 
 import styles from './styles';
@@ -8,23 +8,39 @@ import { useAppNavigation } from '@hooks/useNavigation';
 
 import Button from '@components/atoms/Button';
 import CardContainer from '@components/molecules/CardContainer2';
-import ListEmptyComponent from '@components/molecules/PropertyListing/ListEmptyComponent';
+import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
+import {
+  useFeaturedProperties,
+  saveFeaturedProperties,
+} from 'src/db/hooks/useProperties';
 
 import { Icons } from '@utils/icons';
 import { ROUTES } from 'src/navigation/constants';
 
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+  const { isConnected } = useNetInfo();
+  console.log(isConnected);
+  const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery(
+    undefined,
+    {
+      skip: !isConnected,
+    },
+  );
 
-  const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery();
+  useEffect(() => {
+    if (data && !error) {
+      saveFeaturedProperties(data);
+    }
+  }, [data, error]);
 
-  /**
-   * Memoized Header — prevents full FlatList re-render
-   */
+  const { data: localData } = useFeaturedProperties();
+  console.log(data);
   const header = useMemo(
     () => (
       <>
@@ -116,7 +132,6 @@ const Home = () => {
           </View>
         </View>
 
-        {/* Section Heading */}
         <View style={dynamicStyles.headingSection}>
           <Text style={dynamicStyles.heading}>Featured Properties</Text>
           <Text style={[dynamicStyles.smallText, { textAlign: 'center' }]}>
@@ -128,9 +143,6 @@ const Home = () => {
     [Colors, dynamicStyles, navigation],
   );
 
-  /**
-   * Loading State
-   */
   if (isLoading && !data) {
     return (
       <ScrollView style={dynamicStyles.container}>
@@ -143,35 +155,11 @@ const Home = () => {
   }
 
   /**
-   * Error State
-   */
-  if (error) {
-    console.warn(error);
-
-    return (
-      <ScrollView style={dynamicStyles.container}>
-        {header}
-        <Text
-          style={[
-            dynamicStyles.heroPrimarytext,
-            {
-              textAlign: 'center',
-              height: Dimensions.get('screen').height * 0.3,
-            },
-          ]}
-        >
-          Sorry, could not fetch the properties
-        </Text>
-      </ScrollView>
-    );
-  }
-
-  /**
    * Main List (Replaces PropertyListing)
    */
   return (
     <FlatList
-      data={data ?? []}
+      data={localData}
       ListHeaderComponent={header}
       contentContainerStyle={[{ gap: 10 }, dynamicStyles.container]}
       style={{ backgroundColor: Colors.background }}

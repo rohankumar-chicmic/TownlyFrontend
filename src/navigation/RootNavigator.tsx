@@ -80,8 +80,8 @@ const RootNavigator = () => {
           <Stack.Screen name={ROUTES.CREATE_NFT} component={CreateNFTScreen} />
           <Stack.Screen name={ROUTES.KYC} component={KYC} />
         </Stack.Navigator>
-        <Toast config={toastConfig} position="top" swipeable topOffset={120} />
       </NavigationContainer>
+      <Toast config={toastConfig} position="top" swipeable topOffset={120} />
     </SafeAreaProvider>
   );
 };

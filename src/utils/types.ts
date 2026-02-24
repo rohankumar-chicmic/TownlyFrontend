@@ -91,9 +91,39 @@ interface MyPropertyDetailsType {
   userInvestmentAmount: number | null;
 }
 
+interface PropertyCardProps {
+  id: string;
+  name: string;
+  location: string;
+  imageUrl: string;
+  propertyType: string;
+  annualYieldPercent: number;
+  approvedValuation: number;
+  availableUnits: number;
+  totalUnits: number;
+  riskScore: number;
+  pricePerUnitEth: number;
+  userOwned: boolean;
+  status?: number;
+  onClick?: () => void;
+}
+
+interface NotificationItem {
+  id: string;
+  userId: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  type: number;
+  createdAt: string;
+  referenceId: string;
+}
+
 export {
   InvestmentCardType,
   MyPropertyDetailsType,
   PropertyDetailsType,
   PropertyPortfolioData,
+  PropertyCardProps,
+  NotificationItem,
 };

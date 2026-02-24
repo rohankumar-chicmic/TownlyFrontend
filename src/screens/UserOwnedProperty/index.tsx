@@ -40,13 +40,12 @@ export default function UserOwnedProperty() {
   const handleDeleteConfirm = async () => {
     try {
       await deleteProperty(params.id).unwrap();
-      // Mark as deleted BEFORE navigating so the query is skipped
       setIsDeleted(true);
       setShowDeleteModal(false);
       navigation.navigate(ROUTES.LISTED_PROPERTIES);
 
       Toast.show({
-        type: 'Success',
+        type: 'success',
         text1: data?.name + 'has been deleted Successfully',
       });
     } catch (error) {

@@ -11,6 +11,9 @@ import { preloadImages } from '@utils/images';
 import RootNavigator from './src/navigation/RootNavigator';
 import store, { persistor } from './src/redux/store';
 import './src/localization';
+import { migrate } from 'drizzle-orm/expo-sqlite/migrator';
+import { db } from 'src/db/client';
+import migrations from './drizzle/migrations';
 
 import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
@@ -23,9 +26,6 @@ import { appKit, wagmiAdapter } from './src/AppkitConfig'; // Your configured Ap
 import { AppKitProvider, AppKit } from '@reown/appkit-react-native';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import messaging from '@react-native-firebase/messaging';
-import handleNotification from '@utils/handleNotification';
-import useNotification from '@hooks/useNotification';
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
@@ -54,21 +54,10 @@ export default function App() {
     (async () => {
       preloadImages();
       await preloadFonts();
+      await migrate(db, migrations);
       SplashScreen.hideAsync();
     })();
   }, []);
-
-  //the below comment is for f
-  // useEffect(() => {
-  //   messaging()
-  //     .getInitialNotification()
-  //     .then(remoteMessage => {
-  //       if (remoteMessage) {
-  //         console.warn('App opened from quit by notification:', remoteMessage);
-  //         handleNotification(remoteMessage.data);
-  //       }
-  //     });
-  // }, []);
 
   return (
     <SafeAreaProvider>

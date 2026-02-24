@@ -1,7 +1,7 @@
 module.exports = function babelConfig(api) {
   api.cache(true);
   return {
-    presets: [['babel-preset-expo', { unstable_transformImportMeta: true }]], // or '@babel/preset-env' etc.
+    presets: [['babel-preset-expo', { unstable_transformImportMeta: true }]],
     plugins: [
       [
         'module-resolver',
@@ -19,6 +19,7 @@ module.exports = function babelConfig(api) {
         },
         'react-native-reanimated/plugin',
       ],
+      ['inline-import', { extensions: ['.sql'] }],
     ],
   };
 };

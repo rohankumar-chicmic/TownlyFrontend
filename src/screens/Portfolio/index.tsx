@@ -39,10 +39,13 @@ export default function Portfolio() {
   const dispatch = useAppDispatch();
   const userToken = useAppSelector(state => state.auth.userToken);
 
-  const { data: transactionsResult } = useGetTransactionsQuery({
-    page: 1,
-    pageSize: 4,
-  });
+  const { data: transactionsResult } = useGetTransactionsQuery(
+    {
+      page: 1,
+      pageSize: 4,
+    },
+    { skip: !userToken },
+  );
 
   const InvestmentDetails = useGetMyInvestmentDetailsQuery(undefined, {
     skip: !userToken,
@@ -65,12 +68,19 @@ export default function Portfolio() {
     { page: 1, pageSize: 3, search: '', propertyType: '' },
     { skip: !userToken, refetchOnMountOrArgChange: true },
   );
+  console.warn('========================================');
+  console.log(InvestmentDetails.data);
+  console.log(myPropertiesResult?.items);
+  console.log(investedResult?.items);
+  console.log(lineData);
+  console.log(donutData);
+  console.log(transactionsResult?.items);
+  console.warn('========================================');
+
 
   const previewItems = investedResult?.items?.slice(0, 3) ?? [];
   const listedPreview = myPropertiesResult?.items?.slice(0, 4) ?? [];
 
-  // FIX: items are already sliced so length check never exceeded 4.
-  // hasMore from the API is the correct source of truth.
   const showListedViewAll = myPropertiesResult?.hasMore ?? false;
   const showViewAll = investedResult?.hasMore ?? false;
 
@@ -81,10 +91,6 @@ export default function Portfolio() {
     skip: !userToken,
   });
 
-  // FIX: Invalidate both lists every time Portfolio comes into focus.
-  // Back-navigation does not remount the screen in React Navigation, so
-  // refetchOnMountOrArgChange never fires. useFocusEffect + invalidateTags
-  // forces a fresh fetch every time the screen is focused (including on back).
   useFocusEffect(
     useCallback(() => {
       dispatch(propertyApi.util.invalidateTags(['MyProperties']));
@@ -273,8 +279,8 @@ export default function Portfolio() {
             renderItem={({ item }) => (
               <View style={{ width: CARD_WIDTH }}>
                 <CardContainer2
-                  userOwned
                   {...item}
+                  userOwned
                   onClick={() => {
                     navigation.navigate(ROUTES.OWNED_PROPERTY, {
                       id: item.id,

@@ -48,11 +48,8 @@ export const formatCompactNumber = (
 export const sanitizeSearch = (input: string) => {
   if (!input) return '';
 
-  // Trim + collapse multiple spaces
-  let cleaned = input.trim().replace(/\s+/g, ' ');
-
-  // Remove dangerous chars (keep letters, numbers, space, comma, dash)
-  cleaned = cleaned.replace(/[^\w\s,-]/g, '');
+  let cleaned = input.trim().replaceAll(/\s+/g, ' ');
+  cleaned = cleaned.replaceAll(/[^\w\s,-]/g, '');
 
   return cleaned;
 };
@@ -90,5 +87,5 @@ export const customParseNumber = (value: any, originalValue: any) => {
   const parsed = Number(originalValue);
 
   // Return undefined if it's NaN, otherwise return the parsed number
-  return isNaN(parsed) ? undefined : parsed;
+  return Number.isNaN(parsed) ? undefined : parsed;
 };

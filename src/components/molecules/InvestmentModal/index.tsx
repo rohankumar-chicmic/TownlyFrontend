@@ -18,7 +18,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useAppNavigation } from '@hooks/useNavigation';
 import Toast from 'react-native-toast-message';
 import { ROUTES } from 'src/navigation/constants';
-
+import { useAppToastConfig } from '@hooks/useAppToastConfig';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -41,7 +41,7 @@ export default function InvestPropertyModal({
   const navigation = useAppNavigation();
   const totalCost = Number(shares || 0) * pricePerShare;
   const [investInProperty] = useInvestInPropertyMutation();
-
+  const toastConfig = useAppToastConfig();
   const { dynamicStyles } = useStyles(styles);
 
   const handleSubmit = async () => {
@@ -51,6 +51,7 @@ export default function InvestPropertyModal({
       Toast.show({
         type: 'error',
         text1: 'Minimum 1 share required',
+        visibilityTime: 1000,
       });
       return;
     }
@@ -58,7 +59,7 @@ export default function InvestPropertyModal({
     try {
       await investInProperty({ propertyId: id, shares: sharesNum });
       onClose();
-      navigation.navigate(ROUTES.TABS);
+      navigation.navigate(ROUTES.TRANSACTIONS);
     } catch (error) {
       console.error(error);
     }
@@ -159,6 +160,7 @@ export default function InvestPropertyModal({
             </View>
           </ScrollView>
         </SafeAreaView>
+        <Toast config={toastConfig} />
       </Modal>
     </KeyboardAwareScrollView>
   );

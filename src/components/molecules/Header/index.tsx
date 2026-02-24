@@ -8,6 +8,7 @@ import useTheme from '@hooks/useTheme';
 import ConnectButton from '@components/atoms/ConnectButton';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { THEME } from '@theme/constants';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 export default function Header({
   route,
@@ -16,46 +17,72 @@ export default function Header({
 }: Readonly<BottomTabHeaderProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors, toggleTheme, currentTheme } = useTheme();
+  const { isConnected } = useNetInfo();
 
   return (
-    <View
-      style={[
-        dynamicStyles.container,
-        {
-          paddingVertical: 10,
-          width: '100%',
-        },
-      ]}
-    >
-      <View style={{ flexDirection: 'row' }}>
-        <Icons.Logo
-          height={30}
-          width={60}
-          color={Colors.primary}
-          borderColor={Colors.border}
-        />
-        <Text style={dynamicStyles.primaryText}>Townly</Text>
-      </View>
+    <View>
       <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 15,
-        }}
+        style={[
+          dynamicStyles.container,
+          {
+            paddingVertical: 10,
+            width: '100%',
+          },
+        ]}
       >
-        <ConnectButton style={dynamicStyles.walletButton} />
-        <Pressable
-          onPress={toggleTheme}
-          style={{ backgroundColor: Colors.surface, borderRadius: 15 }}
-        >
-          <AntDesign
-            name={currentTheme === THEME.LIGHT ? 'sun' : 'moon'}
-            size={24}
+        <View style={{ flexDirection: 'row' }}>
+          <Icons.Logo
+            height={30}
+            width={60}
             color={Colors.primary}
-            style={{ padding: 10 }}
+            borderColor={Colors.border}
           />
-        </Pressable>
+          <Text style={dynamicStyles.primaryText}>Townly</Text>
+        </View>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 15,
+          }}
+        >
+          <ConnectButton style={dynamicStyles.walletButton} />
+          <Pressable
+            onPress={toggleTheme}
+            style={{ backgroundColor: Colors.surface, borderRadius: 15 }}
+          >
+            <AntDesign
+              name={currentTheme === THEME.LIGHT ? 'sun' : 'moon'}
+              size={24}
+              color={Colors.primary}
+              style={{ padding: 10 }}
+            />
+          </Pressable>
+        </View>
       </View>
+      {!isConnected && (
+        <View
+          style={[
+            {
+              width: '100%',
+              backgroundColor: Colors.primary,
+              flexDirection: 'row',
+              padding: 5,
+              justifyContent: 'center',
+              overflow: 'hidden',
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 5,
+            },
+          ]}
+        >
+          <Text style={{ textAlign: 'center', color: Colors.background }}>
+            You Are Currently Offline
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

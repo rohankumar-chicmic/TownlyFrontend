@@ -111,7 +111,7 @@ export default function DonutGraph({ data }: Readonly<DonutData>) {
               textColor={Colors.textSecondary}
               radius={70}
               textSize={20}
-              onPress={(_, index) => handlePress(index)}
+              onPress={(_: any, index: number) => handlePress(index)}
               innerCircleColor={Colors.surface}
               innerRadius={40}
               isAnimated

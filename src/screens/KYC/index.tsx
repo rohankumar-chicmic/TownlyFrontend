@@ -25,6 +25,7 @@ import { kycSchema } from './validationSchema';
 import styles from './styles';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
+import Toast from 'react-native-toast-message';
 
 export default function KYCVerificationScreen() {
   const { dynamicStyles } = useStyles(styles);
@@ -35,14 +36,10 @@ export default function KYCVerificationScreen() {
 
   const navigation = useAppNavigation();
   const [selfieUploaded, setSelfieUploaded] = useState(false);
-  const [submitKYC, { isLoading, isSuccess }] = useSubmitKYCMutation();
+  const [submitKYC, { isLoading }] = useSubmitKYCMutation();
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null);
-
-  if (isSuccess) {
-    navigation.navigate('Home');
-  }
 
   const {
     control,
@@ -98,12 +95,21 @@ export default function KYCVerificationScreen() {
         name: 'selfie.jpg',
         type: 'image/jpeg',
       } as any);
-
+      console.log(formData);
       await submitKYC(formData).unwrap();
 
       navigation.navigate(ROUTES.TABS);
-    } catch (error) {
+
+      Toast.show({
+        type: 'success', 
+        text1: 'Kyc is submitted successfully'
+      })
+    } catch (error: any) {
       console.error('KYC submission failed:', error);
+      Toast.show({
+        type: 'error',
+        text1: JSON.stringify(error) + 'Some Error occured',
+      });
     }
   };
 
@@ -117,7 +123,7 @@ export default function KYCVerificationScreen() {
 
   const handlePickFile = async () => {
     try {
-      const [result] = await pick({ type: [types.pdf, types.docx] });
+      const [result] = await pick({ type: [types.images] });
 
       const file = {
         name: result.name,
@@ -360,7 +366,7 @@ export default function KYCVerificationScreen() {
                     marginTop: 4,
                   }}
                 >
-                  Accepted: PDF, DOCX
+                  Accepted: Images
                 </Text>
               </View>
             </View>

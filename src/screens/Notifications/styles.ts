@@ -8,7 +8,6 @@ const styles = (Colors: ThemeColors) =>
       backgroundColor: Colors.background,
     },
     container: {
-      flex: 1,
       paddingHorizontal: 20,
       paddingBottom: 20,
     },
@@ -39,7 +38,6 @@ const styles = (Colors: ThemeColors) =>
     tag: {
       paddingVertical: 8,
       paddingHorizontal: 16,
-      // marginHorizontal: 4,
       borderRadius: 4,
       borderWidth: 1,
       backgroundColor: Colors.surface,
@@ -49,11 +47,11 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '400',
     },
     notificationsContainer: {
-      marginVertical: 5,
       padding: 10,
       borderWidth: 1,
       backgroundColor: Colors.surface,
       borderColor: Colors.border,
+      height: '80%',
       borderRadius: 4,
     },
     emptyContainer: {
@@ -67,7 +65,6 @@ const styles = (Colors: ThemeColors) =>
       justifyContent: 'center',
     },
     loadingContainer: {
-      flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
       paddingVertical: 40,

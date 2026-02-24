@@ -11,7 +11,7 @@ export const useAppToastConfig = () => {
         {...props}
         style={{
           borderLeftColor: Colors.success,
-          backgroundColor: Colors.surface, // Using your surface color
+          backgroundColor: Colors.surface,
           borderWidth: 1,
           borderColor: Colors.border,
         }}

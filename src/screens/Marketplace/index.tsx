@@ -6,7 +6,7 @@ import SearchInput from '@components/molecules/SearchInput';
 import useTheme from '@hooks/useTheme';
 import { useSearchPropertiesQuery } from '@redux/PropertyApiReducer';
 import CardContainer2 from '@components/molecules/CardContainer2';
-import ListEmptyComponent from '@components/molecules/PropertyListing/ListEmptyComponent';
+import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 import FilterButton from '@components/atoms/FilterButton';
 import { debounce, sanitizeSearch } from '@utils/utility';
 

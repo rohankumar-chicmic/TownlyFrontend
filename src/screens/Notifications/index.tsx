@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -21,17 +15,8 @@ import {
 } from '@redux/NotificationsApiReducer';
 import { useAppDispatch, useAppSelector } from '@redux/store';
 import handleNotification from '@utils/handleNotification';
-import { NotificationProps } from '@utils/constants';
 import { hasUnreadNotifications } from '@redux/AuthReducer';
-
-interface NotificationItem extends NotificationProps {
-  id: string;
-  title: string;
-  message: string;
-  isRead: boolean;
-  type: number;
-  createdAt: string;
-}
+import { NotificationItem } from '@utils/types';
 
 const Notifications = () => {
   const { dynamicStyles } = useStyles(styles);
@@ -67,8 +52,8 @@ const Notifications = () => {
     try {
       if (!userToken) return;
       await readAllNotifications();
-      refetchAll();
-      refetchUnread();
+      await refetchAll();
+      await refetchUnread();
       dispatch(hasUnreadNotifications(false));
     } catch (error) {
       console.log(error);
@@ -77,7 +62,10 @@ const Notifications = () => {
 
   const handleSingleNotificationRead = async (item: NotificationItem) => {
     try {
-      handleNotification({ type: item.type, referenceId: item.referenceId });
+      handleNotification({
+        type: item.type,
+        referenceId: String(item.referenceId),
+      });
       if (!item.isRead) {
         await readSingleNotification(item.id);
         refetchAll();
@@ -121,24 +109,6 @@ const Notifications = () => {
       </View>
     );
   };
-
-  if (isLoadingNotifications) {
-    return (
-      <View style={dynamicStyles.container}>
-        <View style={dynamicStyles.headerSection}>
-          <Text style={dynamicStyles.heroPrimarytext}>Notifications</Text>
-          <Text style={dynamicStyles.heroText}>
-            Stay updated with your investments and activities
-          </Text>
-        </View>
-
-        <View style={dynamicStyles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
-          <Text style={dynamicStyles.heroText}>Loading notifications...</Text>
-        </View>
-      </View>
-    );
-  }
 
   return (
     <SafeAreaView style={dynamicStyles.safeArea}>
@@ -232,16 +202,25 @@ const Notifications = () => {
             </Pressable>
           </View>
         </View>
-
-        <View style={dynamicStyles.notificationsContainer}>
+      </View>
+      <View style={dynamicStyles.container}>
+        {isLoadingNotifications ? (
+          <View style={{ width: '100%', alignContent: 'center' }}>
+            <Text style={[dynamicStyles.heroText, { textAlign: 'center' }]}>
+              Loading Notifications...
+            </Text>
+          </View>
+        ) : (
           <FlatList
             data={notificationsToRender}
+            contentContainerStyle={{ paddingVertical: 10 }}
+            style={dynamicStyles.notificationsContainer}
             renderItem={renderItem}
             keyExtractor={item => item.id}
             ListEmptyComponent={renderEmpty}
             showsVerticalScrollIndicator={false}
           />
-        </View>
+        )}
       </View>
     </SafeAreaView>
   );

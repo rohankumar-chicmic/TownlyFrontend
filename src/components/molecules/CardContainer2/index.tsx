@@ -4,7 +4,7 @@ import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
-import PropertyCardProps from './PropertyCardProps.type';
+import { PropertyCardProps } from '@utils/types';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import Badge from '@components/atoms/Badge';

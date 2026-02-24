@@ -42,8 +42,6 @@ export default function PropertyDetails() {
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
 
-  console.log(data);
-
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
@@ -58,23 +56,23 @@ export default function PropertyDetails() {
 
         <View style={dynamicStyles.heroImage}>
           <Image
-            source={{
-              uri: data?.imageUrl,
-            }}
+            source={{ uri: data?.imageUrl }}
             style={{ width: '100%', height: '100%' }}
           />
         </View>
 
         <View style={dynamicStyles.section}>
-          <Text style={dynamicStyles.title}>{data?.name}</Text>
+          <Text style={dynamicStyles.title}>{String(data?.name ?? '')}</Text>
           <Text style={dynamicStyles.location}>
-            {<Icons.Location height={10} width={10} color={Colors.primary} />}{' '}
-            {data?.location}
+            <Icons.Location height={10} width={10} color={Colors.primary} />
+            {' ' + String(data?.location ?? '')}
           </Text>
           <View style={dynamicStyles.tag}>
-            <Text style={dynamicStyles.tagText}>{data?.propertyType}</Text>
+            <Text style={dynamicStyles.tagText}>
+              {String(data?.propertyType ?? '')}
+            </Text>
           </View>
-          {data?.userInvestedAmountEth && (
+          {data?.userInvestedAmountEth ? (
             <View style={dynamicStyles.investmentCard}>
               <View style={dynamicStyles.investmentIcon}>
                 <MaterialIcons name="payments" size={24} color="black" />
@@ -90,14 +88,13 @@ export default function PropertyDetails() {
                     fontWeight: '700',
                   }}
                 >
-                  {data?.userInvestedAmountEth.toFixed(4)}{' '}
-                  <Text style={{ fontSize: 14 }}>ETH</Text>
+                  {Number(data?.userInvestedAmountEth).toFixed(4)}
+                  <Text style={{ fontSize: 14 }}> ETH</Text>
                 </Text>
               </View>
             </View>
-          )}
+          ) : null}
         </View>
-
         <ScrollView
           horizontal
           contentContainerStyle={{
@@ -124,9 +121,10 @@ export default function PropertyDetails() {
               }}
             >
               {'$'}
-              {data?.totalValue}
+              {String(data?.totalValue ?? '')}
             </Text>
           </View>
+
           <View style={dynamicStyles.containerStyle}>
             <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
               Price/Share
@@ -138,22 +136,24 @@ export default function PropertyDetails() {
                 fontWeight: '500',
               }}
             >
-              {Number(data?.pricePerUnitEth ?? 10).toFixed(5)}
+              {Number(data?.pricePerUnitEth ?? 0).toFixed(5)}
               {' ETH'}
             </Text>
           </View>
-          <View style={[dynamicStyles.containerStyle]}>
+
+          <View style={dynamicStyles.containerStyle}>
             <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
               Annual Yield
             </Text>
             <Text
               style={{ color: Colors.primary, fontSize: 18, fontWeight: '500' }}
             >
-              {data?.annualYieldPercent}
+              {String(data?.annualYieldPercent ?? '')}
               {'%'}
             </Text>
           </View>
-          <View style={[dynamicStyles.containerStyle]}>
+
+          <View style={dynamicStyles.containerStyle}>
             <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
               Available Share
             </Text>
@@ -164,17 +164,17 @@ export default function PropertyDetails() {
                 fontWeight: '500',
               }}
             >
-              {data?.availableUnits}
+              {String(data?.availableUnits ?? '')}
               {'/'}
-              {data?.totalUnits}
+              {String(data?.totalUnits ?? '')}
             </Text>
           </View>
         </ScrollView>
 
         <View style={[dynamicStyles.section, { paddingTop: 5 }]}>
           <Text style={dynamicStyles.sectionTitle}>Property Highlights</Text>
-          <Text style={[{ fontSize: 15, color: Colors.textPrimary }]}>
-            {data?.description}
+          <Text style={{ fontSize: 15, color: Colors.textPrimary }}>
+            {String(data?.description ?? '')}
           </Text>
         </View>
 
@@ -184,7 +184,7 @@ export default function PropertyDetails() {
           onPress={() => setShowModal(true)}
           size="lg"
           style={{ margin: 15 }}
-        ></Button>
+        />
 
         <View style={[dynamicStyles.section, { paddingHorizontal: 15 }]}>
           <Text style={[dynamicStyles.sectionTitle, { paddingHorizontal: 10 }]}>
@@ -196,21 +196,24 @@ export default function PropertyDetails() {
             keyExtractor={(item, index) => `${item.id}-${index}`}
             renderItem={({ item }) => (
               <View style={{ width: Dimensions.get('screen').width * 0.8 }}>
-                <CardContainer {...item} />
+                <CardContainer
+                  {...item}
+                  description={item.description ?? undefined}
+                />
               </View>
             )}
-            // ListEmptyComponent={() => <ListEmptyComponent />}
             contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
             showsHorizontalScrollIndicator={false}
           />
         </View>
+
         {kycStatus === 2 ? (
           <InvestPropertyModal
             visible={showModal}
             onClose={() => setShowModal(false)}
-            id={String(data?.id)}
-            pricePerShare={Number(data?.pricePerUnitEth)}
-            availableUnits={Number(data?.availableUnits)}
+            id={String(data?.id ?? '')}
+            pricePerShare={Number(data?.pricePerUnitEth ?? 0)}
+            availableUnits={Number(data?.availableUnits ?? 0)}
           />
         ) : (
           <KYCStatusModal
