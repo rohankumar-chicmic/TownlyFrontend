@@ -33,6 +33,7 @@ export default function FormInput(props: Readonly<FormInputType>) {
       </Text>
       <TextInput
         placeholder={props.placeholder}
+        numberOfLines={1}
         placeholderTextColor={Colors.textMuted}
         style={[
           dynamicStyles.input,

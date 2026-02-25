@@ -29,24 +29,30 @@ const Notifications = () => {
   const [isPressed, setIsPressed] = useState(false);
   const dispatch = useAppDispatch();
   const {
-    data: allNotifications = [],
+    data: allNotifications,
     isLoading: isLoadingNotifications,
     refetch: refetchAll,
-  } = useGetMyNotificationsQuery(undefined, {
-    skip: !userToken,
-  });
-  const { data: unreadNotifications = [], refetch: refetchUnread } =
-    useGetMyUnreadNotificationsQuery(undefined, {
+  } = useGetMyNotificationsQuery(
+    { page: 1, limit: 10 },
+    {
       skip: !userToken,
-    });
+    },
+  );
+  const { data: unreadNotifications, refetch: refetchUnread } =
+    useGetMyUnreadNotificationsQuery(
+      { page: 1, limit: 10 },
+      {
+        skip: !userToken,
+      },
+    );
 
   const [readSingleNotification] = useReadNotificationMutation();
   const [readAllNotifications] = useReadAllNotificationMutation();
 
-  const unreadCount = unreadNotifications.length;
+  const unreadCount = unreadNotifications?.items.length;
 
   const notificationsToRender =
-    filter === 'unread' ? unreadNotifications : allNotifications;
+    filter === 'unread' ? unreadNotifications?.items : allNotifications?.items;
 
   const handleMarkAllAsRead = async () => {
     try {
@@ -77,7 +83,7 @@ const Notifications = () => {
   };
 
   useEffect(() => {
-    if (unreadNotifications.length === 0) {
+    if (unreadNotifications?.items.length === 0) {
       dispatch(hasUnreadNotifications(false));
     }
   }, [unreadNotifications, dispatch]);

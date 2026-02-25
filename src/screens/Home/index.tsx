@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Dimensions, FlatList, ScrollView, Text, View } from 'react-native';
+import { FlatList, ScrollView, Text, View } from 'react-native';
 
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
@@ -16,6 +16,7 @@ import {
 
 import { Icons } from '@utils/icons';
 import { ROUTES } from 'src/navigation/constants';
+import { debounce } from '@utils/utility';
 
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -25,7 +26,6 @@ const Home = () => {
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
   const { isConnected } = useNetInfo();
-  console.log(isConnected);
   const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery(
     undefined,
     {
@@ -74,8 +74,8 @@ const Home = () => {
           onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
         >
           <Icons.Arrow
-            height={12}
-            width={12}
+            height={15}
+            width={15}
             borderColor={Colors.background}
             color={Colors.background}
           />
@@ -143,6 +143,12 @@ const Home = () => {
     [Colors, dynamicStyles, navigation],
   );
 
+  const handlePressed = (id: string) => {
+    navigation.push(ROUTES.PROPERTY_DETAILS, { id: id });
+  };
+
+  const debouncedHandlePressed = debounce(handlePressed, 250);
+
   if (isLoading && !data) {
     return (
       <ScrollView style={dynamicStyles.container}>
@@ -164,7 +170,12 @@ const Home = () => {
       contentContainerStyle={[{ gap: 10 }, dynamicStyles.container]}
       style={{ backgroundColor: Colors.background }}
       keyExtractor={item => item.id.toString()}
-      renderItem={({ item }) => <CardContainer {...item} />}
+      renderItem={({ item }) => (
+        <CardContainer
+          {...item}
+          onClick={() => debouncedHandlePressed(item.id)}
+        />
+      )}
       ListEmptyComponent={isLoading ? null : <ListEmptyComponent />}
       refreshing={isLoading}
       onRefresh={refetch}

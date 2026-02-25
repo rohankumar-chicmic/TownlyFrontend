@@ -6,8 +6,7 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       borderWidth: 1,
-      aspectRatio: 3 / 2,
-      minHeight: 200,
+      aspectRatio: 5 / 3,
       borderColor: Colors.border,
       flexDirection: 'row',
       borderRadius: 10,
@@ -25,14 +24,14 @@ const styles = (Colors: ThemeColors) =>
     },
     title: {
       fontSize: 23,
-      padding: 5,
+      padding: 2,
       fontWeight: '400',
       color: Colors.textPrimary,
     },
     location: {
       fontSize: 15,
       padding: 5,
-      color: Colors.textSecondary,
+      color: Colors.textPrimary,
       alignItems: 'center',
     },
     smallText: {
@@ -43,7 +42,7 @@ const styles = (Colors: ThemeColors) =>
     },
     column: {
       padding: 5,
-
+      paddingVertical: 2,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'baseline',
@@ -55,7 +54,7 @@ const styles = (Colors: ThemeColors) =>
     values: {
       fontSize: 15,
       fontWeight: '400',
-      color: Colors.primary,
+      color: Colors.textPrimary,
     },
   });
 

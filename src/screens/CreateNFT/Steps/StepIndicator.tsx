@@ -27,7 +27,7 @@ export default function StepIndicator({
             step === currentStep
               ? Colors.primary
               : currentStep > step
-                ? Colors.primaryDark
+                ? Colors.primary
                 : Colors.surface,
           borderRadius: 15,
           justifyContent: 'center',

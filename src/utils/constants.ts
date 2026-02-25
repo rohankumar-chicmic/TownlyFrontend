@@ -2,8 +2,9 @@ import { loadAsync } from 'expo-font';
 
 // export const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || '';
 
-// export const API_BASE_URL = 'https://tonwly.runasp.net/api';
-export const API_BASE_URL = 'https://uncombinable-nonscholastic-layton.ngrok-free.dev/api';
+export const API_BASE_URL = 'https://tonwly.runasp.net/api';
+// export const API_BASE_URL =
+//   'https://uncombinable-nonscholastic-layton.ngrok-free.dev/api';
 
 export const FONT_WEIGHTS = {
   100: '100',

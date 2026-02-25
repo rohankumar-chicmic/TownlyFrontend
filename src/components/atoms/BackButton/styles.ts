@@ -22,7 +22,7 @@ const styles = (Colors: ThemeColors) =>
       elevation: 8,
     },
     symbol: {
-      color: Colors.primaryDark,
+      color: Colors.primary,
     },
   });
 

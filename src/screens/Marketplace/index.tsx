@@ -9,10 +9,13 @@ import CardContainer2 from '@components/molecules/CardContainer2';
 import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 import FilterButton from '@components/atoms/FilterButton';
 import { debounce, sanitizeSearch } from '@utils/utility';
+import { useAppNavigation } from '@hooks/useNavigation';
+import { ROUTES } from 'src/navigation/constants';
 
 const Marketplace = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
+  const navigation = useAppNavigation();
 
   // State
   const [filter, setFilter] = useState('');
@@ -37,6 +40,12 @@ const Marketplace = () => {
       }, 200),
     [],
   );
+
+  const handlePressed = (id: string) => {
+    navigation.push(ROUTES.PROPERTY_DETAILS, { id: id });
+  };
+
+  const debouncedHandlePressed = debounce(handlePressed, 250);
 
   const handleTextChange = (val: string) => {
     setText(val);
@@ -105,7 +114,12 @@ const Marketplace = () => {
       <FlatList
         data={data?.items || []}
         keyExtractor={(item, index) => `${item.id}`}
-        renderItem={({ item }) => <CardContainer2 {...item} />}
+        renderItem={({ item }) => (
+          <CardContainer2
+            {...item}
+            onClick={() => debouncedHandlePressed(item.id)}
+          />
+        )}
         ListEmptyComponent={<ListEmptyComponent />}
         contentContainerStyle={{ gap: 10, padding: 10 }}
         showsVerticalScrollIndicator={false}

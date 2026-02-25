@@ -41,7 +41,7 @@ export default function PropertyDetails() {
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
-
+  console.log(data);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
@@ -90,6 +90,18 @@ export default function PropertyDetails() {
                 >
                   {Number(data?.userInvestedAmountEth).toFixed(4)}
                   <Text style={{ fontSize: 14 }}> ETH</Text>
+                </Text>
+              </View>
+              <View>
+                <Text style={dynamicStyles.investmentTitle}>Tokens Owned</Text>
+                <Text
+                  style={{
+                    color: Colors.textPrimary,
+                    fontSize: 18,
+                    fontWeight: '700',
+                  }}
+                >
+                  {Number(data?.tokensOwned)}
                 </Text>
               </View>
             </View>
@@ -146,7 +158,7 @@ export default function PropertyDetails() {
               Annual Yield
             </Text>
             <Text
-              style={{ color: Colors.primary, fontSize: 18, fontWeight: '500' }}
+              style={{ color: Colors.success, fontSize: 18, fontWeight: '500' }}
             >
               {String(data?.annualYieldPercent ?? '')}
               {'%'}
@@ -170,14 +182,6 @@ export default function PropertyDetails() {
             </Text>
           </View>
         </ScrollView>
-
-        <View style={[dynamicStyles.section, { paddingTop: 5 }]}>
-          <Text style={dynamicStyles.sectionTitle}>Property Highlights</Text>
-          <Text style={{ fontSize: 15, color: Colors.textPrimary }}>
-            {String(data?.description ?? '')}
-          </Text>
-        </View>
-
         <Button
           title={data?.userInvestedAmountEth ? 'Invest More' : 'Invest'}
           disabled={!userToken || !data?.availableUnits}
@@ -186,9 +190,36 @@ export default function PropertyDetails() {
           style={{ margin: 15 }}
         />
 
-        <View style={[dynamicStyles.section, { paddingHorizontal: 15 }]}>
-          <Text style={[dynamicStyles.sectionTitle, { paddingHorizontal: 10 }]}>
-            Related Properties
+        <View style={[dynamicStyles.section, { paddingTop: 5 }]}>
+          <Text style={dynamicStyles.sectionTitle}>Property Highlights:</Text>
+          <Text style={{ fontSize: 15, color: Colors.textPrimary }}>
+            {String(data?.description ?? '')}
+          </Text>
+        </View>
+
+        <View
+          style={[
+            dynamicStyles.section,
+            {
+              paddingHorizontal: 15,
+              borderBottomColor: Colors.border,
+              borderBottomWidth: 1,
+              paddingBottom: 5,
+            },
+          ]}
+        >
+          <Text
+            style={[
+              dynamicStyles.sectionTitle,
+              {
+                paddingHorizontal: 10,
+                borderTopColor: Colors.border,
+                borderTopWidth: 1,
+                paddingTop: 5,
+              },
+            ]}
+          >
+            Related Properties:
           </Text>
           <FlatList
             horizontal

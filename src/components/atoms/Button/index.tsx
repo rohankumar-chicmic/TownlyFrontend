@@ -49,7 +49,11 @@ export default function Button({
         style,
       ]}
     >
-      {title && <Text style={[dynamicStyles.text, textStyle]}>{title}</Text>}
+      {title && (
+        <Text style={[dynamicStyles.text, textStyle]} numberOfLines={1}>
+          {title}
+        </Text>
+      )}
       {children}
     </Pressable>
   );

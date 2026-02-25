@@ -113,7 +113,7 @@ export default function Step3({
           title="Back"
           onPress={() => setStep(prev => prev - 1)}
           variant="outline"
-          textStyle={{ marginHorizontal: 10, color: Colors.primaryDark }}
+          textStyle={{ marginHorizontal: 10, color: Colors.primary }}
         />
 
         <Button

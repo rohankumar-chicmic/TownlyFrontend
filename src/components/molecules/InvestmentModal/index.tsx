@@ -75,6 +75,12 @@ export default function InvestPropertyModal({
     const numericValue = Number(cleanValue);
 
     if (numericValue > MAX_LIMIT) {
+      Toast.show({
+        type: 'error',
+        text1: 'Max Limit Reached',
+        text2: 'Cannot buy more than maximum shares',
+        visibilityTime: 1000,
+      });
       setShares(MAX_LIMIT.toString());
     } else {
       setShares(cleanValue);
@@ -117,7 +123,9 @@ export default function InvestPropertyModal({
               value={shares}
               onChangeText={handleSharesChange}
               keyboardType="number-pad"
+              placeholderTextColor={Colors.textMuted}
               style={dynamicStyles.input}
+              cursorColor={Colors.outline}
               placeholder="0"
             />
 

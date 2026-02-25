@@ -35,7 +35,7 @@ const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
           dynamicStyles.value,
           {
             color: isNegative
-              ? Colors.primaryDark
+              ? Colors.primary
               : isSuccess
                 ? Colors.success
                 : Colors.textPrimary,

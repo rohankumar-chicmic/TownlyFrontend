@@ -1,7 +1,8 @@
 export const DarkColors = {
   // Primary Brand Colors
   primary: '#c7ff1f', // Vibrant Lime (Buttons, Active Icons)
-  primaryDark: '#9CAF2A', // Hover/Pressed state for primary
+  primaryDark: '#c7ff1f', // Vibrant Lime (Buttons, Active Icons)
+  // primaryDark: '#9CAF2A', // Hover/Pressed state for primary
 
   // Background Colors
   background: '#0D0D0D', // Deep Black/Charcoal (Main App BG)
@@ -14,7 +15,7 @@ export const DarkColors = {
   textMuted: '#666666', // Captions/Disabled text
 
   // Status & Feedback
-  success: '#4ADE80', // Positive growth/Profit
+  success: '#10D258', // Positive growth/Profit
   error: '#FF5C5C', // Alerts/Loss
   warning: '#FACC15', // Pending actions
 

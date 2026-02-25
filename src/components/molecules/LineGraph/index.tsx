@@ -32,8 +32,6 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
 
-  // if (!data || data.length === 0) return null;
-
   const lineData = (data ?? []).map((item, index) => ({
     value: Number(item.value) || 0,
     label: item.label || String(index),

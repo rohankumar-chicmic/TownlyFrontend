@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../types';
 import { Icons } from '@utils/icons';
@@ -10,7 +10,6 @@ import useTheme from '@hooks/useTheme';
 import Home from '@screens/Home';
 import Marketplace from '@screens/Marketplace';
 import Portfolio from '@screens/Portfolio';
-import { useNavigation } from '@react-navigation/native';
 import Notifications from '@screens/Notifications';
 import Feather from '@expo/vector-icons/Feather';
 import { View } from 'react-native';
@@ -22,8 +21,6 @@ const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export default function Tabs() {
   const { Colors } = useTheme();
-  const [drawerOpened, setDrawerOpened] = useState(false);
-  const navigation = useNavigation();
   const userToken = useAppSelector(state => state.auth.userToken);
   const { data } = useGetMyUnreadNotificationsQuery(undefined, {
     skip: !userToken,
@@ -36,14 +33,7 @@ export default function Tabs() {
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
-          header: props => (
-            <Header
-              {...props}
-              setDrawerOpened={setDrawerOpened}
-              onPress={() => navigation.openDrawer()}
-              drawerOpened={drawerOpened}
-            />
-          ),
+          header: props => <Header {...props} />,
 
           headerTintColor: Colors.primary,
           sceneStyle: {

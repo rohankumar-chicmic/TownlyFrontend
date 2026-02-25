@@ -5,30 +5,17 @@ import styles from './styles';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import { PropertyCardProps } from '@utils/types';
-import { useAppNavigation } from '@hooks/useNavigation';
-import { ROUTES } from 'src/navigation/constants';
+
 import Badge from '@components/atoms/Badge';
-import { debounce } from '@utils/utility';
 
 export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const navigation = useAppNavigation();
   const [isPressed, setIsPressed] = useState(false);
-
-  const handlePressed = () => {
-    if (props.onClick) {
-      props.onClick();
-      return;
-    }
-    navigation.push(ROUTES.PROPERTY_DETAILS, { id: props.id });
-  };
-
-  const debouncedHandlePressed = debounce(handlePressed, 250);
 
   return (
     <Pressable
-      onPress={debouncedHandlePressed}
+      onPress={props.onClick}
       onPressIn={() => setIsPressed(true)}
       onPressOut={() => setIsPressed(false)}
       style={[
@@ -62,19 +49,13 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
           {props.location}
         </Text>
 
-        <Text
-          style={[
-            dynamicStyles.smallText,
-            {
-              color: Colors.textPrimary,
-              justifyContent: 'space-between',
-            },
-          ]}
-        >
-          <Text style={dynamicStyles.smallText}>Final risk Score: </Text>
-          {props.riskScore ?? 0}
-          {'/10 '}
-        </Text>
+        <View style={dynamicStyles.column}>
+          <Text style={dynamicStyles.fields}>Final Risk Score</Text>
+          <Text style={[dynamicStyles.values]}>
+            {props.riskScore}
+            {'/10'}
+          </Text>
+        </View>
 
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Estimated Yield</Text>
@@ -85,7 +66,9 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         </View>
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Availability</Text>
-          <Text style={[dynamicStyles.values]}>{props.availableUnits}</Text>
+          <Text style={[dynamicStyles.values, { color: Colors.primary }]}>
+            {props.availableUnits}
+          </Text>
         </View>
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Price/Share</Text>

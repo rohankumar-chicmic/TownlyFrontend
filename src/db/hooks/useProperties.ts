@@ -32,11 +32,11 @@ export const saveFeaturedProperties = async (
     });
 
     console.log(
-      '✅ Successfully stored',
+      ' Successfully stored',
       sanitizedData.length,
       'properties locally',
     );
   } catch (err) {
-    console.error('❌ Database Error:', err);
+    console.error(' Database Error:', err);
   }
 };

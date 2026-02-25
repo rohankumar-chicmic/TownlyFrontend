@@ -1,6 +1,8 @@
 export const LightColors = {
   // Primary Brand Colors (Locked as requested)
-  primary: '#BECC33',
+  // primary: '#BECC33',
+  primary: '#9ac714',
+  // primary: '#000000',
   primaryDark: '#7A851C',
 
   // Background Colors (High-Contrast Layering)

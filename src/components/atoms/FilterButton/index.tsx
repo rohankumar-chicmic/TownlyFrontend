@@ -26,7 +26,7 @@ const FilterButton = ({
         {
           borderWidth: 1,
           borderColor:
-            currentValue === value ? Colors.primaryDark : Colors.border,
+            currentValue === value ? Colors.primary : Colors.border,
         },
       ]}
       onPress={onPress}
@@ -37,7 +37,7 @@ const FilterButton = ({
           {
             color:
               currentValue === value
-                ? Colors.primaryDark
+                ? Colors.primary
                 : Colors.textSecondary,
           },
         ]}

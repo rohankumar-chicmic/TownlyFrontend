@@ -16,6 +16,7 @@ interface PropertyDetailsType {
   riskScore: number | null;
 
   // User Specific (Nullable until invested)
+  tokensOwned: number | null;
   userInvestedAmountEth: number | null;
   userInvestmentAmount: number | null;
 }
@@ -103,8 +104,8 @@ interface PropertyCardProps {
   totalUnits: number;
   riskScore: number;
   pricePerUnitEth: number;
-  userOwned: boolean;
-  status?: number;
+  userOwned: boolean | null;
+  status: number | null;
   onClick?: () => void;
 }
 

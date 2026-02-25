@@ -41,7 +41,7 @@ export default function BackButton({
         <Icons.BackLogo
           height={10}
           width={10}
-          color={Colors.primaryDark}
+          color={Colors.primary}
         ></Icons.BackLogo>
       </View>
     </Pressable>

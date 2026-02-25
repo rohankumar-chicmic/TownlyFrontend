@@ -254,7 +254,7 @@ export default function Step4(props: Readonly<StepProps>) {
         <InfoRow
           field="Expected Annual Yield"
           value={
-            <Text style={{ fontSize: 18, color: Colors.primaryDark }}>
+            <Text style={{ fontSize: 18, color: Colors.success }}>
               {props.formData.expectedAnnualYield?.toFixed(1)}
               {'%'}
             </Text>
@@ -267,7 +267,7 @@ export default function Step4(props: Readonly<StepProps>) {
           title="Back"
           onPress={() => props.setStep(prev => prev - 1)}
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
-          textStyle={{ marginHorizontal: 10, color: Colors.primaryDark }}
+          textStyle={{ marginHorizontal: 10, color: Colors.primary }}
           variant="outline"
         ></Button>
 

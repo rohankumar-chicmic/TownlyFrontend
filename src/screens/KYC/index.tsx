@@ -101,9 +101,9 @@ export default function KYCVerificationScreen() {
       navigation.navigate(ROUTES.TABS);
 
       Toast.show({
-        type: 'success', 
+        type: 'success',
         text1: 'Kyc is submitted successfully'
-      })
+      });
     } catch (error: any) {
       console.error('KYC submission failed:', error);
       Toast.show({

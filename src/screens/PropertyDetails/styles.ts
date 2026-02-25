@@ -32,6 +32,7 @@ const styles = (Colors: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       marginVertical: 15,
+      justifyContent: 'space-between',
       borderWidth: 1,
       borderColor: Colors.primary + '30',
     },
@@ -48,21 +49,21 @@ const styles = (Colors: ThemeColors) =>
 
     location: {
       fontSize: 14,
-      color: Colors.textSecondary,
+      color: Colors.textPrimary,
       marginTop: 4,
     },
 
     tag: {
       marginTop: 10,
       alignSelf: 'flex-start',
-      backgroundColor: Colors.border,
+      backgroundColor: Colors.surface,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 6,
     },
 
     tagText: {
-      color: Colors.primaryDark,
+      color: Colors.primary,
       fontSize: 12,
     },
 
