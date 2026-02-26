@@ -22,12 +22,14 @@ import { Icons } from '@utils/icons';
 import {
   useGetPropertyDetailsQuery,
   useGetRelatedPropertiesQuery,
+  useInvestmentInfoQuery,
 } from '@redux/PropertyApiReducer';
 import InvestPropertyModal from '@components/molecules/InvestmentModal';
 
 import { useAppSelector } from '@redux/store';
 import KYCStatusModal from '@components/molecules/KYCModal';
 import { useAppNavigation } from '@hooks/useNavigation';
+import InvestmentInfo from '@components/molecules/InvestmentInfo';
 
 export default function PropertyDetails() {
   const { Colors } = useTheme();
@@ -36,12 +38,13 @@ export default function PropertyDetails() {
   const params = route.params;
   const [showModal, setShowModal] = useState(false);
   const { data } = useGetPropertyDetailsQuery(params.id);
+  const { data: investmentData } = useInvestmentInfoQuery(params.id);
 
   const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
-  console.log(data);
+  console.log(investmentData)
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
@@ -236,6 +239,30 @@ export default function PropertyDetails() {
             contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
             showsHorizontalScrollIndicator={false}
           />
+        </View>
+
+        <View style={[dynamicStyles.section, { paddingHorizontal: 15 }]}>
+          <Text style={[dynamicStyles.sectionTitle, { marginBottom: 10 }]}>
+            Investment Details:
+          </Text>
+          {investmentData ? (
+            <InvestmentInfo
+              data={{
+                minimumInvestmentShares:
+                  investmentData?.minimumInvestmentShares ?? 1,
+                dividendFrequency:
+                  investmentData?.dividendFrequency ?? 'Monthly',
+                investmentType: investmentData?.propertyType ?? 'Real Estate',
+                security: 'Blockchain Verified',
+                propertyOwnerUserId: investmentData?.propertyOwnerUserId,
+                expectedAnnualReturnPercent:
+                  investmentData?.expectedAnnualReturnPercent ?? 0,
+                pricePerShareUsd:
+                  investmentData?.totalValue / investmentData?.totalUnits || 0,
+                pricePerShareEth: Number(investmentData?.pricePerUnitEth ?? 0),
+              }}
+            />
+          ) : null}
         </View>
 
         {kycStatus === 2 ? (

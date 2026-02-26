@@ -188,16 +188,19 @@ const propertyApi = api.injectEndpoints({
       invalidatesTags: ['MyInvestedProperties'],
     }),
 
-    // FIX: only invalidate MyProperties (the list).
-    // Removed { type: 'MyPropertyDetail', id } from invalidatesTags —
-    // that was causing RTK Query to refetch getMyPropertyDetails for the
-    // deleted property, which returned a 500 from the backend.
     deleteProperty: builder.mutation<void, string>({
       query: propertyId => ({
         url: `/properties/${propertyId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['MyProperties'],
+    }),
+
+    investmentInfo: builder.query<any, string>({
+      query: propertyId => ({
+        url: `/properties/${propertyId}/investInfo`,
+        method: 'GET',
+      }),
     }),
   }),
 
@@ -216,6 +219,7 @@ export const {
   useEditPropertyMutation,
   useGetMyPropertyDetailsQuery,
   useDeletePropertyMutation,
+  useInvestmentInfoQuery,
 } = propertyApi;
 
 export { propertyApi };

@@ -4,7 +4,6 @@ import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
-import useTheme from '@hooks/useTheme';
 import ConnectButton from '@components/atoms/ConnectButton';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { THEME } from '@theme/constants';
@@ -15,8 +14,8 @@ export default function Header({
   options,
   navigation,
 }: Readonly<BottomTabHeaderProps>) {
-  const { dynamicStyles } = useStyles(styles);
-  const { Colors, toggleTheme, currentTheme } = useTheme();
+  const { dynamicStyles, Colors, toggleTheme, currentTheme } =
+    useStyles(styles);
   const { isConnected } = useNetInfo();
 
   return (
