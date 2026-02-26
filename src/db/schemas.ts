@@ -43,10 +43,10 @@ export const properties = sqliteTable('properties', {
 
   approvedValuation: real('approvedValuation').notNull(),
   totalUnits: integer('totalUnits').notNull(),
-  soldUnits: integer('soldUnits').notNull(),
+  // soldUnits: integer('soldUnits').notNull(),
   availableUnits: integer('availableUnits').notNull(),
-  investmentProgressPercent: real('investmentProgressPercent').notNull(),
-  totalAmountInvestedUsd: real('totalAmountInvestedUsd').notNull(),
+  // investmentProgressPercent: real('investmentProgressPercent').notNull(),
+  // totalAmountInvestedUsd: real('totalAmountInvestedUsd').notNull(),
 
   pricePerUnitEth: real('pricePerUnitEth').notNull(),
   annualYieldPercent: real('annualYieldPercent').notNull(),

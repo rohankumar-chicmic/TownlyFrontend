@@ -3,7 +3,7 @@ import { PieChart } from 'react-native-gifted-charts';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export interface DonutDataPoint {
   label: string;
@@ -37,6 +37,31 @@ export default function DonutGraph({ data }: Readonly<DonutData>) {
       focused: false,
     },
   ]);
+
+  useEffect(() => {
+    if (!data?.length) return;
+
+    setPieData([
+      {
+        value: data?.[0]?.percentage ?? 0,
+        color: '#9161f3',
+        text: 'Residential',
+        focused: false,
+      },
+      {
+        value: data?.[1]?.percentage ?? 0,
+        color: '#3b82f6',
+        text: 'Commercial',
+        focused: false,
+      },
+      {
+        value: data?.[2]?.percentage ?? 0,
+        color: '#f59e0b',
+        text: 'Land',
+        focused: false,
+      },
+    ]);
+  }, [data]);
 
   const handlePress = (index: number) => {
     setPieData(prev =>

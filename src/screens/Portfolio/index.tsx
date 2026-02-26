@@ -34,6 +34,9 @@ import {
   savePortfolioSummary,
   savePortfolioSnapshots,
   savePortfolioAllocation,
+  saveProperties,
+  saveTransactions,
+  saveUserInvestments,
 } from 'src/db/hooks/usePortfolioData';
 import { useNetInfo } from '@react-native-community/netinfo';
 
@@ -48,10 +51,6 @@ export default function Portfolio() {
   const { isConnected } = useNetInfo();
   const dbData = usePortfolioData();
 
-  const { data: transactionsResult } = useGetTransactionsQuery(
-    { page: 1, pageSize: 4 },
-    { skip: !userToken },
-  );
   const { data: InvestmentDetails, error: InvestmentDetailsError } =
     useGetMyInvestmentDetailsQuery(undefined, {
       skip: !userToken,
@@ -68,14 +67,18 @@ export default function Portfolio() {
       skip: !userToken,
     },
   );
-  const { data: myPropertiesResult } = useGetMyPropertiesQuery(
-    { page: 1, pageSize: 4, search: '', status: '' },
-    { skip: !userToken, refetchOnMountOrArgChange: true },
-  );
-  const { data: investedResult } = useGetMyInvestedPropertiesQuery(
-    { page: 1, pageSize: 3, search: '', propertyType: '' },
-    { skip: !userToken, refetchOnMountOrArgChange: true },
-  );
+  const { data: myPropertiesResult, error: myPropertiesResultError } =
+    useGetMyPropertiesQuery(
+      { page: 1, pageSize: 4, search: '', status: '' },
+      { skip: !userToken, refetchOnMountOrArgChange: true },
+    );
+  const { data: investedResult, error: investedResultError } =
+    useGetMyInvestedPropertiesQuery(
+      { page: 1, pageSize: 3, search: '', propertyType: '' },
+      { skip: !userToken, refetchOnMountOrArgChange: true },
+    );
+  const { data: transactionsResult, error: transactionsResultError } =
+    useGetTransactionsQuery({ page: 1, pageSize: 4 }, { skip: !userToken });
 
   useGetKYCStatusQuery(undefined, { skip: !userToken });
 
@@ -110,6 +113,28 @@ export default function Portfolio() {
     }
   }, [InvestmentDetails, InvestmentDetailsError]);
 
+  useEffect(() => {
+    if (myPropertiesResult && !myPropertiesResultError) {
+      saveProperties(myPropertiesResult.items);
+    }
+  }, [myPropertiesResult, myPropertiesResultError]);
+
+  useEffect(() => {
+    if (transactionsResult && !transactionsResultError) {
+      saveTransactions(transactionsResult.items);
+    }
+  }, [transactionsResult, transactionsResultError]);
+
+  useEffect(() => {
+    if (investedResult && !investedResultError) {
+      saveUserInvestments(investedResult.items);
+    }
+  }, [investedResult, investedResultError]);
+
+  const lineGraphData = isConnected
+    ? (lineData ?? dbData.valueHistory ?? [])
+    : (dbData.valueHistory ?? []);
+
   if (!userToken) return <PortfolioWithoutAuth />;
   if (kycStatus !== 2) return <KYCpendingPortfolio />;
 
@@ -123,27 +148,38 @@ export default function Portfolio() {
       <InvestmentSummaryBar
         data={isConnected ? InvestmentDetails : dbData.summary}
       />
-      {donutData && (
-        <DonutGraph data={isConnected ? donutData : dbData.allocation} />
-      )}
-      {lineData && (
-        <LineGraph data={isConnected ? lineData : dbData.valueHistory} />
-      )}
+      <DonutGraph data={donutData ?? dbData.allocation} />
+      <LineGraph data={lineGraphData} />
       <Button
         title="Create Property"
         onPress={() => navigation.navigate('CreateNft')}
         style={{ marginVertical: 5 }}
       />
+
       <InvestedPropertiesSection
-        items={investedResult?.items?.slice(0, 3) ?? []}
+        items={
+          (isConnected ? investedResult?.items : dbData.holdings)?.slice(
+            0,
+            3,
+          ) ?? []
+        }
         showViewAll={investedResult?.hasMore ?? false}
       />
+
       <ListedPropertiesSection
-        items={myPropertiesResult?.items?.slice(0, 4) ?? []}
+        items={
+          (isConnected ? myPropertiesResult?.items : dbData.properties)?.slice(
+            0,
+            4,
+          ) ?? []
+        }
         showViewAll={myPropertiesResult?.hasMore ?? false}
       />
       <RecentTransactionsSection
-        transactions={isConnected ? transactionsResult : dbData.txHistory}
+        transactions={
+          isConnected ? transactionsResult?.items : dbData.txHistory
+        }
+        hasMore={isConnected && transactionsResult?.hasMore}
       />
     </ScrollView>
   );

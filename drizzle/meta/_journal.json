@@ -15,6 +15,20 @@
       "when": 1771926324596,
       "tag": "0001_gray_sharon_ventura",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1772095829089,
+      "tag": "0002_curly_sinister_six",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1772101465158,
+      "tag": "0003_absent_bulldozer",
+      "breakpoints": true
     }
   ]
 }

@@ -126,13 +126,13 @@ export const siwx: SIWXConfig = {
       savedSession.data.accountAddress.toLowerCase() !==
         newSession.data.accountAddress.toLowerCase();
 
-    const sessionIdChanged = savedSession && savedSession.id !== newSession.id;
+    const signatureChanged =
+      savedSession && savedSession.signature !== newSession.signature;
 
     console.log('Wallet changed:', walletChanged);
-    console.log('Session changed:', sessionIdChanged);
+    console.log('Session changed:', signatureChanged);
 
-    // 🚨 If session OR wallet changed → TOKEN INVALID → force re-auth
-    if (walletChanged || sessionIdChanged) {
+    if (walletChanged || signatureChanged) {
       console.log('Session mismatch — clearing and forcing re-auth');
 
       await clearSiwxSession();
@@ -174,7 +174,6 @@ export const siwx: SIWXConfig = {
     console.log('Hard logout: clearing session + token');
 
     await clearSiwxSession();
-
     store.dispatch(logoutAndDisconnect());
     store.dispatch(resetKyc());
   },

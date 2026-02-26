@@ -57,15 +57,6 @@ const styles = (Colors: ThemeColors) =>
       borderRadius: 4,
       borderWidth: 1,
     },
-
-    viewAllContainer: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: 10,
-      borderRadius: 8,
-      aspectRatio: 1,
-      marginVertical: 20,
-    },
   });
 
 export default styles;

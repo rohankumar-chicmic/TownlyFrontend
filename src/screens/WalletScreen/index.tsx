@@ -67,7 +67,6 @@ export default function WalletScreen() {
     state => state.auth.userData?.walletAddress,
   );
   const userToken = useAppSelector(state => state.auth.userToken);
-
   const { data, refetch } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
@@ -104,11 +103,17 @@ export default function WalletScreen() {
     }
   };
 
-  const handleDisconnect = () => {
-    setTimeout(() => {
+  const handleDisconnect = async () => {
+    try {
       disconnect();
-    }, 50);
-    navigation.navigate(ROUTES.TABS);
+      navigation.navigate(ROUTES.TABS);
+    } catch (e) {
+      Toast.show({
+        type: 'error',
+        text1: 'Cannot disconnect at the moment',
+      });
+      console.log(e);
+    }
   };
 
   useFocusEffect(

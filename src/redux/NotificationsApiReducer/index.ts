@@ -3,50 +3,17 @@ import { NotificationItem } from '@utils/types';
 
 const NotificationApi = api.injectEndpoints({
   endpoints: builder => ({
-    getMyNotifications: builder.query<
-      { hasMore: boolean; items: NotificationItem[] },
-      { page: number; limit: number }
-    >({
-      query: ({ page, limit = 10 }) => ({
+    getMyNotifications: builder.query<NotificationItem[], void>({
+      query: () => ({
         url: '/notifications/me',
         method: 'GET',
-        params: { page, limit },
       }),
-
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
-      },
-
-      merge: (currentCache, newItems) => {
-        currentCache.items.push(...newItems.items);
-        currentCache.hasMore = newItems.hasMore;
-      },
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.page !== previousArg?.page;
-      },
     }),
-    getMyUnreadNotifications: builder.query<
-      { hasMore: boolean; items: NotificationItem[] },
-      { page: number; limit: number }
-    >({
-      query: ({ page, limit = 10 }) => ({
+    getMyUnreadNotifications: builder.query<NotificationItem[], void>({
+      query: () => ({
         url: '/notifications/me/unread',
         method: 'GET',
-        params: { page, limit },
       }),
-
-      serializeQueryArgs: ({ endpointName }) => {
-        return endpointName;
-      },
-
-      merge: (currentCache, newItems) => {
-        currentCache.items.push(...newItems.items);
-        currentCache.hasMore = newItems.hasMore;
-      },
-
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.page !== previousArg?.page;
-      },
     }),
     readNotification: builder.mutation<void, string>({
       query: (notificationId: string) => ({

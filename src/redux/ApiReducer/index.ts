@@ -9,7 +9,7 @@ const authApi = api.injectEndpoints({
       }),
     }),
 
-    verifySignature: builder.mutation<void, any>({
+    verifySignature: builder.mutation<any, any>({
       query: body => ({
         url: '/v1/auth/wallet/verify',
         method: 'POST',

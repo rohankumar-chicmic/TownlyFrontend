@@ -8,16 +8,17 @@ import { ROUTES } from 'src/navigation/constants';
 import styles from './styles';
 
 interface Props {
-  transactions?: { items: any[]; hasMore: boolean };
+  transactions?: any[];
+  hasMore?: boolean;
 }
 
 export default function RecentTransactionsSection({
   transactions,
+  hasMore,
 }: Readonly<Props>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-
   return (
     <View
       style={[
@@ -40,17 +41,16 @@ export default function RecentTransactionsSection({
             Your latest investment activity
           </Text>
         </View>
-        {transactions?.hasMore && (
+        {hasMore && (
           <Button
             title="View all"
-            textStyle={{ fontWeight: '400' }}
             size="sm"
             onPress={() => navigation.navigate(ROUTES.TRANSACTIONS)}
           />
         )}
       </View>
 
-      {transactions?.items && transactions.items.length > 0 && (
+      {transactions && transactions.length > 0 && (
         <View
           style={{
             flexDirection: 'row',
@@ -69,8 +69,8 @@ export default function RecentTransactionsSection({
       )}
 
       <View style={{ gap: 5, alignItems: 'center' }}>
-        {transactions?.items && transactions.items.length > 0 ? (
-          transactions.items.map((item: any) => (
+        {transactions && transactions.length > 0 ? (
+          (transactions ?? []).map((item: any) => (
             <TransactionsRow item={item} key={item.transactionId} />
           ))
         ) : (

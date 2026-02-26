@@ -7,6 +7,7 @@ interface InitialStateType {
   userToken: string | undefined;
   userData: any;
   theme: THEME;
+  kycStatus: number;
   unreadNotifcations: boolean;
 }
 
@@ -15,6 +16,7 @@ const initialState: InitialStateType = {
   userData: undefined,
   theme: THEME.DEVICE,
   unreadNotifcations: false,
+  kycStatus: 0,
 };
 
 const authReducer = createSlice({
@@ -22,6 +24,7 @@ const authReducer = createSlice({
   initialState,
   reducers: {
     loginUser(state, action) {
+      console.log('LOGIN PAYLOAD:', action.payload);
       state.userData = action.payload;
       state.userToken = action.payload.token;
     },

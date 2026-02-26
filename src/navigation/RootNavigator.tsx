@@ -54,6 +54,7 @@ const RootNavigator = () => {
             headerShown: false,
             contentStyle: { backgroundColor: Colors.background },
           }}
+          // initialRouteName={ROUTES.KYC}
         >
           <Stack.Screen name={ROUTES.TABS} component={Tabs} />
           <Stack.Screen name={ROUTES.WALLET} component={WalletScreen} />

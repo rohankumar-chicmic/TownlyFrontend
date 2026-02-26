@@ -39,7 +39,7 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
 
   const values = data.map(d => Number(d.value) || 0);
   const { maxValue, minValue } = getYAxisScale(values, 4);
-
+  console.log(lineData);
   return (
     <Pressable>
       <View style={dynamicStyles.container}>

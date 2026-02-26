@@ -28,12 +28,23 @@ export default function InvestedPropertiesSection({
         { backgroundColor: Colors.surface, borderColor: Colors.border },
       ]}
     >
-      <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
-        Your Property Portfolio
-      </Text>
-      <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
-        Active tokenized property holdings
-      </Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View>
+          <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
+            Your Property Portfolio
+          </Text>
+          <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
+            Active tokenized property holdings
+          </Text>
+        </View>
+        {showViewAll ? (
+          <Button
+            size="sm"
+            onPress={() => navigation.navigate(ROUTES.INVESTED_PROPERTIES)}
+            title="View All"
+          ></Button>
+        ) : null}
+      </View>
       <FlatList
         data={items}
         horizontal
@@ -47,16 +58,6 @@ export default function InvestedPropertiesSection({
         ListEmptyComponent={<EmptyState message="No Investments Made yet" />}
         style={{ padding: 10 }}
         contentContainerStyle={dynamicStyles.flatListContainerStyle}
-        ListFooterComponent={() =>
-          showViewAll ? (
-            <View style={dynamicStyles.viewAllContainer}>
-              <Button
-                onPress={() => navigation.navigate(ROUTES.INVESTED_PROPERTIES)}
-                title="View All"
-              />
-            </View>
-          ) : null
-        }
       />
     </View>
   );

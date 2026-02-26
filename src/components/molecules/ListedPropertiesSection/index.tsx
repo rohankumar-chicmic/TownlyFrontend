@@ -15,15 +15,39 @@ interface Props {
   showViewAll: boolean;
 }
 
-export default function ListedPropertiesSection({ items, showViewAll }: Props) {
+export default function ListedPropertiesSection({
+  items,
+  showViewAll,
+}: Readonly<Props>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
 
   return (
-    <View style={[dynamicStyles.sectionCard, { backgroundColor: Colors.surface, borderColor: Colors.border }]}>
-      <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>My Listed Properties</Text>
-      <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>Properties you've created and tokenized</Text>
+    <View
+      style={[
+        dynamicStyles.sectionCard,
+        { backgroundColor: Colors.surface, borderColor: Colors.border },
+      ]}
+    >
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+        <View>
+          <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
+            My Listed Properties
+          </Text>
+          <Text style={[dynamicStyles.smallText, { marginBottom: 10 }]}>
+            Properties you&apos;ve created and tokenized
+          </Text>
+        </View>
+
+        {showViewAll ? (
+          <Button
+            size="sm"
+            onPress={() => navigation.navigate(ROUTES.INVESTED_PROPERTIES)}
+            title="View All"
+          ></Button>
+        ) : null}
+      </View>
       <FlatList
         keyExtractor={item => item.id.toString()}
         data={items}
@@ -36,17 +60,15 @@ export default function ListedPropertiesSection({ items, showViewAll }: Props) {
             <CardContainer2
               {...item}
               userOwned
-              onClick={() => navigation.navigate(ROUTES.OWNED_PROPERTY, { id: item.id, status: item.status })}
+              onClick={() =>
+                navigation.navigate(ROUTES.OWNED_PROPERTY, {
+                  id: item.id,
+                  status: item.status,
+                })
+              }
             />
           </View>
         )}
-        ListFooterComponent={() =>
-          showViewAll ? (
-            <View style={[dynamicStyles.viewAllContainer, { width: Dimensions.get('screen').width * 0.5 }]}>
-              <Button title="View All" onPress={() => navigation.navigate(ROUTES.LISTED_PROPERTIES)} />
-            </View>
-          ) : null
-        }
       />
     </View>
   );

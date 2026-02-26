@@ -28,12 +28,14 @@ export const usePortfolioData = () => {
     db.select().from(portfolioAllocation),
   );
   const { data: txHistory } = useLiveQuery(db.select().from(transactions));
+  const { data: myProperties } = useLiveQuery(db.select().from(properties));
 
   return {
     summary: summary?.[0] ?? null,
     holdings,
     valueHistory,
     allocation,
+    properties: myProperties,
     txHistory,
   };
 };
@@ -69,10 +71,7 @@ export const saveProperty = async (data: NewProperty) => {
         status: data.status,
         approvedValuation: data.approvedValuation,
         totalUnits: data.totalUnits,
-        soldUnits: data.soldUnits,
         availableUnits: data.availableUnits,
-        investmentProgressPercent: data.investmentProgressPercent,
-        totalAmountInvestedUsd: data.totalAmountInvestedUsd,
         pricePerUnitEth: data.pricePerUnitEth,
         annualYieldPercent: data.annualYieldPercent,
         riskScore: data.riskScore,
@@ -87,10 +86,7 @@ export const saveProperties = async (data: NewProperty[]) => {
     .onConflictDoUpdate({
       target: properties.id,
       set: {
-        soldUnits: sql`excluded.soldUnits`,
         availableUnits: sql`excluded.availableUnits`,
-        investmentProgressPercent: sql`excluded.investmentProgressPercent`,
-        totalAmountInvestedUsd: sql`excluded.totalAmountInvestedUsd`,
         status: sql`excluded.status`,
         pricePerUnitEth: sql`excluded.pricePerUnitEth`,
       },

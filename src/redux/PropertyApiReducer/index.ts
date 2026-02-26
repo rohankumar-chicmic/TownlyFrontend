@@ -124,7 +124,7 @@ const propertyApi = api.injectEndpoints({
     }),
 
     getMyInvestedProperties: builder.query<
-      { hasMore: boolean; items: PropertyCardProps[] },
+      { hasMore: boolean; items: any[] },
       { search: string; propertyType: string; page: number; pageSize: number }
     >({
       query: params => ({
