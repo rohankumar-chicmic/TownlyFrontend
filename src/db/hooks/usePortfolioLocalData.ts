@@ -134,14 +134,22 @@ export const savePortfolioSnapshot = async (data: NewPortfolioSnapshot) => {
 
 export const savePortfolioSnapshots = async (data: NewPortfolioSnapshot[]) => {
   const rows = data.map(d => ({ ...d, recordedAt: new Date().toISOString() }));
-  return await db.insert(portfolioValueHistory).values(rows);
+
+  await db.transaction(async tx => {
+    await tx.delete(portfolioValueHistory);
+    await tx.insert(portfolioValueHistory).values(rows);
+  });
 };
 
 export const savePortfolioAllocation = async (
   data: NewPortfolioAllocation[],
 ) => {
   const rows = data.map(d => ({ ...d, snapshotAt: new Date().toISOString() }));
-  return await db.insert(portfolioAllocation).values(rows);
+
+  await db.transaction(async tx => {
+    await tx.delete(portfolioAllocation);
+    await tx.insert(portfolioAllocation).values(rows);
+  });
 };
 
 export const saveTransaction = async (data: NewTransaction) => {

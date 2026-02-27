@@ -1,8 +1,7 @@
 import { THEME } from '@theme/constants';
 
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '@redux/store';
-import { KYC_STATUS } from '@redux/KYCReducer';
+
 interface InitialStateType {
   userToken: string | undefined;
   userData: any;
@@ -43,6 +42,5 @@ const authReducer = createSlice({
 
 export const { loginUser, logoutUser, setTheme, hasUnreadNotifications } =
   authReducer.actions;
-export const canUserInvest = (state: RootState) =>
-  state.wallet.connected && state.kyc.status === KYC_STATUS.APPROVED;
+
 export default authReducer.reducer;

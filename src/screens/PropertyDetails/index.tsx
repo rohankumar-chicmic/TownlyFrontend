@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import CardContainer from '@components/molecules/CardContainer2';
+import CardContainerSkeleton from '@components/molecules/CardContainerSkeleton';
 
 import { Icons } from '@utils/icons';
 import {
@@ -30,6 +31,7 @@ import { useAppSelector } from '@redux/store';
 import KYCStatusModal from '@components/molecules/KYCModal';
 import { useAppNavigation } from '@hooks/useNavigation';
 import InvestmentInfo from '@components/molecules/InvestmentInfo';
+import PropertyDetailsSkeleton from '@components/molecules/PropertyDetailsSkeleton';
 
 export default function PropertyDetails() {
   const { Colors } = useTheme();
@@ -44,7 +46,11 @@ export default function PropertyDetails() {
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
-  console.log(investmentData)
+
+  const isLoading = !data || !investmentData || !relatedProperties.data;
+
+  if (isLoading) return <PropertyDetailsSkeleton />;
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
@@ -136,7 +142,7 @@ export default function PropertyDetails() {
               }}
             >
               {'$'}
-              {String(data?.totalValue ?? '')}
+              {String(data?.totalValue.toLocaleString() ?? '')}
             </Text>
           </View>
 
@@ -206,8 +212,17 @@ export default function PropertyDetails() {
             {
               paddingHorizontal: 15,
               borderBottomColor: Colors.border,
+              backgroundColor: Colors.surface,
+              borderTopColor: Colors.border,
+              borderTopWidth: 1,
               borderBottomWidth: 1,
               paddingBottom: 5,
+              marginTop: 15,
+              shadowColor: '#000',
+              shadowOffset: { width: 4, height: 4 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 5,
             },
           ]}
         >
@@ -215,10 +230,8 @@ export default function PropertyDetails() {
             style={[
               dynamicStyles.sectionTitle,
               {
-                paddingHorizontal: 10,
-                borderTopColor: Colors.border,
-                borderTopWidth: 1,
-                paddingTop: 5,
+                paddingHorizontal: 8,
+                marginBottom: 0,
               },
             ]}
           >
@@ -226,17 +239,34 @@ export default function PropertyDetails() {
           </Text>
           <FlatList
             horizontal
-            data={relatedProperties.data ?? []}
-            keyExtractor={(item, index) => `${item.id}-${index}`}
-            renderItem={({ item }) => (
-              <View style={{ width: Dimensions.get('screen').width * 0.8 }}>
-                <CardContainer
-                  {...item}
-                  description={item.description ?? undefined}
-                />
-              </View>
-            )}
-            contentContainerStyle={{ gap: 10, paddingHorizontal: 10 }}
+            data={
+              relatedProperties.isLoading
+                ? (new Array(3).fill(null) as null[])
+                : (relatedProperties.data ?? [])
+            }
+            keyExtractor={(item, index) =>
+              item ? `${item.id}-${index}` : `skeleton-${index}`
+            }
+            renderItem={({ item, index }) =>
+              relatedProperties.isLoading || !item ? (
+                <View
+                  style={{
+                    width: Dimensions.get('screen').width * 0.8,
+                    padding: 10,
+                  }}
+                >
+                  <CardContainerSkeleton />
+                </View>
+              ) : (
+                <View style={{ width: Dimensions.get('screen').width * 0.8 }}>
+                  <CardContainer
+                    {...item}
+                    description={item.description ?? undefined}
+                  />
+                </View>
+              )
+            }
+            contentContainerStyle={{ gap: 10, padding: 10 }}
             showsHorizontalScrollIndicator={false}
           />
         </View>

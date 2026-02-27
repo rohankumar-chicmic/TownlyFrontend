@@ -48,7 +48,7 @@ export default function Header({
           <ConnectButton style={dynamicStyles.walletButton} />
           <Pressable
             onPress={toggleTheme}
-            style={{ backgroundColor: Colors.surface, borderRadius: 15 }}
+            style={{ backgroundColor: Colors.elevated, borderRadius: 15 }}
           >
             <AntDesign
               name={currentTheme === THEME.LIGHT ? 'sun' : 'moon'}

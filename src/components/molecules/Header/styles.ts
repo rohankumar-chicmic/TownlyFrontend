@@ -6,23 +6,28 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       width: '100%',
-      backgroundColor: Colors.elevated,
+      backgroundColor: Colors.surface,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       paddingHorizontal: 16,
       borderBottomWidth: 1,
       borderBottomColor: Colors.border,
+
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+      elevation: 5,
     },
     logoWrapper: {
-      alignItems: 'center', // Centers icon and text vertically
-      gap: 8, // Adds space between icon and "Townly"
+      alignItems: 'center',
+      gap: 8,
     },
     primaryText: {
       color: Colors.textPrimary,
       fontSize: 25,
       fontWeight: 'bold',
-      letterSpacing: -2,
     },
     walletButton: {
       flexDirection: 'row',

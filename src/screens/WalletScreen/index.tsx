@@ -142,7 +142,10 @@ export default function WalletScreen() {
             <View style={{ marginLeft: -10, justifyContent: 'center' }}>
               <BackButton />
               <Text
-                style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}
+                style={[
+                  dynamicStyles.heroPrimarytext,
+                  { textAlign: 'center', marginBottom: 2 },
+                ]}
               >
                 Account Details
               </Text>
@@ -195,7 +198,7 @@ export default function WalletScreen() {
             >
               <View style={{ flex: 1 }}>
                 <FormInput
-                  placeholder="Amount to request"
+                  placeholder="Amount"
                   keyboardType="number-pad"
                   value={amount}
                   onChangeText={setAmount}

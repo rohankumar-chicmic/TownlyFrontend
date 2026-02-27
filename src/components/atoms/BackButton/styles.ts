@@ -4,11 +4,11 @@ import { ThemeColors } from '@theme/constants';
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     box: {
-      backgroundColor: Colors.border,
+      backgroundColor: Colors.surface,
       position: 'absolute',
       justifyContent: 'center',
       borderRadius: 5,
-      borderColor: Colors.outline,
+      borderColor: Colors.border,
       borderWidth: 1,
       alignItems: 'center',
       zIndex: 100,

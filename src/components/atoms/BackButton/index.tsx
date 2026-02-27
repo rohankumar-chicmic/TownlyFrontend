@@ -1,7 +1,6 @@
 import React from 'react';
 import { Pressable, ViewStyle, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import useTheme from '@hooks/useTheme';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import { Icons } from '@utils/icons';
@@ -17,8 +16,7 @@ export default function BackButton({
   size = 24,
 }: Readonly<BackButtonProps>) {
   const navigation = useNavigation();
-  const { Colors } = useTheme();
-  const { dynamicStyles } = useStyles(styles);
+  const { dynamicStyles, darkMode, Colors } = useStyles(styles);
 
   const handlePress = () => {
     if (onPress) {
@@ -41,7 +39,7 @@ export default function BackButton({
         <Icons.BackLogo
           height={10}
           width={10}
-          color={Colors.primary}
+          color={darkMode ? Colors.primary : Colors.textPrimary}
         ></Icons.BackLogo>
       </View>
     </Pressable>

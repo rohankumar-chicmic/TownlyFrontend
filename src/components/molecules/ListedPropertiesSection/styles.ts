@@ -12,6 +12,7 @@ const styles = (Colors: ThemeColors) =>
     flatListContainerStyle: {
       flexDirection: 'row',
       gap: 10,
+      paddingRight: 20,
     },
     heroPrimarytext: {
       fontSize: 25,

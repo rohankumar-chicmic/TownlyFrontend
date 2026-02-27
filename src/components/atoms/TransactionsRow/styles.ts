@@ -6,7 +6,6 @@ const styles = (Colors: ThemeColors) =>
     row: {
       flexDirection: 'row',
       alignItems: 'center',
-      height: 50,
       width: '100%',
       padding: 15,
       borderRadius: 8,

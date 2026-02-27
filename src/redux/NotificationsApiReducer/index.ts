@@ -9,8 +9,8 @@ const NotificationApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
-    getMyUnreadNotifications: builder.query<NotificationItem[], void>({
-      query: () => ({
+    getMyUnreadNotifications: builder.query<NotificationItem[], any>({
+      query: params => ({
         url: '/notifications/me/unread',
         method: 'GET',
       }),

@@ -32,7 +32,7 @@ const styles = (Colors: ThemeColors) =>
     tag: {
       marginTop: 10,
       alignSelf: 'flex-start',
-      backgroundColor: Colors.outline,
+      backgroundColor: Colors.surface,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 6,

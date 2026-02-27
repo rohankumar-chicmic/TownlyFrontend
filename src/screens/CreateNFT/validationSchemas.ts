@@ -2,6 +2,18 @@ import * as yup from 'yup';
 import { Step1FormData, DocumentFile } from './types';
 import { customParseNumber } from '@utils/utility';
 
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+
+const fileSizeValidation = (fieldName: string) =>
+  yup
+    .mixed<DocumentFile>()
+    .nullable()
+    .required(`${fieldName} is required`)
+    .test('fileSize', `${fieldName} must be less than 5MB`, value => {
+      if (!value || typeof value.size !== 'number') return false;
+      return value.size <= MAX_FILE_SIZE;
+    });
+
 export const step1Schema: yup.ObjectSchema<Step1FormData> = yup.object({
   propertyName: yup
     .string()
@@ -28,10 +40,7 @@ export const step1Schema: yup.ObjectSchema<Step1FormData> = yup.object({
       yup.object({
         documentName: yup.string().required('Document name is required'),
 
-        file: yup
-          .mixed<DocumentFile>()
-          .nullable()
-          .required('Document file is required'),
+        file: fileSizeValidation('Document file'),
       }),
     )
     .min(1, 'At least one document is required')
@@ -73,7 +82,7 @@ export const step2Schema = yup.object({
 });
 
 export const step3Schema = yup.object().shape({
-  propertyImage: yup.mixed().required('Property image is required').nullable(),
+  propertyImage: fileSizeValidation('Property image'),
 });
 
 export const fullFormSchema = yup.object().shape({

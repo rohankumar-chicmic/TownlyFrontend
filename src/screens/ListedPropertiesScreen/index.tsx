@@ -23,7 +23,6 @@ const ListedProperiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-  // ================= STATE =================
   const [status, setStatus] = useState('');
   const [text, setText] = useState('');
   const [params, setParams] = useState({
@@ -31,7 +30,6 @@ const ListedProperiesScreen = () => {
     page: 1,
   });
 
-  // ================= QUERY =================
   const { data, isFetching, isLoading } = useGetMyPropertiesQuery({
     page: params.page,
     pageSize: PAGE_SIZE,
@@ -64,13 +62,11 @@ const ListedProperiesScreen = () => {
     debouncedSearch(val);
   };
 
-  // ================= FILTER =================
   const handleStatusChange = (newStatus: string | number) => {
     setStatus(newStatus as any);
     setParams(prev => ({ ...prev, page: 1 }));
   };
 
-  // ================= PAGINATION =================
   const handleEndReached = () => {
     if (!isFetching && hasMore) {
       setParams(prev => ({ ...prev, page: prev.page + 1 }));
@@ -150,13 +146,13 @@ const ListedProperiesScreen = () => {
           renderItem={({ item }) => (
             <View style={{ width: CARD_WIDTH }}>
               <CardContainer2
-                userOwned
                 {...item}
+                userOwned
                 onClick={() => {
                   console.log(item.status);
                   return navigation.navigate(ROUTES.OWNED_PROPERTY, {
                     id: item.id,
-                    status: item.status,
+                    status: item.status ?? undefined,
                   });
                 }}
               />

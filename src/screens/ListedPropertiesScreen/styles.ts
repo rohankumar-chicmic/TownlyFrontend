@@ -16,7 +16,7 @@ const styles = (Colors: ThemeColors) =>
     },
     heroText: {
       fontSize: 20,
-      color: Colors.textSecondary,
+      color: Colors.textPrimary,
     },
     heading: {
       fontSize: 30,
@@ -30,7 +30,7 @@ const styles = (Colors: ThemeColors) =>
     tag: {
       margin: 10,
       alignSelf: 'flex-start',
-      backgroundColor: Colors.outline,
+      backgroundColor: Colors.surface,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 6,

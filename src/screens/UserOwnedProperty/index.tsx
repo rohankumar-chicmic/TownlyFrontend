@@ -42,14 +42,20 @@ export default function UserOwnedProperty() {
       await deleteProperty(params.id).unwrap();
       setIsDeleted(true);
       setShowDeleteModal(false);
-      navigation.navigate(ROUTES.LISTED_PROPERTIES);
+      navigation.navigate(ROUTES.PORTFOLIO);
 
       Toast.show({
         type: 'success',
-        text1: data?.name + 'has been deleted Successfully',
+        text1: 'Property Removed',
+        text2: data?.name + 'has been deleted Successfully.',
       });
     } catch (error) {
       console.error('Delete failed:', error);
+      Toast.show({
+        type: 'error',
+        text1: 'Property Not Removed',
+        text2: data?.name + 'could not be deleted.',
+      });
     }
   };
 
@@ -137,7 +143,7 @@ export default function UserOwnedProperty() {
                 fontWeight: '500',
               }}
             >
-              {Number(data?.pricePerUnitEth ?? 10).toFixed(5)}
+              {Number(data?.pricePerUnitEth ?? 0).toFixed(5)}
               {' ETH'}
             </Text>
           </View>
@@ -194,7 +200,7 @@ export default function UserOwnedProperty() {
           <View style={{ width: '90%', alignSelf: 'center', margin: 20 }}>
             <Button
               variant="outline"
-              textStyle={{ color: Colors.warning }}
+              textStyle={{ color: Colors.primary }}
               title="Delete Property"
               onPress={() => setShowDeleteModal(true)}
             />

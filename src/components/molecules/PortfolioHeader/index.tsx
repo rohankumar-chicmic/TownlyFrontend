@@ -19,7 +19,7 @@ export default function PortfolioHeader({ address }: Readonly<Props>) {
       </Text>
       {address && (
         <Text style={[dynamicStyles.smallText, { marginTop: 10 }]}>
-          wallet: <Text style={{ color: Colors.primary }}>{address}</Text>
+          Wallet: <Text style={{ color: Colors.primary }}>{address}</Text>
         </Text>
       )}
     </View>

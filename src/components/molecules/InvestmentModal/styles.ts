@@ -4,8 +4,8 @@ import { ThemeColors } from '@theme/constants';
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     backdrop: {
-      flex: 1,
-      backgroundColor: 'rgba(0,0,0,0.6)',
+      flexGrow: 1,
+      backgroundColor: 'rgba(0,0,0,0.3)',
     },
 
     sheet: {

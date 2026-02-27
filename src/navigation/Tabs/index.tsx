@@ -22,15 +22,12 @@ const Tab = createBottomTabNavigator<RootStackParamList>();
 export default function Tabs() {
   const { Colors } = useTheme();
   const userToken = useAppSelector(state => state.auth.userToken);
-  const { data } = useGetMyUnreadNotificationsQuery(undefined, {
-    skip: !userToken,
-  });
 
   const unreadNotifcations = useAppSelector(
     state => state.auth.unreadNotifcations,
   );
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: Colors.surface }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           header: props => <Header {...props} />,
@@ -90,8 +87,7 @@ export default function Tabs() {
           options={{
             tabBarIcon: ({ color, size }) => (
               <View>
-                {((userToken && unreadNotifcations) ||
-                  (data && data?.length !== 0)) && (
+                {userToken && unreadNotifcations && (
                   <View
                     style={{
                       height: 15,

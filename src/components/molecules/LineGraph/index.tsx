@@ -3,6 +3,7 @@ import { LineChart } from 'react-native-gifted-charts';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
+import { hexToRGBA } from '@utils/utility';
 
 export interface LinePoint {
   label: string;
@@ -39,7 +40,9 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
 
   const values = data.map(d => Number(d.value) || 0);
   const { maxValue, minValue } = getYAxisScale(values, 4);
+
   console.log(lineData);
+
   return (
     <Pressable>
       <View style={dynamicStyles.container}>
@@ -62,18 +65,24 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             spacing={Dimensions.get('window').width * 0.11}
             initialSpacing={10}
             endSpacing={0}
-            color={Colors.primary}
+            color={hexToRGBA(Colors.primary)}
             height={Dimensions.get('window').height * 0.15}
             dataPointsHeight={8}
             dataPointsWidth={8}
-            dataPointsColor={Colors.primary}
-            startFillColor={Colors.primary}
+            dataPointsColor={hexToRGBA(Colors.primary)}
+            startFillColor={hexToRGBA(Colors.primary)}
             startOpacity={0.02}
             endOpacity={0.01}
-            yAxisColor={Colors.textSecondary}
-            xAxisColor={Colors.textSecondary}
-            yAxisTextStyle={{ color: Colors.textSecondary, fontSize: 12 }}
-            xAxisLabelTextStyle={{ color: Colors.textSecondary, fontSize: 12 }}
+            yAxisColor={hexToRGBA(Colors.textSecondary)}
+            xAxisColor={hexToRGBA(Colors.textSecondary)}
+            yAxisTextStyle={{
+              color: hexToRGBA(Colors.textSecondary),
+              fontSize: 12,
+            }}
+            xAxisLabelTextStyle={{
+              color: hexToRGBA(Colors.textSecondary),
+              fontSize: 12,
+            }}
             rulesColor={Colors.border}
             animateOnDataChange
             showVerticalLines

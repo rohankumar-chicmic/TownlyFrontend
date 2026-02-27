@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { FlatList, ScrollView, Text, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
@@ -8,6 +8,7 @@ import { useAppNavigation } from '@hooks/useNavigation';
 
 import Button from '@components/atoms/Button';
 import CardContainer from '@components/molecules/CardContainer2';
+import CardContainer2Skeleton from '@components/molecules/CardContainerSkeleton';
 import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 import {
   useFeaturedProperties,
@@ -21,16 +22,19 @@ import { debounce } from '@utils/utility';
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
 import { useNetInfo } from '@react-native-community/netinfo';
 
+const SKELETON_COUNT = 4;
+
 const Home = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
   const { isConnected } = useNetInfo();
+
+  const skipFetch = !isConnected || isConnected === null;
+
   const { data, isLoading, error, refetch } = useGetFeaturedPropertiesQuery(
     undefined,
-    {
-      skip: !isConnected,
-    },
+    { skip: skipFetch },
   );
 
   useEffect(() => {
@@ -40,16 +44,14 @@ const Home = () => {
   }, [data, error]);
 
   const { data: localData } = useFeaturedProperties();
-  console.log(data);
+
   const header = useMemo(
     () => (
       <>
-        {/* Hero Section */}
         <View>
           <Text style={dynamicStyles.heroPrimarytext}>
             Fractional, Tokenized
           </Text>
-
           <Text
             style={[dynamicStyles.heroPrimarytext, { color: Colors.primary }]}
           >
@@ -64,24 +66,21 @@ const Home = () => {
           </Text>
         </View>
 
-        {/* CTA Button */}
         <Button
           title="Explore Marketplace"
           style={{ marginBottom: 5 }}
           textStyle={{ margin: 10 }}
           size="lg"
-          // onPress={handleClick}
           onPress={() => navigation.navigate(ROUTES.MARKETPLACE)}
         >
           <Icons.Arrow
-            height={15}
-            width={15}
+            height={10}
+            width={10}
             borderColor={Colors.background}
             color={Colors.background}
           />
         </Button>
 
-        {/* Stats */}
         <View
           style={{
             flexDirection: 'row',
@@ -102,7 +101,6 @@ const Home = () => {
               Customer Satisfaction
             </Text>
           </View>
-
           <View style={dynamicStyles.containerStyle}>
             <Text
               style={[
@@ -116,7 +114,6 @@ const Home = () => {
               In property Sales
             </Text>
           </View>
-
           <View style={dynamicStyles.containerStyle}>
             <Text
               style={[
@@ -126,7 +123,7 @@ const Home = () => {
             >
               2,600+
             </Text>
-            <Text style={[dynamicStyles.smallText, { width: 110 }]}>
+            <Text style={[dynamicStyles.smallText, { width: '100%' }]}>
               Successful Sales
             </Text>
           </View>
@@ -144,39 +141,37 @@ const Home = () => {
   );
 
   const handlePressed = (id: string) => {
-    navigation.push(ROUTES.PROPERTY_DETAILS, { id: id });
+    navigation.push(ROUTES.PROPERTY_DETAILS, { id });
   };
 
   const debouncedHandlePressed = debounce(handlePressed, 250);
 
-  if (isLoading && !data) {
-    return (
-      <ScrollView style={dynamicStyles.container}>
-        {header}
-        <Text style={[dynamicStyles.heroPrimarytext, { alignSelf: 'center' }]}>
-          Loading Properties...
-        </Text>
-      </ScrollView>
-    );
-  }
+  const showSkeleton = isLoading && !localData?.length;
 
-  /**
-   * Main List (Replaces PropertyListing)
-   */
   return (
     <FlatList
-      data={localData}
+      data={
+        showSkeleton
+          ? (new Array(SKELETON_COUNT).fill(null) as null[])
+          : localData
+      }
       ListHeaderComponent={header}
       contentContainerStyle={[{ gap: 10 }, dynamicStyles.container]}
       style={{ backgroundColor: Colors.background }}
-      keyExtractor={item => item.id.toString()}
-      renderItem={({ item }) => (
-        <CardContainer
-          {...item}
-          onClick={() => debouncedHandlePressed(item.id)}
-        />
-      )}
-      ListEmptyComponent={isLoading ? null : <ListEmptyComponent />}
+      keyExtractor={(item, index) =>
+        item ? item.id.toString() : `skeleton-${index}`
+      }
+      renderItem={({ item, index }) =>
+        showSkeleton || !item ? (
+          <CardContainer2Skeleton key={`skeleton-${index}`} />
+        ) : (
+          <CardContainer
+            {...item}
+            onClick={() => debouncedHandlePressed(item.id)}
+          />
+        )
+      }
+      ListEmptyComponent={<ListEmptyComponent />}
       refreshing={isLoading}
       onRefresh={refetch}
       showsVerticalScrollIndicator={false}

@@ -109,7 +109,14 @@ const Marketplace = () => {
         />
       </View>
       {isLoading && (
-        <Text style={dynamicStyles.heroText}>Loading Properties...</Text>
+        <Text
+          style={[
+            dynamicStyles.heroText,
+            { alignSelf: 'center', textAlign: 'center' },
+          ]}
+        >
+          Loading Properties...
+        </Text>
       )}
       <FlatList
         data={data?.items || []}

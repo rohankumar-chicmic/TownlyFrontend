@@ -1,10 +1,11 @@
-import { View, Text, Image, Pressable } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import React, { useState } from 'react';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { Icons } from '@utils/icons';
 import useTheme from '@hooks/useTheme';
 import { PropertyCardProps } from '@utils/types';
+import FastImage from 'react-native-fast-image';
 
 import Badge from '@components/atoms/Badge';
 
@@ -26,7 +27,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
       ]}
     >
       <View style={{ width: '40%' }}>
-        <Image
+        <FastImage
           source={{
             uri: props.imageUrl,
           }}
@@ -35,7 +36,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
             borderTopLeftRadius: 7,
             height: '100%',
           }}
-        ></Image>
+        ></FastImage>
       </View>
 
       {props.userOwned && props.status && <Badge status={props.status} />}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   View,
@@ -19,6 +19,7 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import Toast from 'react-native-toast-message';
 import { ROUTES } from 'src/navigation/constants';
 import { useAppToastConfig } from '@hooks/useAppToastConfig';
+
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -36,7 +37,11 @@ export default function InvestPropertyModal({
 }: Readonly<Props>) {
   const MAX_LIMIT = Math.min(10000, availableUnits);
   const MIN_LIMIT = 1;
+
   const [shares, setShares] = useState('');
+  const [step, setStep] = useState<'form' | 'confirm'>('form');
+  const [loading, setLoading] = useState(false);
+
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
   const totalCost = Number(shares || 0) * pricePerShare;
@@ -44,26 +49,13 @@ export default function InvestPropertyModal({
   const toastConfig = useAppToastConfig();
   const { dynamicStyles } = useStyles(styles);
 
-  const handleSubmit = async () => {
-    const sharesNum = Number(shares);
-
-    if (sharesNum < MIN_LIMIT) {
-      Toast.show({
-        type: 'error',
-        text1: 'Minimum 1 share required',
-        visibilityTime: 1000,
-      });
-      return;
+  useEffect(() => {
+    if (!visible) {
+      setStep('form');
+      setShares('');
+      setLoading(false);
     }
-
-    try {
-      await investInProperty({ propertyId: id, shares: sharesNum });
-      onClose();
-      navigation.navigate(ROUTES.TRANSACTIONS);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  }, [visible]);
 
   const handleSharesChange = (value: string) => {
     let cleanValue = value.replaceAll(/\D/g, '');
@@ -87,90 +79,183 @@ export default function InvestPropertyModal({
     }
   };
 
+  const handleProceedToConfirm = () => {
+    const sharesNum = Number(shares);
+
+    if (sharesNum < MIN_LIMIT) {
+      Toast.show({
+        type: 'error',
+        text1: 'Minimum 1 share required',
+        visibilityTime: 1000,
+      });
+      return;
+    }
+
+    setStep('confirm');
+  };
+
+  const handleConfirmInvestment = async () => {
+    try {
+      setLoading(true);
+
+      await investInProperty({
+        propertyId: id,
+        shares: Number(shares),
+      }).unwrap();
+
+      setStep('form');
+      onClose();
+      navigation.navigate(ROUTES.TRANSACTIONS);
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Investment Failed',
+        text2: 'Some Error occured' + error,
+        visibilityTime: 1500,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <KeyboardAwareScrollView>
-      <Modal
-        animationType="slide"
-        transparent
-        visible={visible}
-        style={{ flexGrow: 1 }}
-      >
-        <Pressable
-          style={dynamicStyles.backdrop}
-          onPress={() => {
-            Keyboard.dismiss();
-            onClose();
-          }}
-        />
-        <SafeAreaView style={dynamicStyles.sheet}>
+    <Modal
+      animationType="slide"
+      transparent
+      visible={visible}
+      style={{ flexGrow: 1 }}
+    >
+      <Pressable
+        style={dynamicStyles.backdrop}
+        onPress={() => {
+          Keyboard.dismiss();
+          onClose();
+        }}
+      />
+
+      <SafeAreaView style={dynamicStyles.sheet}>
+        <KeyboardAwareScrollView>
           <ScrollView
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            <View style={dynamicStyles.header}>
-              <Text style={dynamicStyles.title}>Invest in Property</Text>
-              <Pressable onPress={onClose} style={{ height: 25, width: 25 }}>
-                <Text style={dynamicStyles.close}>✕</Text>
-              </Pressable>
-            </View>
+            {step === 'form' ? (
+              <>
+                <View style={dynamicStyles.header}>
+                  <Text style={dynamicStyles.title}>Invest in Property</Text>
+                  <Pressable onPress={onClose}>
+                    <Text style={dynamicStyles.close}>✕</Text>
+                  </Pressable>
+                </View>
 
-            <Text style={dynamicStyles.label}>
-              Number of Shares to Buy{' '}
-              <Text style={dynamicStyles.required}>*</Text>
-            </Text>
+                <Text style={dynamicStyles.label}>
+                  Number of Shares to Buy{' '}
+                  <Text style={dynamicStyles.required}>*</Text>
+                </Text>
 
-            <TextInput
-              value={shares}
-              onChangeText={handleSharesChange}
-              keyboardType="number-pad"
-              placeholderTextColor={Colors.textMuted}
-              style={dynamicStyles.input}
-              cursorColor={Colors.outline}
-              placeholder="0"
-            />
+                <TextInput
+                  value={shares}
+                  onChangeText={handleSharesChange}
+                  keyboardType="number-pad"
+                  placeholder="0"
+                  placeholderTextColor={Colors.textMuted}
+                  style={dynamicStyles.input}
+                  cursorColor={Colors.outline}
+                />
 
-            <Text style={dynamicStyles.hint}>
-              Min: 1 • Max: {MAX_LIMIT} shares
-            </Text>
-            <View style={dynamicStyles.card}>
-              <Row label="Shares" value={shares} />
-              <Row label="Price per Share" value={`${pricePerShare} ETH`} />
-              <View style={dynamicStyles.divider} />
-              <Row
-                label="Total Cost"
-                value={`${totalCost.toFixed(3)} ETH`}
-                bold
-                large
-              />
-            </View>
+                <Text style={dynamicStyles.hint}>
+                  Min: 1 • Max: {MAX_LIMIT} shares
+                </Text>
 
-            <View style={dynamicStyles.info}>
-              <Text style={dynamicStyles.infoText}>
-                Transaction Fee: ~0.05 ETH
-              </Text>
-              <Text style={dynamicStyles.infoSub}>
-                You will receive an Investment NFT representing your 1 share
-              </Text>
-            </View>
+                {/* SUMMARY CARD */}
+                <View style={dynamicStyles.card}>
+                  <Row label="Shares" value={shares || 0} />
+                  <Row label="Price per Share" value={`${pricePerShare} ETH`} />
+                  <View style={dynamicStyles.divider} />
+                  <Row
+                    label="Total Cost"
+                    value={`${totalCost.toFixed(3)} ETH`}
+                    bold
+                    large
+                  />
+                </View>
 
-            <View style={dynamicStyles.footer}>
-              <Button
-                title="Cancel"
-                onPress={onClose}
-                variant="outline"
-                textStyle={{ color: Colors.primary }}
-              ></Button>
+                <View style={dynamicStyles.info}>
+                  <Text style={dynamicStyles.infoText}>
+                    Transaction Fee: ~0.05 ETH
+                  </Text>
+                  <Text style={dynamicStyles.infoSub}>
+                    You will receive an Investment NFT representing your share.
+                  </Text>
+                </View>
 
-              <Button
-                title={`Invest ${totalCost.toFixed(3)} ETH`}
-                onPress={handleSubmit}
-              ></Button>
-            </View>
+                {/* FOOTER */}
+                <View style={dynamicStyles.footer}>
+                  <Button
+                    title="Cancel"
+                    variant="outline"
+                    onPress={onClose}
+                    textStyle={{ color: Colors.primary }}
+                  />
+
+                  <Button
+                    title={`Invest ${totalCost.toFixed(3)} ETH`}
+                    onPress={handleProceedToConfirm}
+                  />
+                </View>
+              </>
+            ) : (
+              <>
+                <View style={dynamicStyles.header}>
+                  <Text style={dynamicStyles.title}>Confirm Investment</Text>
+                  <Pressable onPress={onClose}>
+                    <Text style={dynamicStyles.close}>✕</Text>
+                  </Pressable>
+                </View>
+
+                <View style={dynamicStyles.card}>
+                  <Row label="Shares" value={shares} />
+                  <Row label="Price per Share" value={`${pricePerShare} ETH`} />
+                  <View style={dynamicStyles.divider} />
+                  <Row
+                    label="Total Cost"
+                    value={`${totalCost.toFixed(3)} ETH`}
+                    bold
+                    large
+                  />
+                </View>
+
+                <View style={dynamicStyles.info}>
+                  <Text style={dynamicStyles.infoText}>
+                    Transaction Fee: ~0.05 ETH
+                  </Text>
+                  <Text style={dynamicStyles.infoSub}>
+                    Please confirm this blockchain transaction.
+                  </Text>
+                </View>
+
+                <View style={dynamicStyles.footer}>
+                  <Button
+                    title="Cancel"
+                    variant="outline"
+                    textStyle={{ color: Colors.primary }}
+                    onPress={() => setStep('form')}
+                  />
+
+                  <Button
+                    title={loading ? 'Processing...' : 'Confirm Investment'}
+                    onPress={handleConfirmInvestment}
+                    disabled={loading}
+                  />
+                </View>
+              </>
+            )}
           </ScrollView>
-        </SafeAreaView>
-        <Toast config={toastConfig} />
-      </Modal>
-    </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
+      </SafeAreaView>
+
+      <Toast config={toastConfig} />
+    </Modal>
   );
 }
 

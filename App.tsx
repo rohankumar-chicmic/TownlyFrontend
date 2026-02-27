@@ -3,7 +3,7 @@ import 'react-native-get-random-values';
 import { Buffer } from 'buffer';
 
 import { useEffect } from 'react';
-import { TextInput, TextStyle } from 'react-native';
+import { Text, TextInput, TextStyle } from 'react-native';
 
 import { preloadFonts } from '@utils/constants';
 import { preloadImages } from '@utils/images';
@@ -48,8 +48,7 @@ export default function App() {
   (TextInput as unknown as ExtendedTextInput).defaultProps = {
     allowFontScaling: false,
   };
-  // Preload images and fonts before rendering the app
-  // This ensures that the app is ready to display content without a loading screen
+
   useEffect(() => {
     (async () => {
       preloadImages();

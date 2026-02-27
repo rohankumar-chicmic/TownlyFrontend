@@ -89,3 +89,10 @@ export const customParseNumber = (value: any, originalValue: any) => {
   // Return undefined if it's NaN, otherwise return the parsed number
   return Number.isNaN(parsed) ? undefined : parsed;
 };
+
+export const hexToRGBA = (hex: string, opacity: number = 1) => {
+  const r = Number.parseInt(hex.slice(1, 3), 16);
+  const g = Number.parseInt(hex.slice(3, 5), 16);
+  const b = Number.parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
