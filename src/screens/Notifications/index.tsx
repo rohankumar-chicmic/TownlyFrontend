@@ -23,28 +23,44 @@ const Notifications = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const userToken = useAppSelector(state => state.auth.userToken);
-  const notificationsArrived = useAppSelector(
-    state => state.auth.unreadNotifcations,
-  );
+
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [isPressed, setIsPressed] = useState(false);
   const dispatch = useAppDispatch();
+  const PAGE_SIZE = 10;
+
+  const [pageAll, setPageAll] = useState(1);
+  const [pageUnread, setPageUnread] = useState(1);
+
   const {
-    data: allNotifications = [],
+    data: allNotificationsData,
+    isFetching: isFetchingAll,
     isLoading: isLoadingNotifications,
     refetch: refetchAll,
-  } = useGetMyNotificationsQuery(undefined, {
-    skip: !userToken,
-  });
-  const { data: unreadNotifications = [], refetch: refetchUnread } =
-    useGetMyUnreadNotificationsQuery(undefined, {
-      skip: !userToken,
-    });
+  } = useGetMyNotificationsQuery(
+    { page: pageAll, pageSize: PAGE_SIZE },
+    { skip: !userToken },
+  );
+
+  const {
+    data: unreadNotificationsData,
+    isFetching: isFetchingUnread,
+    refetch: refetchUnread,
+  } = useGetMyUnreadNotificationsQuery(
+    { page: pageUnread, pageSize: PAGE_SIZE },
+    { skip: !userToken },
+  );
 
   const [readSingleNotification] = useReadNotificationMutation();
   const [readAllNotifications] = useReadAllNotificationMutation();
 
-  const unreadCount = unreadNotifications.length;
+  const allNotifications = allNotificationsData?.items ?? [];
+  const unreadNotifications = unreadNotificationsData?.items ?? [];
+
+  const totalAll = allNotificationsData?.totalCount ?? 0;
+  const totalUnread = unreadNotificationsData?.totalCount ?? 0;
+
+  const unreadCount = totalUnread;
 
   const notificationsToRender =
     filter === 'unread' ? unreadNotifications : allNotifications;
@@ -53,8 +69,8 @@ const Notifications = () => {
     try {
       if (!userToken) return;
       await readAllNotifications();
-      await refetchAll();
-      await refetchUnread();
+      setPageAll(1);
+      setPageUnread(1);
       dispatch(hasUnreadNotifications(false));
     } catch (error) {
       console.log(error);
@@ -77,19 +93,28 @@ const Notifications = () => {
     }
   };
 
-  useEffect(() => {
-    if (unreadNotifications.length === 0) {
-      dispatch(hasUnreadNotifications(false));
+  const hasMoreAll = allNotifications.length < totalAll;
+  const hasMoreUnread = unreadNotifications.length < totalUnread;
+
+  const handleLoadMore = () => {
+    if (filter === 'all') {
+      if (!isFetchingAll && hasMoreAll) {
+        setPageAll(prev => prev + 1);
+      }
+    } else {
+      if (!isFetchingUnread && hasMoreUnread) {
+        setPageUnread(prev => prev + 1);
+      }
     }
-  }, [unreadNotifications, dispatch]);
+  };
 
   useEffect(() => {
-    const func = async () => {
-      await refetchAll();
-      await refetchUnread();
-    };
-    func();
-  }, [notificationsArrived, refetchAll, refetchUnread]);
+    if (filter === 'all') {
+      setPageAll(1);
+    } else {
+      setPageUnread(1);
+    }
+  }, [filter]);
 
   const renderItem = ({ item }: { item: NotificationItem }) => (
     <Notification
@@ -220,6 +245,21 @@ const Notifications = () => {
             keyExtractor={item => item.id}
             ListEmptyComponent={renderEmpty}
             showsVerticalScrollIndicator={false}
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
+            refreshing={
+              filter === 'all'
+                ? isFetchingAll && pageAll === 1
+                : isFetchingUnread && pageUnread === 1
+            }
+            ListFooterComponent={
+              (filter === 'all' && isFetchingAll && pageAll > 1) ||
+              (filter === 'unread' && isFetchingUnread && pageUnread > 1) ? (
+                <Text style={{ textAlign: 'center', padding: 10 }}>
+                  Loading...
+                </Text>
+              ) : null
+            }
           />
         )}
       </View>

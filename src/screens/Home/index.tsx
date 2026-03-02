@@ -17,7 +17,7 @@ import {
 
 import { Icons } from '@utils/icons';
 import { ROUTES } from 'src/navigation/constants';
-import { debounce } from '@utils/utility';
+import { throttle } from '@utils/utility';
 
 import { useGetFeaturedPropertiesQuery } from '@redux/PropertyApiReducer';
 import { useNetInfo } from '@react-native-community/netinfo';
@@ -144,7 +144,7 @@ const Home = () => {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id });
   };
 
-  const debouncedHandlePressed = debounce(handlePressed, 250);
+  const throttledHandlePressed = throttle(handlePressed, 300);
 
   const showSkeleton = isLoading && !localData?.length;
 
@@ -167,7 +167,7 @@ const Home = () => {
         ) : (
           <CardContainer
             {...item}
-            onClick={() => debouncedHandlePressed(item.id)}
+            onClick={() => throttledHandlePressed(item.id)}
           />
         )
       }

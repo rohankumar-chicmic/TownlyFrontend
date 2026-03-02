@@ -1,4 +1,4 @@
-import React, { ReactElement, useCallback, useState } from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -13,7 +13,6 @@ import useTheme from '@hooks/useTheme';
 import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
-
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import {
   useGetBalanceQuery,
@@ -27,6 +26,10 @@ import { useAppKit } from '@reown/appkit-react-native';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import Toast from 'react-native-toast-message';
+import {
+  saveAccountBalance,
+  useAccountBalance,
+} from 'src/db/hooks/useWalletScreenData';
 
 const InfoRow = ({
   field,
@@ -38,6 +41,7 @@ const InfoRow = ({
   style?: ViewStyle;
 }) => {
   const { Colors } = useTheme();
+
   return (
     <View
       style={[
@@ -75,6 +79,7 @@ export default function WalletScreen() {
   const navigation = useAppNavigation();
   const [inputError, setInputError] = useState('');
   const [requestCurrency, { isSuccess }] = useRequestCurrencyMutation();
+  const { data: balance } = useAccountBalance(walletAddress);
 
   const handleRequestCurrency = async (rawAmount: string) => {
     try {
@@ -116,6 +121,17 @@ export default function WalletScreen() {
     }
   };
 
+  useEffect(() => {
+    if (data) {
+      saveAccountBalance({
+        walletAddress: walletAddress,
+        totalGranted: data.totalGranted,
+        totalUsed: data.totalUsed,
+        available: data.available,
+      });
+    }
+  }, [data]);
+
   useFocusEffect(
     useCallback(() => {
       const refreshBalance = async () => {
@@ -128,6 +144,13 @@ export default function WalletScreen() {
       refreshBalance();
     }, [refetch]),
   );
+
+  const displayData = {
+    walletAddress: walletAddress ?? 'N/A',
+    totalGranted: balance?.totalGranted ?? 0,
+    totalUsed: balance?.totalUsed ?? 0,
+    available: balance?.available ?? 0,
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -165,10 +188,19 @@ export default function WalletScreen() {
               },
             ]}
           >
-            <InfoRow field="Wallet Address" value={walletAddress ?? 0} />
-            <InfoRow field="Total granted" value={data?.totalGranted ?? 0} />
-            <InfoRow field="Total used" value={data?.totalUsed ?? 0} />
-            <InfoRow field="Available Balance" value={data?.available ?? 0} />
+            <InfoRow field="Wallet Address" value={displayData.walletAddress} />
+            <InfoRow
+              field="Total granted"
+              value={displayData.totalGranted.toString()}
+            />
+            <InfoRow
+              field="Total used"
+              value={displayData.totalUsed.toString()}
+            />
+            <InfoRow
+              field="Available Balance"
+              value={displayData.available.toString()}
+            />
           </View>
           <View
             style={[

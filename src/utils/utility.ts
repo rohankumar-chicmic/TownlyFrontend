@@ -73,6 +73,26 @@ export function debounce<T extends (...args: any[]) => void>(
   };
 }
 
+export function throttle<T extends (...args: any[]) => void>(
+  func: T,
+  limit: number = 300,
+): (...args: Parameters<T>) => void {
+  let inThrottle: boolean = false;
+
+  return function (this: any, ...args: Parameters<T>): void {
+    if (!inThrottle) {
+      // Execute the function immediately
+      func.apply(this, args);
+      inThrottle = true;
+
+      // Reset the throttle after the specified limit
+      setTimeout(() => {
+        inThrottle = false;
+      }, limit);
+    }
+  };
+}
+
 export const customParseNumber = (value: any, originalValue: any) => {
   // If the original value is empty string, null, or undefined, return undefined
   if (

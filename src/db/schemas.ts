@@ -102,3 +102,17 @@ export const transactions = sqliteTable('transactions', {
   createdAt: text('createdAt').notNull(),
   syncedAt: text('syncedAt'),
 });
+
+// wallet Screen schema
+
+export const accountBalances = sqliteTable('accountBalances', {
+  walletAddress: text('walletAddress').primaryKey(),
+  
+  totalGranted: real('totalGranted').notNull().default(0),
+  
+  totalUsed: real('totalUsed').notNull().default(0),
+  
+  availableBalance: real('availableBalance').notNull().default(0),
+  
+  syncedAt: text('syncedAt').$defaultFn(() => new Date().toISOString()),
+});

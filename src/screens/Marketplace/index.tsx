@@ -8,7 +8,7 @@ import { useSearchPropertiesQuery } from '@redux/PropertyApiReducer';
 import CardContainer2 from '@components/molecules/CardContainer2';
 import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 import FilterButton from '@components/atoms/FilterButton';
-import { debounce, sanitizeSearch } from '@utils/utility';
+import { debounce, sanitizeSearch, throttle } from '@utils/utility';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 
@@ -45,7 +45,7 @@ const Marketplace = () => {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id: id });
   };
 
-  const debouncedHandlePressed = debounce(handlePressed, 250);
+  const throttledHandlePressed = throttle(handlePressed, 250);
 
   const handleTextChange = (val: string) => {
     setText(val);
@@ -124,7 +124,7 @@ const Marketplace = () => {
         renderItem={({ item }) => (
           <CardContainer2
             {...item}
-            onClick={() => debouncedHandlePressed(item.id)}
+            onClick={() => throttledHandlePressed(item.id)}
           />
         )}
         ListEmptyComponent={<ListEmptyComponent />}

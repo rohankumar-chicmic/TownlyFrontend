@@ -32,6 +32,8 @@ import KYCStatusModal from '@components/molecules/KYCModal';
 import { useAppNavigation } from '@hooks/useNavigation';
 import InvestmentInfo from '@components/molecules/InvestmentInfo';
 import PropertyDetailsSkeleton from '@components/molecules/PropertyDetailsSkeleton';
+import { throttle } from '@utils/utility';
+import { ROUTES } from 'src/navigation/constants';
 
 export default function PropertyDetails() {
   const { Colors } = useTheme();
@@ -46,6 +48,9 @@ export default function PropertyDetails() {
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
   const relatedProperties = useGetRelatedPropertiesQuery(params.id);
+  const throttledHandleCardPressed = throttle(
+    id => navigation.push(ROUTES.PROPERTY_DETAILS, { id: id }),
+  );
 
   const isLoading = !data || !investmentData || !relatedProperties.data;
 
@@ -262,6 +267,7 @@ export default function PropertyDetails() {
                   <CardContainer
                     {...item}
                     description={item.description ?? undefined}
+                    onClick={() =>  throttledHandleCardPressed(item.id)}
                   />
                 </View>
               )
