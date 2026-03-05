@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, FlatList, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -19,18 +19,21 @@ import handleNotification from '@utils/handleNotification';
 import { hasUnreadNotifications } from '@redux/AuthReducer';
 import { NotificationItem } from '@utils/types';
 
+const PAGE_SIZE = 10;
+
 const Notifications = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
+  const dispatch = useAppDispatch();
+
   const userToken = useAppSelector(state => state.auth.userToken);
 
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [isPressed, setIsPressed] = useState(false);
-  const dispatch = useAppDispatch();
-  const PAGE_SIZE = 10;
-
   const [pageAll, setPageAll] = useState(1);
   const [pageUnread, setPageUnread] = useState(1);
+
+  const isAllFilter = filter === 'all';
 
   const {
     data: allNotificationsData,
@@ -54,23 +57,48 @@ const Notifications = () => {
   const [readSingleNotification] = useReadNotificationMutation();
   const [readAllNotifications] = useReadAllNotificationMutation();
 
-  const allNotifications = allNotificationsData?.items ?? [];
-  const unreadNotifications = unreadNotificationsData?.items ?? [];
+  const allNotifications = useMemo(
+    () => allNotificationsData?.items ?? [],
+    [allNotificationsData?.items],
+  );
+
+  const unreadNotifications = useMemo(
+    () => unreadNotificationsData?.items ?? [],
+    [unreadNotificationsData?.items],
+  );
 
   const totalAll = allNotificationsData?.totalCount ?? 0;
   const totalUnread = unreadNotificationsData?.totalCount ?? 0;
-
   const unreadCount = totalUnread;
 
-  const notificationsToRender =
-    filter === 'unread' ? unreadNotifications : allNotifications;
+  const notificationsToRender = useMemo(
+    () => (isAllFilter ? allNotifications : unreadNotifications),
+    [isAllFilter, allNotifications, unreadNotifications],
+  );
+
+  const currentPage = isAllFilter ? pageAll : pageUnread;
+
+  const isFetchingCurrent = isAllFilter ? isFetchingAll : isFetchingUnread;
+
+  const hasMore = isAllFilter
+    ? allNotifications.length < totalAll
+    : unreadNotifications.length < totalUnread;
+
+  const isRefreshing = isFetchingCurrent && currentPage === 1;
+
+  const shouldShowFooter = isFetchingCurrent && currentPage > 1;
 
   const handleMarkAllAsRead = async () => {
     try {
       if (!userToken) return;
-      await readAllNotifications();
+
+      await readAllNotifications().unwrap();
+
       setPageAll(1);
       setPageUnread(1);
+
+      await Promise.all([refetchAll(), refetchUnread()]);
+
       dispatch(hasUnreadNotifications(false));
     } catch (error) {
       console.log(error);
@@ -83,38 +111,34 @@ const Notifications = () => {
         type: item.type,
         referenceId: String(item.referenceId),
       });
-      if (!item.isRead) {
-        await readSingleNotification(item.id);
-        refetchAll();
-        refetchUnread();
-      }
-    } catch (e: any) {
-      console.log(e);
+
+      if (item.isRead) return;
+
+      await readSingleNotification(item.id);
+      refetchAll();
+      refetchUnread();
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  const hasMoreAll = allNotifications.length < totalAll;
-  const hasMoreUnread = unreadNotifications.length < totalUnread;
-
   const handleLoadMore = () => {
-    if (filter === 'all') {
-      if (!isFetchingAll && hasMoreAll) {
-        setPageAll(prev => prev + 1);
-      }
+    if (isFetchingCurrent || !hasMore) return;
+
+    if (isAllFilter) {
+      setPageAll(prev => prev + 1);
     } else {
-      if (!isFetchingUnread && hasMoreUnread) {
-        setPageUnread(prev => prev + 1);
-      }
+      setPageUnread(prev => prev + 1);
     }
   };
 
   useEffect(() => {
-    if (filter === 'all') {
+    if (isAllFilter) {
       setPageAll(1);
     } else {
       setPageUnread(1);
     }
-  }, [filter]);
+  }, [isAllFilter]);
 
   const renderItem = ({ item }: { item: NotificationItem }) => (
     <Notification
@@ -125,19 +149,18 @@ const Notifications = () => {
 
   const renderEmpty = () => {
     if (isLoadingNotifications) return null;
+
     return (
       <View style={dynamicStyles.emptyContainer}>
         <Text style={dynamicStyles.heroText}>
-          {filter === 'unread'
-            ? 'No unread notifications'
-            : 'No notifications yet'}
+          {isAllFilter ? 'No notifications yet' : 'No unread notifications'}
         </Text>
       </View>
     );
   };
 
   return (
-    <SafeAreaView style={dynamicStyles.safeArea}>
+    <SafeAreaView style={{ flex: 1 }}>
       <View style={dynamicStyles.container}>
         <View style={dynamicStyles.headerSection}>
           <Text style={dynamicStyles.heroPrimarytext}>Notifications</Text>
@@ -145,90 +168,82 @@ const Notifications = () => {
             Stay updated with your investments and activities
           </Text>
         </View>
-        <View>
-          <View
-            style={[
-              dynamicStyles.filterContainer,
-              { justifyContent: 'space-between' },
-            ]}
-          >
-            <View style={{ flexDirection: 'row', gap: 8 }}>
-              <Pressable
-                style={[
-                  dynamicStyles.tag,
-                  {
-                    borderColor:
-                      filter === 'all' ? Colors.primary : Colors.border,
-                  },
-                ]}
-                onPress={() => setFilter('all')}
-              >
-                <Text
-                  style={[
-                    dynamicStyles.tagText,
-                    {
-                      color:
-                        filter === 'all'
-                          ? Colors.primary
-                          : Colors.textSecondary,
-                    },
-                  ]}
-                >
-                  All
-                </Text>
-              </Pressable>
 
-              <Pressable
-                style={[
-                  dynamicStyles.tag,
-                  {
-                    borderColor:
-                      filter === 'unread' ? Colors.primary : Colors.border,
-                  },
-                ]}
-                onPress={() => setFilter('unread')}
-              >
-                <Text
-                  style={[
-                    dynamicStyles.tagText,
-                    {
-                      color:
-                        filter === 'unread'
-                          ? Colors.primary
-                          : Colors.textSecondary,
-                    },
-                  ]}
-                >
-                  Unread {unreadCount > 0 && `(${unreadCount})`}
-                </Text>
-              </Pressable>
-            </View>
-
+        <View
+          style={[
+            dynamicStyles.filterContainer,
+            { justifyContent: 'space-between' },
+          ]}
+        >
+          <View style={{ flexDirection: 'row', gap: 8 }}>
             <Pressable
               style={[
                 dynamicStyles.tag,
                 {
-                  borderColor: isPressed ? Colors.primary : Colors.border,
+                  borderColor: isAllFilter ? Colors.primary : Colors.border,
                 },
               ]}
-              onPressIn={() => setIsPressed(true)}
-              onPressOut={() => setIsPressed(false)}
-              onPress={handleMarkAllAsRead}
+              onPress={() => setFilter('all')}
             >
               <Text
                 style={[
                   dynamicStyles.tagText,
                   {
-                    color: isPressed ? Colors.primary : Colors.textSecondary,
+                    color: isAllFilter ? Colors.primary : Colors.textSecondary,
                   },
                 ]}
               >
-                Mark all read
+                All
+              </Text>
+            </Pressable>
+
+            <Pressable
+              style={[
+                dynamicStyles.tag,
+                {
+                  borderColor: isAllFilter ? Colors.border : Colors.primary,
+                },
+              ]}
+              onPress={() => setFilter('unread')}
+            >
+              <Text
+                style={[
+                  dynamicStyles.tagText,
+                  {
+                    color: isAllFilter ? Colors.textSecondary : Colors.primary,
+                  },
+                ]}
+              >
+                Unread {unreadCount > 0 && `(${unreadCount})`}
               </Text>
             </Pressable>
           </View>
+
+          <Pressable
+            style={[
+              dynamicStyles.tag,
+              {
+                borderColor: isPressed ? Colors.primary : Colors.border,
+              },
+            ]}
+            onPressIn={() => setIsPressed(true)}
+            onPressOut={() => setIsPressed(false)}
+            onPress={handleMarkAllAsRead}
+          >
+            <Text
+              style={[
+                dynamicStyles.tagText,
+                {
+                  color: isPressed ? Colors.primary : Colors.textSecondary,
+                },
+              ]}
+            >
+              Mark all read
+            </Text>
+          </Pressable>
         </View>
       </View>
+
       <View style={dynamicStyles.container}>
         {isLoadingNotifications ? (
           <View style={{ width: '100%', alignContent: 'center' }}>
@@ -239,7 +254,7 @@ const Notifications = () => {
         ) : (
           <FlatList
             data={notificationsToRender}
-            contentContainerStyle={{ paddingVertical: 10 }}
+            contentContainerStyle={{ paddingBottom: 10 }}
             style={dynamicStyles.notificationsContainer}
             renderItem={renderItem}
             keyExtractor={item => item.id}
@@ -247,14 +262,9 @@ const Notifications = () => {
             showsVerticalScrollIndicator={false}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.5}
-            refreshing={
-              filter === 'all'
-                ? isFetchingAll && pageAll === 1
-                : isFetchingUnread && pageUnread === 1
-            }
+            refreshing={isRefreshing}
             ListFooterComponent={
-              (filter === 'all' && isFetchingAll && pageAll > 1) ||
-              (filter === 'unread' && isFetchingUnread && pageUnread > 1) ? (
+              shouldShowFooter ? (
                 <Text style={{ textAlign: 'center', padding: 10 }}>
                   Loading...
                 </Text>

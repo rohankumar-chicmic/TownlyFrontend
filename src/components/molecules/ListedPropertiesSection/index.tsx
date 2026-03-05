@@ -42,7 +42,7 @@ export default function ListedPropertiesSection({
         {showViewAll ? (
           <Button
             size="sm"
-            onPress={() => navigation.navigate(ROUTES.INVESTED_PROPERTIES)}
+            onPress={() => navigation.navigate(ROUTES.LISTED_PROPERTIES)}
             title="View All"
           ></Button>
         ) : null}

@@ -76,13 +76,45 @@ const InvestedPropertiesScreen = () => {
   };
 
   // ================= RENDER =================
+
+  let footerComponent = null;
+
+  if (isFetching && params.page > 1) {
+    footerComponent = (
+      <ActivityIndicator
+        size="small"
+        color={Colors.primary}
+        style={{ marginVertical: 15 }}
+      />
+    );
+  } else if (!hasMore && list.length > 0) {
+    footerComponent = (
+      <Text
+        style={{
+          textAlign: 'center',
+          marginVertical: 15,
+          color: Colors.textSecondary,
+        }}
+      >
+        No more invested properties
+      </Text>
+    );
+  }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* HEADER */}
-      <View style={{ padding: 10 }}>
-        <BackButton />
-        <Text style={[dynamicStyles.heroText, { alignSelf: 'center' }]}>
-          Your Invested Properties
+      <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ position: 'absolute', left: 10, zIndex: 100 }}>
+          <BackButton />
+        </View>
+        <Text
+          style={[
+            dynamicStyles.heroText,
+            { alignSelf: 'center', textAlign: 'center', width: '100%' },
+          ]}
+        >
+          Your invested Properties
         </Text>
       </View>
 
@@ -97,6 +129,8 @@ const InvestedPropertiesScreen = () => {
           flexDirection: 'row',
           borderBottomColor: Colors.border,
           borderBottomWidth: 1,
+          padding: 10,
+          paddingTop: 0,
         }}
       >
         <FilterButton
@@ -141,25 +175,7 @@ const InvestedPropertiesScreen = () => {
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
           style={{ backgroundColor: Colors.background }}
-          ListFooterComponent={
-            isFetching && params.page > 1 ? (
-              <ActivityIndicator
-                size="small"
-                color={Colors.primary}
-                style={{ marginVertical: 15 }}
-              />
-            ) : !hasMore && list.length > 0 ? (
-              <Text
-                style={{
-                  textAlign: 'center',
-                  marginVertical: 15,
-                  color: Colors.textSecondary,
-                }}
-              >
-                No more invested properties
-              </Text>
-            ) : null
-          }
+          ListFooterComponent={footerComponent}
         />
       )}
     </SafeAreaView>

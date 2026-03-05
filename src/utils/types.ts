@@ -90,6 +90,9 @@ interface MyPropertyDetailsType {
   // User Specific (Nullable until invested)
   userInvestedAmountEth: number | null;
   userInvestmentAmount: number | null;
+
+  //documents
+  documents: any;
 }
 
 interface PropertyCardProps {
@@ -119,6 +122,19 @@ interface NotificationItem {
   createdAt: string;
   referenceId: string;
 }
+interface Transaction {
+  transactionId: string;
+  propertyId: string;
+  type: number;
+  propertyName: string;
+  amountUsd: number;
+  currency: string;
+  amountEth: number;
+  ethAmountAtExecution: number;
+  ethUsdRateAtExecution: number;
+  status: 'Pending' | 'Completed' | 'Failed';
+  createdAt: string;
+}
 
 export {
   InvestmentCardType,
@@ -127,4 +143,5 @@ export {
   PropertyPortfolioData,
   PropertyCardProps,
   NotificationItem,
+  Transaction,
 };

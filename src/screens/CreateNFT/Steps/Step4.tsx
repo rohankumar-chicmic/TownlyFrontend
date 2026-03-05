@@ -1,12 +1,5 @@
-import React, { Dispatch, ReactElement, SetStateAction } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  ViewStyle,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import React, { Dispatch, SetStateAction } from 'react';
+import { View, Text, Image, Pressable, ActivityIndicator } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -14,57 +7,38 @@ import Button from '@components/atoms/Button';
 import { Icons } from '@utils/icons';
 import { NFTFormData } from '../types';
 import { viewDocument } from '@react-native-documents/viewer';
-import { useMakePropertyMutation } from '@redux/PropertyApiReducer';
+import {
+  useMakePropertyMutation,
+  useResubmitPropertyMutation,
+  useEditPropertyMutation,
+} from '@redux/PropertyApiReducer';
 import { useAppSelector } from '@redux/store';
 import { useAppNavigation } from '@hooks/useNavigation';
 import Toast from 'react-native-toast-message';
 import { ROUTES } from 'src/navigation/constants';
 import { debounce } from '@utils/utility';
+import InfoRow from '@components/atoms/InfoRow';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
   formData: NFTFormData;
+  propertyId?: string;
+  isEdit?: boolean;
+  isActiveProperty?: boolean;
 }
-
-const InfoRow = ({
-  field,
-  value,
-  style,
-}: {
-  field: string;
-  value: string | ReactElement;
-  style?: ViewStyle;
-}) => {
-  const { Colors } = useTheme();
-  return (
-    <View
-      style={[
-        {
-          flexDirection: 'row',
-          paddingVertical: 10,
-          justifyContent: 'space-between',
-        },
-        style,
-      ]}
-    >
-      <Text style={{ color: Colors.textSecondary, width: '40%' }}>{field}</Text>
-      <Text
-        style={{ color: Colors.textPrimary, width: '60%', textAlign: 'right' }}
-      >
-        {value || field}
-      </Text>
-    </View>
-  );
-};
 
 export default function Step4(props: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   console.log(props.formData);
-  const [makeProperty, { isLoading }] = useMakePropertyMutation();
-
+  const [makeProperty, { isLoading: isCreating }] = useMakePropertyMutation();
+  const [editProperty, { isLoading: isEditing }] = useEditPropertyMutation();
+  const [resubmitProperty, { isLoading: isResubmitting }] =
+    useResubmitPropertyMutation();
   const navigation = useAppNavigation();
   const userToken = useAppSelector(state => state.auth.userToken);
+
+  const isLoading = isCreating || isResubmitting || isEditing;
   const handleSubmitProperty = debounce(async () => {
     if (!userToken) {
       console.error('No token available!');
@@ -72,30 +46,64 @@ export default function Step4(props: Readonly<StepProps>) {
     }
 
     try {
-      const result = await makeProperty({
-        data: props.formData,
-        token: userToken,
-      }).unwrap();
+      let result;
 
-      console.log('Property created successfully!', result);
+      if (props.isEdit && props.isActiveProperty && props.propertyId) {
+        const formData = new FormData();
+
+        formData.append('Description', props.formData.description ?? '');
+
+        if (props.formData.propertyImage?.uri) {
+          formData.append('Image', {
+            uri: props.formData.propertyImage.uri,
+            name: props.formData.propertyImage.name ?? 'image.jpg',
+            type: props.formData.propertyImage.type ?? 'image/jpeg',
+          } as any);
+        }
+        result = await editProperty({
+          propertyId: props.propertyId,
+          body: formData,
+        }).unwrap();
+
+        console.error(result);
+      } else if (props.isEdit && props.propertyId) {
+        console.log('b ============', props.isEdit, props.propertyId);
+        result = await resubmitProperty({
+          propertyId: props.propertyId,
+          data: props.formData,
+        }).unwrap();
+      } else {
+        console.log('c ============', props.isEdit, props.propertyId);
+
+        result = await makeProperty({
+          data: props.formData,
+          token: userToken,
+        }).unwrap();
+      }
+
+      console.log('Property submitted successfully!', result);
 
       navigation.navigate(ROUTES.TABS);
 
       Toast.show({
         type: 'success',
         text1: 'Success!',
-        text2: 'Your property creation request has been sent successfully',
+        text2: props.isEdit
+          ? 'Property update request submitted successfully'
+          : 'Property creation request submitted successfully',
       });
     } catch (err: any) {
-      console.error('Failed to create property:', err);
+      console.error('Failed to submit property:', err);
 
       Toast.show({
         type: 'error',
         text1: 'Submission Failed',
-        text2: err.data?.message || 'Sorry, cannot create property.',
+        text2: err.data?.message || 'Sorry, cannot submit property.',
       });
     }
   }, 200);
+
+  console.log(props.isEdit);
 
   return (
     <View style={dynamicStyles.containerSurface}>

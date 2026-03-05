@@ -17,6 +17,11 @@ const Badge = ({ status }: { status: number | undefined }) => {
         return { label: 'Sold Out', color: Colors.error || '#F44336' };
       case 4:
         return { label: 'Rejected', color: Colors.textSecondary || '#757575' };
+      case 5:
+        return {
+          label: 'Modify',
+          color: Colors.textPrimary || '#757575',
+        };
       default:
         return null;
     }

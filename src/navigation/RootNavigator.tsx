@@ -82,7 +82,7 @@ const RootNavigator = () => {
           <Stack.Screen name={ROUTES.KYC} component={KYC} />
         </Stack.Navigator>
       </NavigationContainer>
-      <Toast config={toastConfig} position="top" swipeable topOffset={120} />
+      <Toast config={toastConfig} position="top" swipeable />
     </SafeAreaProvider>
   );
 };

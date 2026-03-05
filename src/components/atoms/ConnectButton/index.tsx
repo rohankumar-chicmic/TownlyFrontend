@@ -9,6 +9,7 @@ import { useGetBalanceQuery } from '@redux/ApiReducer';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
 import { useAppSelector } from '@redux/store';
+import { useAccountBalance } from 'src/db/hooks/useWalletScreenData';
 
 interface ConnectButtonPropsType {
   style?: ViewStyle;
@@ -24,6 +25,8 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
   const { data, isLoading } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
+  const { data: balance } = useAccountBalance(String(address));
+
   useGetKYCStatusQuery(undefined, {
     skip: !userToken,
   });
@@ -44,7 +47,9 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
             numberOfLines={1}
           >
             {isLoading && 'loading...'}
-            {data?.available ? data?.available + ' ETH,' : '...'}
+            {data?.available
+              ? data?.available + ' ETH, '
+              : (balance?.availableBalance ?? '...') + ' ETH, '}
             {address ?? ' '}
           </Text>
         </Pressable>

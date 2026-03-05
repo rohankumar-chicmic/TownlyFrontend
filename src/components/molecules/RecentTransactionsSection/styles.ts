@@ -66,6 +66,26 @@ const styles = (Colors: ThemeColors) =>
       aspectRatio: 1,
       marginVertical: 20,
     },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)', // Dim the background
+      justifyContent: 'flex-end', // Align to bottom
+    },
+    modalContent: {
+      backgroundColor: Colors.surface,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      padding: 24,
+      paddingBottom: 40,
+      minHeight: 300,
+    },
+    modalTitle: {
+      color: Colors.textPrimary,
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 20,
+      textAlign: 'center',
+    },
   });
 
 export default styles;

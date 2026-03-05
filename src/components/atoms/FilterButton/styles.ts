@@ -28,12 +28,13 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textSecondary,
     },
     tag: {
-      margin: 10,
+      margin: 5,
       alignSelf: 'flex-start',
       backgroundColor: Colors.surface,
       paddingHorizontal: 10,
       paddingVertical: 4,
       borderRadius: 6,
+      minHeight: 27,
     },
 
     tagText: {

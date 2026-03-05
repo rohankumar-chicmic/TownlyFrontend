@@ -1,12 +1,5 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Dimensions,
-  FlatList,
-} from 'react-native';
+import { View, Text, ScrollView, Dimensions, FlatList } from 'react-native';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import useTheme from '@hooks/useTheme';
@@ -34,30 +27,48 @@ import InvestmentInfo from '@components/molecules/InvestmentInfo';
 import PropertyDetailsSkeleton from '@components/molecules/PropertyDetailsSkeleton';
 import { throttle } from '@utils/utility';
 import { ROUTES } from 'src/navigation/constants';
+import FastImage from 'react-native-fast-image';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 export default function PropertyDetails() {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const route = useAppRoute();
   const params = route.params;
+  console.log(params?.item);
   const [showModal, setShowModal] = useState(false);
-  const { data } = useGetPropertyDetailsQuery(params.id);
-  const { data: investmentData } = useInvestmentInfoQuery(params.id);
+  const { data } = useGetPropertyDetailsQuery(params?.item?.id || params?.id);
+  const { data: investmentData } = useInvestmentInfoQuery(
+    params?.item?.id || params?.id,
+  );
 
   const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
-  const relatedProperties = useGetRelatedPropertiesQuery(params.id);
-  const throttledHandleCardPressed = throttle(
-    id => navigation.push(ROUTES.PROPERTY_DETAILS, { id: id }),
+  const relatedProperties = useGetRelatedPropertiesQuery(
+    params?.item?.id || params?.id,
   );
+  const throttledHandleCardPressed = throttle(item =>
+    navigation.push(ROUTES.PROPERTY_DETAILS, { item: item }),
+  );
+  const { isConnected } = useNetInfo();
 
   const isLoading = !data || !investmentData || !relatedProperties.data;
 
-  if (isLoading) return <PropertyDetailsSkeleton />;
+  const fallbackProperty = params?.item ?? null;
+
+  // prefer API data, fallback to params item
+  const property = data ?? fallbackProperty;
+
+  if (isConnected && isLoading) return <PropertyDetailsSkeleton />;
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
+      <View>
+        <BackButton
+          style={{ position: 'absolute', zIndex: 100, left: 10, top: 10 }}
+        />
+      </View>
       <ScrollView
         style={[dynamicStyles.screen]}
         contentContainerStyle={{
@@ -66,24 +77,40 @@ export default function PropertyDetails() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <BackButton />
-
         <View style={dynamicStyles.heroImage}>
-          <Image
-            source={{ uri: data?.imageUrl }}
+          <FastImage
+            source={{ uri: property?.imageUrl }}
             style={{ width: '100%', height: '100%' }}
           />
         </View>
+        {!isConnected && (
+          <View
+            style={{
+              backgroundColor: '#FFF3CD',
+              paddingVertical: 8,
+              paddingHorizontal: 15,
+              alignItems: 'center',
+              borderBottomWidth: 1,
+              borderBottomColor: '#FFE69C',
+            }}
+          >
+            <Text style={{ color: '#856404', fontSize: 13 }}>
+              You are offline. Property data is not available.
+            </Text>
+          </View>
+        )}
 
         <View style={dynamicStyles.section}>
-          <Text style={dynamicStyles.title}>{String(data?.name ?? '')}</Text>
+          <Text style={dynamicStyles.title}>
+            {String(property?.name ?? '')}
+          </Text>
           <Text style={dynamicStyles.location}>
             <Icons.Location height={10} width={10} color={Colors.primary} />
-            {' ' + String(data?.location ?? '')}
+            {' ' + String(property?.location ?? '')}
           </Text>
           <View style={dynamicStyles.tag}>
             <Text style={dynamicStyles.tagText}>
-              {String(data?.propertyType ?? '')}
+              {String(property?.propertyType ?? '')}
             </Text>
           </View>
           {data?.userInvestedAmountEth ? (
@@ -137,6 +164,21 @@ export default function PropertyDetails() {
         >
           <View style={dynamicStyles.containerStyle}>
             <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
+              Final Risk Score
+            </Text>
+            <Text
+              style={{
+                color: Colors.textPrimary,
+                fontSize: 18,
+                fontWeight: '500',
+              }}
+            >
+              {data?.riskScore ? data?.riskScore + '/10' : ''}
+            </Text>
+          </View>
+
+          <View style={dynamicStyles.containerStyle}>
+            <Text style={{ color: Colors.textSecondary, fontSize: 15 }}>
               Total Value
             </Text>
             <Text
@@ -162,7 +204,7 @@ export default function PropertyDetails() {
                 fontWeight: '500',
               }}
             >
-              {Number(data?.pricePerUnitEth ?? 0).toFixed(5)}
+              {Number(property?.pricePerUnitEth ?? 0).toFixed(5)}
               {' ETH'}
             </Text>
           </View>
@@ -174,7 +216,7 @@ export default function PropertyDetails() {
             <Text
               style={{ color: Colors.success, fontSize: 18, fontWeight: '500' }}
             >
-              {String(data?.annualYieldPercent ?? '')}
+              {String(property?.annualYieldPercent ?? '')}
               {'%'}
             </Text>
           </View>
@@ -190,7 +232,7 @@ export default function PropertyDetails() {
                 fontWeight: '500',
               }}
             >
-              {String(data?.availableUnits ?? '')}
+              {String(property?.availableUnits ?? '')}
               {'/'}
               {String(data?.totalUnits ?? '')}
             </Text>
@@ -267,7 +309,7 @@ export default function PropertyDetails() {
                   <CardContainer
                     {...item}
                     description={item.description ?? undefined}
-                    onClick={() =>  throttledHandleCardPressed(item.id)}
+                    onClick={() => throttledHandleCardPressed(item)}
                   />
                 </View>
               )

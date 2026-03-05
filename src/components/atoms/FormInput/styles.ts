@@ -11,7 +11,7 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textPrimary,
     },
     input: {
-      marginBottom: 2,
+      // marginBottom: 2,
       borderRadius: 10,
       padding: 12,
       fontSize: 13,

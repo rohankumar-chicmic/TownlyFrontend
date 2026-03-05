@@ -80,7 +80,7 @@ export default function WalletScreen() {
   const [inputError, setInputError] = useState('');
   const [requestCurrency, { isSuccess }] = useRequestCurrencyMutation();
   const { data: balance } = useAccountBalance(walletAddress);
-
+  const [isTemporarilyDisabled, setIsTemporarilyDisabled] = useState(false);
   const handleRequestCurrency = async (rawAmount: string) => {
     try {
       if (!rawAmount) return;
@@ -130,7 +130,7 @@ export default function WalletScreen() {
         available: data.available,
       });
     }
-  }, [data]);
+  }, [data, walletAddress]);
 
   useFocusEffect(
     useCallback(() => {
@@ -149,8 +149,20 @@ export default function WalletScreen() {
     walletAddress: walletAddress ?? 'N/A',
     totalGranted: balance?.totalGranted ?? 0,
     totalUsed: balance?.totalUsed ?? 0,
-    available: balance?.available ?? 0,
+    available: balance?.availableBalance ?? 0,
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      setIsTemporarilyDisabled(true);
+
+      const timer = setTimeout(() => {
+        setIsTemporarilyDisabled(false);
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isSuccess]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -162,12 +174,23 @@ export default function WalletScreen() {
       >
         <View style={[dynamicStyles.container, { flexGrow: 1 }]}>
           <View style={{ justifyContent: 'center', alignItems: 'stretch' }}>
-            <View style={{ marginLeft: -10, justifyContent: 'center' }}>
-              <BackButton />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'flex-end',
+                marginBottom: 10,
+              }}
+            >
+              <BackButton
+                style={{ left: 0, position: 'absolute', zIndex: 100 }}
+              />
               <Text
                 style={[
                   dynamicStyles.heroPrimarytext,
-                  { textAlign: 'center', marginBottom: 2 },
+                  {
+                    textAlign: 'center',
+                    flex: 1,
+                  },
                 ]}
               >
                 Account Details
@@ -225,30 +248,25 @@ export default function WalletScreen() {
             >
               Request currency
             </Text>
-            <View
-              style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}
-            >
-              <View style={{ flex: 1 }}>
-                <FormInput
-                  placeholder="Amount"
-                  keyboardType="number-pad"
-                  value={amount}
-                  onChangeText={setAmount}
-                  error={inputError}
-                ></FormInput>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Button
-                  style={{ marginBottom: 10, height: 38 }}
-                  size="sm"
-                  disabled={isSuccess}
-                  title={isSuccess ? 'Request sent' : 'Request Currency'}
-                  onPress={() => {
-                    handleRequestCurrency(amount);
-                  }}
-                />
-              </View>
+            <View style={{ flex: 1 }}>
+              <FormInput
+                placeholder="Amount to request"
+                keyboardType="number-pad"
+                maxLength={3}
+                value={amount}
+                onChangeText={setAmount}
+                error={inputError}
+              ></FormInput>
             </View>
+            <Button
+              style={{ margin: 10, height: 38 }}
+              size="sm"
+              disabled={isTemporarilyDisabled}
+              title={
+                isTemporarilyDisabled ? 'Request sent' : 'Request Currency'
+              }
+              onPress={() => handleRequestCurrency(amount)}
+            />
           </View>
           <View
             style={[

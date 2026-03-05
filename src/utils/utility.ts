@@ -116,3 +116,19 @@ export const hexToRGBA = (hex: string, opacity: number = 1) => {
   const b = Number.parseInt(hex.slice(5, 7), 16);
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
+
+export const apiToFormDocument = (doc: any) => ({
+  documentName: doc.title,
+  file: {
+    name: doc.fileName,
+    uri: doc.documentUrl,
+    type: 'application/octet-stream',
+    size: 0,
+  },
+});
+
+export const formToApiDocument = (doc: any) => ({
+  title: doc.documentName,
+  fileName: doc.file?.name,
+  documentUrl: doc.file?.uri,
+});

@@ -53,8 +53,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields}>Final Risk Score</Text>
           <Text style={[dynamicStyles.values]}>
-            {props.riskScore}
-            {'/10'}
+            {props.riskScore ? props.riskScore + '/10' : 'NA'}
           </Text>
         </View>
 

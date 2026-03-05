@@ -9,6 +9,36 @@ import { debounce } from '@utils/utility';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 
+const DataItem = ({ label, value, isSuccess, isNegative }: any) => {
+  const { dynamicStyles, Colors } = useStyles(styles);
+
+  let valueColor = Colors.textPrimary;
+
+  if (isNegative) {
+    valueColor = '#ff4d16';
+  } else if (isSuccess) {
+    valueColor = Colors.success;
+  }
+
+  return (
+    <View style={dynamicStyles.dataItem}>
+      <Text style={[dynamicStyles.label, { color: Colors.textSecondary }]}>
+        {label}
+      </Text>
+      <Text
+        style={[
+          dynamicStyles.value,
+          {
+            color: valueColor,
+          },
+        ]}
+      >
+        {value}
+      </Text>
+    </View>
+  );
+};
+
 const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
@@ -25,28 +55,7 @@ const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id: data.propertyId });
   }, 250);
 
-  const DataItem = ({ label, value, isSuccess, isNegative }: any) => (
-    <View style={dynamicStyles.dataItem}>
-      <Text style={[dynamicStyles.label, { color: Colors.textSecondary }]}>
-        {label}
-      </Text>
-      <Text
-        style={[
-          dynamicStyles.value,
-          {
-            color: isNegative
-              ? Colors.primary
-              : isSuccess
-                ? Colors.success
-                : Colors.textPrimary,
-          },
-        ]}
-      >
-        {value}
-      </Text>
-    </View>
-  );
-
+  console.log(data.currentValueEth);
   return (
     <Pressable style={[dynamicStyles.card]} onPress={handlePressed}>
       <View style={dynamicStyles.headerRow}>
@@ -114,7 +123,7 @@ const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
         />
         <DataItem
           label="Current Value"
-          value={`${(data?.currentValueEth / 1000).toFixed(1)} ETH`}
+          value={`${data.currentValueEth?.toFixed(3)} ETH`}
         />
         <DataItem
           isNegative={negative}

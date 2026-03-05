@@ -3,25 +3,26 @@ import { accountBalances } from '../schemas';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
 import { eq } from 'drizzle-orm';
 
-// --- HOOKS ---
-
 /**
- * Live hook for the current user's balance details
+ * Live hook for the current user's balance.
+ * Returns the OBJECT directly (or undefined), not an array.
  */
 export function useAccountBalance(walletAddress: string) {
-  return useLiveQuery(
+  const result = useLiveQuery(
     db
       .select()
       .from(accountBalances)
-      .where(eq(accountBalances.walletAddress, walletAddress)),
+      .where(eq(accountBalances.walletAddress, walletAddress))
+      .limit(1),
   );
+
+  // useLiveQuery returns { data, error, updated }, we extract the first row
+  return {
+    ...result,
+    data: result.data?.[0] ?? null, // Now you can use data.totalGranted safely
+  };
 }
 
-// --- SAVING FUNCTIONS ---
-
-/**
- * Updates or Inserts the account balance from API response
- */
 export const saveAccountBalance = async (data: {
   totalGranted: number;
   totalUsed: number;
@@ -47,8 +48,6 @@ export const saveAccountBalance = async (data: {
           syncedAt: new Date().toISOString(),
         },
       });
-
-    console.log('✅ Account balance synced locally');
   } catch (err) {
     console.error('❌ Database Error (Balance):', err);
   }

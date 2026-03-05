@@ -50,9 +50,17 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
         <Text style={[dynamicStyles.smallText, { paddingBottom: 10 }]}>
           Value over time
         </Text>
-        <View style={{ paddingLeft: '3%', alignItems: 'center' }}>
+        <View
+          style={{
+            paddingLeft: 10,
+            paddingRight: 10,
+            paddingBottom: 10,
+            alignItems: 'center',
+          }}
+        >
           <LineChart
             maxValue={maxValue}
+            yAxisLabelWidth={40}
             yAxisOffset={minValue}
             curved
             curvature={0.04}
@@ -61,9 +69,8 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             overflowBottom={20}
             thickness={2}
             isAnimated
-            onDataChangeAnimationDuration={0.3}
             spacing={Dimensions.get('window').width * 0.11}
-            initialSpacing={10}
+            initialSpacing={15}
             endSpacing={0}
             color={hexToRGBA(Colors.primary)}
             height={Dimensions.get('window').height * 0.15}
@@ -77,11 +84,13 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             xAxisColor={hexToRGBA(Colors.textSecondary)}
             yAxisTextStyle={{
               color: hexToRGBA(Colors.textSecondary),
-              fontSize: 12,
+              fontSize: 10,
+              marginRight: 8,
             }}
             xAxisLabelTextStyle={{
               color: hexToRGBA(Colors.textSecondary),
-              fontSize: 12,
+              fontSize: 10,
+              marginTop: 3,
             }}
             rulesColor={Colors.border}
             animateOnDataChange

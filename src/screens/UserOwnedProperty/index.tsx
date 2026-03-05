@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  Linking,
+  TouchableOpacity,
+} from 'react-native';
 
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
@@ -19,6 +25,9 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import DeletePropertyModal from '@components/molecules/DeletePropertyModal';
 import { ROUTES } from 'src/navigation/constants';
 import Toast from 'react-native-toast-message';
+import EditButton from '@components/atoms/EditButton';
+import FastImage from 'react-native-fast-image';
+import PropertyDetailsSkeleton from '@components/molecules/PropertyDetailsSkeleton';
 
 export default function UserOwnedProperty() {
   const { Colors } = useTheme();
@@ -30,7 +39,7 @@ export default function UserOwnedProperty() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
 
-  const { data } = useGetMyPropertyDetailsQuery(params.id, {
+  const { data, isLoading } = useGetMyPropertyDetailsQuery(params?.id, {
     skip: isDeleted,
   });
 
@@ -39,11 +48,10 @@ export default function UserOwnedProperty() {
 
   const handleDeleteConfirm = async () => {
     try {
-      await deleteProperty(params.id).unwrap();
+      await deleteProperty(params?.id).unwrap();
       setIsDeleted(true);
       setShowDeleteModal(false);
-      navigation.navigate(ROUTES.PORTFOLIO);
-
+      navigation.goBack();
       Toast.show({
         type: 'success',
         text1: 'Property Removed',
@@ -59,8 +67,20 @@ export default function UserOwnedProperty() {
     }
   };
 
-  console.log(data);
+  const handleClickEdit = async () => {
+    try {
+      navigation.navigate(ROUTES.CREATE_NFT, {
+        initialValues: data,
+        isEdit: true,
+        isActiveProperty: params?.status === 2,
+      });
+    } catch (e) {
+      console.error('Error in the user ownder property edition', e);
+    }
+  };
 
+  if (isLoading) return <PropertyDetailsSkeleton />;
+  console.log(data);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
@@ -71,10 +91,18 @@ export default function UserOwnedProperty() {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <BackButton />
+        <View style={{ position: 'absolute', zIndex: 100, left: 10, top: 10 }}>
+          <BackButton />
+        </View>
+
+        <View style={{ position: 'absolute', zIndex: 100, right: 10, top: 10 }}>
+          {(data?.status === 1 || data?.status === 5 || data?.status === 2) && (
+            <EditButton onPress={handleClickEdit}></EditButton>
+          )}
+        </View>
 
         <View style={dynamicStyles.heroImage}>
-          <Image
+          <FastImage
             source={{ uri: data?.imageUrl }}
             style={{ height: '100%', width: '100%' }}
           />
@@ -189,14 +217,20 @@ export default function UserOwnedProperty() {
               { margin: 20, borderColor: Colors.warning },
             ]}
           >
-            <Text style={dynamicStyles.sectionTitle}>Rejection Reason:</Text>
-            <Text style={{ fontSize: 15, color: Colors.warning }}>
+            <Text
+              style={[dynamicStyles.sectionTitle, { color: Colors.warning }]}
+            >
+              {data.status === 5
+                ? 'Modification Requested:'
+                : 'Rejected Reason'}
+            </Text>
+            <Text style={{ fontSize: 15, color: Colors.textPrimary }}>
               {data?.rejectionReason}
             </Text>
           </View>
         )}
 
-        {(data?.status === 1 || data?.status === 4) && (
+        {data?.status && data?.status !== 2 && data?.status !== 3 && (
           <View style={{ width: '90%', alignSelf: 'center', margin: 20 }}>
             <Button
               variant="outline"
@@ -204,6 +238,50 @@ export default function UserOwnedProperty() {
               title="Delete Property"
               onPress={() => setShowDeleteModal(true)}
             />
+          </View>
+        )}
+        {data?.documents?.length > 0 && (
+          <View style={[dynamicStyles.section, { paddingTop: 5 }]}>
+            <Text style={dynamicStyles.sectionTitle}>Property Documents</Text>
+
+            {data?.documents.map((doc: any, index: number) => {
+              return (
+                <View
+                  key={doc.fileName}
+                  style={{
+                    marginTop: 15,
+                    borderWidth: 1,
+                    borderColor: Colors.border,
+                    borderRadius: 10,
+                    overflow: 'hidden',
+                  }}
+                >
+                  {/* Document Header */}
+                  <TouchableOpacity
+                    onPress={() => Linking.openURL(doc.documentUrl)}
+                    style={{
+                      padding: 10,
+                      backgroundColor: Colors.elevated,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: Colors.textPrimary,
+                        fontSize: 15,
+                        fontWeight: '500',
+                      }}
+                    >
+                      {doc.title || doc.fileName}
+                    </Text>
+
+                    <Text style={{ color: Colors.primary }}>Open</Text>
+                  </TouchableOpacity>
+                </View>
+              );
+            })}
           </View>
         )}
       </ScrollView>

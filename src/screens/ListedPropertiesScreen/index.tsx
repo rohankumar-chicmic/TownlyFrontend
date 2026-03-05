@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, FlatList, Dimensions } from 'react-native';
+import { View, Text, FlatList, Dimensions, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -15,6 +15,7 @@ import { useGetMyPropertiesQuery } from '@redux/PropertyApiReducer';
 import { debounce, sanitizeSearch } from '@utils/utility';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
+import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.9;
 const PAGE_SIZE = 10;
@@ -73,12 +74,45 @@ const ListedProperiesScreen = () => {
     }
   };
 
+  const footer = useMemo(() => {
+    if (isFetching && params.page > 1) {
+      return (
+        <Text style={{ textAlign: 'center', padding: 10 }}>
+          Loading more...
+        </Text>
+      );
+    }
+
+    if (!hasMore && list.length > 0) {
+      return (
+        <Text
+          style={{
+            textAlign: 'center',
+            padding: 10,
+            color: Colors.textMuted,
+          }}
+        >
+          No more properties
+        </Text>
+      );
+    }
+
+    return null;
+  }, [isFetching, params.page, hasMore, list.length, Colors.textMuted]);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* HEADER */}
-      <View style={{ padding: 10 }}>
-        <BackButton />
-        <Text style={[dynamicStyles.heroText, { alignSelf: 'center' }]}>
+      <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ position: 'absolute', left: 10, zIndex: 100 }}>
+          <BackButton />
+        </View>
+        <Text
+          style={[
+            dynamicStyles.heroText,
+            { alignSelf: 'center', textAlign: 'center', width: '100%' },
+          ]}
+        >
           My Listed Properties
         </Text>
       </View>
@@ -89,13 +123,15 @@ const ListedProperiesScreen = () => {
       </View>
 
       {/* FILTERS */}
-      <View
+      <ScrollView
+        horizontal
         style={{
-          flexDirection: 'row',
           borderBottomColor: Colors.border,
           borderBottomWidth: 1,
-          marginTop: 10,
+          padding: 15,
+          paddingTop: 0,
         }}
+        contentContainerStyle={{ paddingRight: 30 }}
       >
         <FilterButton
           label="All"
@@ -127,14 +163,20 @@ const ListedProperiesScreen = () => {
           currentValue={status}
           onPress={() => handleStatusChange(4)}
         />
-      </View>
+        <FilterButton
+          label="Modification Required"
+          value={5}
+          currentValue={status}
+          onPress={() => handleStatusChange(5)}
+        />
+      </ScrollView>
 
       {/* LOADING FIRST PAGE */}
       {isLoading && params.page === 1 ? (
         <Text
           style={[
             dynamicStyles.heroText,
-            { textAlign: 'center', width: '100%' },
+            { textAlign: 'center', width: '100%', height: '80%' },
           ]}
         >
           Loading Properties...
@@ -161,32 +203,15 @@ const ListedProperiesScreen = () => {
           contentContainerStyle={{
             padding: 10,
             gap: 12,
+            flexGrow: 1,
             alignItems: 'center',
           }}
           showsVerticalScrollIndicator={false}
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
-          style={{ backgroundColor: Colors.background }}
-          ListFooterComponent={
-            isFetching && params.page > 1 ? (
-              <Text style={{ textAlign: 'center', padding: 10 }}>
-                Loading more...
-              </Text>
-            ) : (
-              !hasMore &&
-              list.length > 0 && (
-                <Text
-                  style={{
-                    textAlign: 'center',
-                    padding: 10,
-                    color: Colors.textMuted,
-                  }}
-                >
-                  No more properties
-                </Text>
-              )
-            )
-          }
+          style={{ backgroundColor: Colors.background, height: '100%' }}
+          ListFooterComponent={footer}
+          ListEmptyComponent={ListEmptyComponent}
         />
       )}
     </SafeAreaView>

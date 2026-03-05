@@ -24,6 +24,7 @@ interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
   formData: NFTFormData;
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
+  isActiveProperty?: boolean;
 }
 
 const propertyTypeOptions = [
@@ -94,10 +95,13 @@ export default function Step1(props: Readonly<StepProps>) {
   });
 
   useEffect(() => {
-    const existingDocuments =
-      props.formData.documents?.length > 0
-        ? props.formData.documents
-        : [{ documentName: '', file: null }];
+    let existingDocuments = [{ documentName: '', file: null }];
+
+    if (props.formData.documents?.length) {
+      existingDocuments = props.formData.documents.map((doc: any) =>
+        doc.documentUrl ? mapApiDocumentToForm(doc) : doc,
+      );
+    }
 
     reset({
       propertyName: props.formData.propertyName ?? '',
@@ -107,15 +111,10 @@ export default function Step1(props: Readonly<StepProps>) {
       documents: existingDocuments,
     });
 
-    const existingFile = existingDocuments[0]?.file;
+    const existingFile = existingDocuments?.[0]?.file;
 
     if (existingFile) {
-      setPickedFile({
-        name: existingFile.name,
-        uri: existingFile.uri,
-        type: existingFile.type,
-        size: existingFile.size,
-      } as DocumentPickerResponse);
+      setPickedFile(existingFile as DocumentPickerResponse);
     } else {
       setPickedFile(null);
     }
@@ -142,6 +141,7 @@ export default function Step1(props: Readonly<StepProps>) {
           <FormInput
             label="Property Name"
             required
+            readOnly={props.isActiveProperty}
             placeholder="e.g., Sunset Villa, Downtown Loft"
             hintText={(value.length ?? '0') + '/100 characters'}
             value={value}
@@ -158,6 +158,7 @@ export default function Step1(props: Readonly<StepProps>) {
           <FormInput
             label="Property Description"
             required
+            maxLength={500}
             multiline
             hintText={(value.length ?? '0') + '/500 characters'}
             placeholder="Describe the Property"
@@ -183,6 +184,7 @@ export default function Step1(props: Readonly<StepProps>) {
               <FormInput
                 label="Location"
                 required
+                readOnly={props.isActiveProperty}
                 placeholder="e.g., Miami, Florida"
                 value={value}
                 onChangeText={onChange}
@@ -192,7 +194,7 @@ export default function Step1(props: Readonly<StepProps>) {
           />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={dynamicStyles.label}>
+          <Text style={[dynamicStyles.label]}>
             Property Type
             <Text style={{ color: Colors.primary }}> *</Text>
           </Text>
@@ -207,27 +209,33 @@ export default function Step1(props: Readonly<StepProps>) {
                   valueField="value"
                   placeholder="Select Type"
                   value={value}
+                  disable={props.isActiveProperty}
                   onChange={item => onChange(item.value)}
-                  style={[dynamicStyles.input]}
+                  style={[dynamicStyles.input, { height: 30 }]}
                   activeColor={Colors.elevated}
                   placeholderStyle={dynamicStyles.dropdownPlaceholder}
-                  selectedTextStyle={dynamicStyles.dropdownSelectedText}
+                  selectedTextStyle={[
+                    dynamicStyles.dropdownSelectedText,
+                    {
+                      color: props.isActiveProperty
+                        ? Colors.textMuted
+                        : Colors.textPrimary,
+                    },
+                  ]}
                   containerStyle={dynamicStyles.dropdownContainer}
                   itemTextStyle={dynamicStyles.dropdownItemText}
                 />
 
-                {errors.propertyType && (
-                  <Text
-                    style={{
-                      color: Colors.error,
-                      fontSize: 10,
-                      marginLeft: 5,
-                      marginTop: 2,
-                    }}
-                  >
-                    {errors.propertyType?.message}
-                  </Text>
-                )}
+                <Text
+                  style={{
+                    color: Colors.error,
+                    fontSize: 10,
+                    marginLeft: 10,
+                    marginTop: 2,
+                  }}
+                >
+                  {errors.propertyType?.message}
+                </Text>
               </>
             )}
           />
@@ -246,7 +254,8 @@ export default function Step1(props: Readonly<StepProps>) {
               <FormInput
                 label="Document Name"
                 required
-                placeholder="e.g., Property Deed"
+                placeholder={'e.g., Property Deed'}
+                readOnly={props.isActiveProperty}
                 value={value}
                 onChangeText={onChange}
                 error={errors.documents?.[0]?.documentName?.message}
@@ -259,7 +268,8 @@ export default function Step1(props: Readonly<StepProps>) {
             Upload Document <Text style={{ color: Colors.primary }}> *</Text>
           </Text>
           <Button
-            style={[dynamicStyles.input, { marginBottom: 2 }]}
+            disabled={props.isActiveProperty}
+            style={[dynamicStyles.input, { marginTop: 2 }]}
             onPress={handlePickFile}
           >
             <Text
@@ -271,18 +281,16 @@ export default function Step1(props: Readonly<StepProps>) {
               {pickedFile ? pickedFile?.name : 'Select Document'}
             </Text>
           </Button>
-          {errors.documents?.[0]?.file && (
-            <Text
-              style={{
-                color: Colors.error,
-                fontSize: 10,
-                marginLeft: 5,
-                marginTop: 2,
-              }}
-            >
-              {errors.documents[0].file.message}
-            </Text>
-          )}
+          <Text
+            style={{
+              color: Colors.error,
+              fontSize: 10,
+              marginLeft: 10,
+              marginTop: 2,
+            }}
+          >
+            {errors.documents?.[0]?.file?.message}
+          </Text>
         </View>
       </View>
       <Button
@@ -300,3 +308,13 @@ export default function Step1(props: Readonly<StepProps>) {
     </View>
   );
 }
+
+const mapApiDocumentToForm = (doc: any) => ({
+  documentName: doc.title ?? '',
+  file: {
+    name: doc.fileName,
+    uri: doc.documentUrl,
+    type: 'application/octet-stream',
+    size: 0,
+  },
+});

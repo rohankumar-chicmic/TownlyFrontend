@@ -15,9 +15,7 @@ import Button from '@components/atoms/Button';
 import useTheme from '@hooks/useTheme';
 import { useInvestInPropertyMutation } from '@redux/PropertyApiReducer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
-import { useAppNavigation } from '@hooks/useNavigation';
 import Toast from 'react-native-toast-message';
-import { ROUTES } from 'src/navigation/constants';
 import { useAppToastConfig } from '@hooks/useAppToastConfig';
 
 interface Props {
@@ -43,7 +41,6 @@ export default function InvestPropertyModal({
   const [loading, setLoading] = useState(false);
 
   const { Colors } = useTheme();
-  const navigation = useAppNavigation();
   const totalCost = Number(shares || 0) * pricePerShare;
   const [investInProperty] = useInvestInPropertyMutation();
   const toastConfig = useAppToastConfig();
@@ -105,7 +102,12 @@ export default function InvestPropertyModal({
 
       setStep('form');
       onClose();
-      navigation.navigate(ROUTES.TRANSACTIONS);
+      Toast.show({
+        type: 'success',
+        text1: 'Invested Successfully',
+        text2: 'Successfully Bought ' + shares + ' Shares',
+        visibilityTime: 1500,
+      });
     } catch (error) {
       Toast.show({
         type: 'error',
@@ -143,7 +145,7 @@ export default function InvestPropertyModal({
               <>
                 <View style={dynamicStyles.header}>
                   <Text style={dynamicStyles.title}>Invest in Property</Text>
-                  <Pressable onPress={onClose}>
+                  <Pressable onPress={onClose} hitSlop={8}>
                     <Text style={dynamicStyles.close}>✕</Text>
                   </Pressable>
                 </View>

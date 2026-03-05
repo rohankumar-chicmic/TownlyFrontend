@@ -15,6 +15,7 @@ interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
   formData: NFTFormData;
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
+  isActiveProperty?: boolean;
 }
 
 const sanitizeInput = (text: string) => {
@@ -86,6 +87,7 @@ export default function Step2(props: Readonly<StepProps>) {
               <FormInput
                 label="Total Property Value (USD)"
                 required
+                readOnly={props.isActiveProperty}
                 placeholder="$ 0.0"
                 keyboardType="number-pad"
                 value={value?.toString() ?? ''}
@@ -106,6 +108,7 @@ export default function Step2(props: Readonly<StepProps>) {
                 label="Total Number of Shares"
                 required
                 placeholder="0"
+                readOnly={props.isActiveProperty}
                 keyboardType="number-pad"
                 value={value?.toString() ?? ''}
                 onChangeText={text => onChange(sanitizeInput(text))}
@@ -134,7 +137,7 @@ export default function Step2(props: Readonly<StepProps>) {
           </Text>
           <Text style={{ color: Colors.background }}>Price Per Share</Text>
           <Text style={{ color: Colors.background }}>Calculated as:</Text>
-          <Text style={{ color: Colors.background, fontWeight: '600'}}>
+          <Text style={{ color: Colors.background, fontWeight: '600' }}>
             {totalPropertyValue + '/' + numberOfShares}
           </Text>
         </View>
@@ -158,6 +161,7 @@ export default function Step2(props: Readonly<StepProps>) {
           <FormInput
             label="Rental Income (per month)"
             required
+            readOnly={props.isActiveProperty}
             placeholder="0"
             keyboardType="number-pad"
             value={value?.toString() ?? ''}
@@ -175,6 +179,7 @@ export default function Step2(props: Readonly<StepProps>) {
             label="Expected Annual Yield (%)"
             required
             placeholder="0"
+            readOnly={props.isActiveProperty}
             keyboardType="number-pad"
             value={value?.toString() ?? ''}
             onChangeText={text => onChange(sanitizeInput(text))}

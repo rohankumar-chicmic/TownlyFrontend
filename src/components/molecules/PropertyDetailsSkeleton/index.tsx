@@ -7,7 +7,7 @@ import SkeletonBox from '@components/atoms/SkeletonBox';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 
 // Matches the horizontal ScrollView with 4 stat pills
-function StatBarSkeleton({ border }: Readonly<{ border: string }>) {
+export function StatBarSkeleton({ border }: Readonly<{ border: string }>) {
   return (
     <ScrollView
       horizontal
@@ -34,7 +34,7 @@ function StatBarSkeleton({ border }: Readonly<{ border: string }>) {
 }
 
 // Matches InvestmentInfo — 6 cards in a 2-column grid
-function InvestmentInfoSkeleton({
+export function InvestmentInfoSkeleton({
   surface,
   border,
 }: Readonly<{
@@ -77,13 +77,13 @@ function InvestmentInfoSkeleton({
 }
 
 // Matches related properties horizontal FlatList
-function RelatedPropertiesSkeleton({
+export function RelatedPropertiesSkeleton({
   surface,
   border,
-}: {
+}: Readonly<{
   surface: string;
   border: string;
-}) {
+}>) {
   const CARD_WIDTH = SCREEN_WIDTH * 0.8;
   return (
     <View

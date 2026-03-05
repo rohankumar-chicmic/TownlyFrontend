@@ -8,6 +8,7 @@ import ConnectButton from '@components/atoms/ConnectButton';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { THEME } from '@theme/constants';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { ROUTES } from 'src/navigation/constants';
 
 export default function Header({
   route,
@@ -29,7 +30,10 @@ export default function Header({
           },
         ]}
       >
-        <View style={{ flexDirection: 'row' }}>
+        <Pressable
+          style={{ flexDirection: 'row' }}
+          onPress={() => navigation.navigate(ROUTES.HOME)}
+        >
           <Icons.Logo
             height={30}
             width={60}
@@ -37,7 +41,7 @@ export default function Header({
             borderColor={Colors.border}
           />
           <Text style={dynamicStyles.primaryText}>Townly</Text>
-        </View>
+        </Pressable>
         <View
           style={{
             flexDirection: 'row',

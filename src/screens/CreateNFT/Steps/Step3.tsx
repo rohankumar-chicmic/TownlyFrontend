@@ -16,6 +16,7 @@ interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
   formData: NFTFormData;
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
+  isActiveProperty?: boolean;
 }
 
 export default function Step3({
@@ -81,8 +82,10 @@ export default function Step3({
         <Text style={dynamicStyles.label}>
           Upload Image <Text style={{ color: Colors.primary }}> *</Text>
         </Text>
-
-        <Button style={dynamicStyles.input} onPress={handlePickImage}>
+        <Button
+          style={[dynamicStyles.input, { marginBottom: 10 }]}
+          onPress={handlePickImage}
+        >
           <Text
             style={{
               color: pickedImage ? Colors.primary : Colors.textMuted,

@@ -42,9 +42,16 @@ const TransactionsScreen = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* HEADER */}
-      <View style={{ padding: 10 }}>
-        <BackButton />
-        <Text style={[dynamicStyles.heroText, { alignSelf: 'center' }]}>
+      <View style={{ padding: 10, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={{ position: 'absolute', left: 10, zIndex: 100 }}>
+          <BackButton />
+        </View>
+        <Text
+          style={[
+            dynamicStyles.heroText,
+            { alignSelf: 'center', textAlign: 'center', width: '100%' },
+          ]}
+        >
           Transactions
         </Text>
       </View>
@@ -55,6 +62,8 @@ const TransactionsScreen = () => {
           flexDirection: 'row',
           borderBottomColor: Colors.border,
           borderBottomWidth: 1,
+          padding: 7,
+          paddingTop: 0,
         }}
       >
         <FilterButton

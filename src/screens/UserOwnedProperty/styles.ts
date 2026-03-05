@@ -25,7 +25,7 @@ const styles = (Colors: ThemeColors) =>
 
     location: {
       fontSize: 14,
-      color: Colors.textSecondary,
+      color: Colors.textPrimary,
       marginTop: 4,
     },
 

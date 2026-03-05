@@ -5,6 +5,7 @@ import m0000 from './0000_little_husk.sql';
 import m0001 from './0001_gray_sharon_ventura.sql';
 import m0002 from './0002_curly_sinister_six.sql';
 import m0003 from './0003_absent_bulldozer.sql';
+import m0004 from './0004_perpetual_domino.sql';
 
   export default {
     journal,
@@ -12,7 +13,8 @@ import m0003 from './0003_absent_bulldozer.sql';
       m0000,
 m0001,
 m0002,
-m0003
+m0003,
+m0004
     }
   }
   

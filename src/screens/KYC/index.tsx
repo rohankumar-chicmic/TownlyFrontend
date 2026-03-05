@@ -102,7 +102,7 @@ export default function KYCVerificationScreen() {
 
       Toast.show({
         type: 'success',
-        text1: 'Kyc is submitted successfully'
+        text1: 'Kyc is submitted successfully',
       });
     } catch (error: any) {
       console.error('KYC submission failed:', error);
@@ -123,7 +123,7 @@ export default function KYCVerificationScreen() {
 
   const handlePickFile = async () => {
     try {
-      const [result] = await pick({ type: [types.images] });
+      const [result] = await pick({ type: [types.images, types.pdf] });
 
       const file = {
         name: result.name,
@@ -152,15 +152,26 @@ export default function KYCVerificationScreen() {
           style={{ backgroundColor: Colors.background }}
           contentContainerStyle={dynamicStyles.container}
         >
-          <BackButton />
-          <Text
-            style={[
-              dynamicStyles.heroPrimarytext,
-              { alignSelf: 'center', textAlign: 'center' },
-            ]}
+          <View
+            style={{ flexDirection: 'row', justifyContent: 'space-between' }}
           >
-            Verify Your Identity
-          </Text>
+            <View>
+              <BackButton style={{ position: 'absolute', zIndex: 100 }} />
+            </View>
+            <Text
+              style={[
+                dynamicStyles.heroPrimarytext,
+                {
+                  alignSelf: 'center',
+                  textAlign: 'center',
+                  flex: 1,
+                  fontSize: 25,
+                },
+              ]}
+            >
+              Verify Your Identity
+            </Text>
+          </View>
           <Text
             style={[
               {
@@ -317,8 +328,6 @@ export default function KYCVerificationScreen() {
                       required
                       placeholder="e.g. Passport, License"
                       value={value}
-                      // ✅ Guard: reject update instead of using maxLength,
-                      // prevents phantom backspace bug on controlled TextInput
                       onChangeText={text => {
                         if (text.length <= 50) onChange(text);
                       }}
@@ -366,7 +375,7 @@ export default function KYCVerificationScreen() {
                     marginTop: 4,
                   }}
                 >
-                  Accepted: Images
+                  Allowed: jpeg, png, jpg and pdf.
                 </Text>
               </View>
             </View>

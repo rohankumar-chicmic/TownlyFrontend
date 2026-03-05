@@ -140,8 +140,8 @@ const Home = () => {
     [Colors, dynamicStyles, navigation],
   );
 
-  const handlePressed = (id: string) => {
-    navigation.push(ROUTES.PROPERTY_DETAILS, { id });
+  const handlePressed = (item: any) => {
+    navigation.push(ROUTES.PROPERTY_DETAILS, { item });
   };
 
   const throttledHandlePressed = throttle(handlePressed, 300);
@@ -167,7 +167,7 @@ const Home = () => {
         ) : (
           <CardContainer
             {...item}
-            onClick={() => throttledHandlePressed(item.id)}
+            onClick={() => throttledHandlePressed(item)}
           />
         )
       }

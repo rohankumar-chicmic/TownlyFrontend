@@ -4,7 +4,6 @@ import { StyleSheet } from 'react-native';
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     safeArea: {
-      flex: 1,
       backgroundColor: Colors.background,
     },
     container: {
@@ -47,7 +46,7 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '400',
     },
     notificationsContainer: {
-      padding: 10,
+      paddingHorizontal: 10,
       borderWidth: 1,
       backgroundColor: Colors.surface,
       borderColor: Colors.border,

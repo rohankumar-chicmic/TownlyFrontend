@@ -17,7 +17,7 @@ module.exports = function babelConfig(api) {
             '@hooks': './src/hooks',
           },
         },
-        'react-native-reanimated/plugin',
+        'react-native-worklets/plugin',
       ],
       ['inline-import', { extensions: ['.sql'] }],
     ],

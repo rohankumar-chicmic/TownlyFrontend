@@ -12,7 +12,6 @@ const styles = (Colors: ThemeColors) =>
     heroPrimarytext: {
       fontSize: 30,
       fontWeight: 'bold',
-      margin: 30,
       marginBottom: 10,
       color: Colors.textPrimary,
     },

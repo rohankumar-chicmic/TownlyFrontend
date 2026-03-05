@@ -6,6 +6,7 @@ import useTheme from '@hooks/useTheme';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import styles from './styles';
+import React from 'react';
 
 interface Props {
   transactions?: any[];
@@ -19,6 +20,7 @@ export default function RecentTransactionsSection({
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+  console.log(transactions);
   return (
     <View
       style={[

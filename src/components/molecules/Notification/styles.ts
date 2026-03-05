@@ -8,6 +8,7 @@ const styles = (Colors: ThemeColors) =>
       paddingVertical: 8,
       borderBottomWidth: 1,
       borderBottomColor: Colors.border,
+      paddingBottom: 10,
     },
     header: {
       flexDirection: 'row',

@@ -3,17 +3,24 @@ import { StyleSheet } from 'react-native';
 
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
+    wrapper: {
+      marginBottom: 8,
+    },
     row: {
       flexDirection: 'row',
       alignItems: 'center',
       width: '100%',
-      padding: 15,
-      borderRadius: 8,
-      justifyContent: 'space-between',
+      paddingHorizontal: 15,
       paddingVertical: 16,
+      borderTopLeftRadius: 8,
+      borderTopRightRadius: 8,
+      justifyContent: 'space-between',
       borderWidth: 1,
       borderColor: Colors.border,
       backgroundColor: Colors.background + '5',
+    },
+    rowClosed: {
+      borderRadius: 8,
     },
     incomeBadge: {
       backgroundColor: '#064e3b',
@@ -75,6 +82,45 @@ const styles = (Colors: ThemeColors) =>
       color: '#052e16',
       fontWeight: '700',
       fontSize: 12,
+    },
+
+    /* CHEVRON */
+    chevronIcon: {
+      marginLeft: 8,
+      fontSize: 16,
+      color: Colors.textMuted,
+      lineHeight: 18,
+    },
+    chevronOpen: {
+      transform: [{ rotate: '180deg' }],
+    },
+
+    /* DETAILS PANEL */
+    detailsContainer: {
+      borderWidth: 1,
+      borderTopWidth: 0,
+      borderColor: Colors.border,
+      borderBottomLeftRadius: 8,
+      borderBottomRightRadius: 8,
+      backgroundColor: Colors.background,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    detailRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 4,
+    },
+    detailLabel: {
+      fontSize: 12,
+      color: Colors.textMuted,
+      fontWeight: '500',
+    },
+    detailValue: {
+      fontSize: 12,
+      color: Colors.textPrimary,
+      fontWeight: '600',
     },
   });
 

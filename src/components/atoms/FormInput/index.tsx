@@ -26,51 +26,38 @@ export default function FormInput(props: Readonly<FormInputType>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   return (
-    <View style={{ padding: 5 }}>
+    <View style={{ padding: 5, paddingBottom: 0 }}>
       <Text style={[dynamicStyles.label, props.labelStyle]}>
         {props.label}{' '}
         {props.required && <Text style={{ color: Colors.primary }}>*</Text>}
       </Text>
       <TextInput
         placeholder={props.placeholder}
-        numberOfLines={1}
+        maxLength={100}
         placeholderTextColor={Colors.textMuted}
         style={[
           dynamicStyles.input,
           {
             borderColor: Colors.border,
             backgroundColor: Colors.background,
-            color: Colors.textPrimary,
+            color: props.readOnly ? Colors.textMuted : Colors.textPrimary,
           },
           props.style,
         ]}
         {...props}
       />
-      {props.error ? (
-        <Text
-          style={{
-            color: Colors.error,
-            fontSize: 10,
-            marginLeft: 5,
-            marginBottom: 4,
-          }}
-        >
-          {props.error as string}
-        </Text>
-      ) : (
-        props.hintText && (
-          <Text
-            style={{
-              color: Colors.textSecondary,
-              fontSize: 10,
-              marginLeft: 5,
-              marginBottom: 4,
-            }}
-          >
-            {props.hintText}
-          </Text>
-        )
-      )}
+
+      <Text
+        style={{
+          color: props.error ? Colors.error : Colors.textSecondary,
+          fontSize: 10,
+          marginLeft: 5,
+          marginTop: 2,
+          marginBottom: 2,
+        }}
+      >
+        {(props.error as string) || props.hintText}
+      </Text>
     </View>
   );
 }

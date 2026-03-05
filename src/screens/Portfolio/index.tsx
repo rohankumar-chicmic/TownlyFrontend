@@ -73,7 +73,7 @@ export default function Portfolio() {
       />
 
       <RecentTransactionsSection
-        transactions={transactions}
+        transactions={transactions?.slice(0, 5)}
         hasMore={transactionsHasMore}
       />
     </ScrollView>
