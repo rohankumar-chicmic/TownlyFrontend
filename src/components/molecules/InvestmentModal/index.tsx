@@ -21,7 +21,9 @@ import { useAppToastConfig } from '@hooks/useAppToastConfig';
 interface Props {
   visible: boolean;
   onClose: () => void;
+  handleSubmit: () => void;
   id: string;
+  name: string;
   pricePerShare: number;
   availableUnits: number;
 }
@@ -30,27 +32,31 @@ export default function InvestPropertyModal({
   visible,
   onClose,
   id,
+  name,
   pricePerShare,
   availableUnits,
+  handleSubmit,
 }: Readonly<Props>) {
   const MAX_LIMIT = Math.min(10000, availableUnits);
   const MIN_LIMIT = 1;
 
   const [shares, setShares] = useState('');
-  const [step, setStep] = useState<'form' | 'confirm'>('form');
   const [loading, setLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   const { Colors } = useTheme();
-  const totalCost = Number(shares || 0) * pricePerShare;
-  const [investInProperty] = useInvestInPropertyMutation();
-  const toastConfig = useAppToastConfig();
   const { dynamicStyles } = useStyles(styles);
+  const toastConfig = useAppToastConfig();
+
+  const totalCost = Number(shares || 0) * pricePerShare;
+
+  const [investInProperty] = useInvestInPropertyMutation();
 
   useEffect(() => {
     if (!visible) {
-      setStep('form');
       setShares('');
       setLoading(false);
+      setShowConfirmModal(false);
     }
   }, [visible]);
 
@@ -70,6 +76,7 @@ export default function InvestPropertyModal({
         text2: 'Cannot buy more than maximum shares',
         visibilityTime: 1000,
       });
+
       setShares(MAX_LIMIT.toString());
     } else {
       setShares(cleanValue);
@@ -88,7 +95,7 @@ export default function InvestPropertyModal({
       return;
     }
 
-    setStep('confirm');
+    setShowConfirmModal(true);
   };
 
   const handleConfirmInvestment = async () => {
@@ -100,19 +107,13 @@ export default function InvestPropertyModal({
         shares: Number(shares),
       }).unwrap();
 
-      setStep('form');
-      onClose();
-      Toast.show({
-        type: 'success',
-        text1: 'Invested Successfully',
-        text2: 'Successfully Bought ' + shares + ' Shares',
-        visibilityTime: 1500,
-      });
+      handleSubmit();
+      setShowConfirmModal(false);
     } catch (error) {
       Toast.show({
         type: 'error',
         text1: 'Investment Failed',
-        text2: 'Some Error occured' + error,
+        text2: 'Something went wrong' + error,
         visibilityTime: 1500,
       });
     } finally {
@@ -121,143 +122,140 @@ export default function InvestPropertyModal({
   };
 
   return (
-    <Modal
-      animationType="slide"
-      transparent
-      visible={visible}
-      style={{ flexGrow: 1 }}
-    >
-      <Pressable
-        style={dynamicStyles.backdrop}
-        onPress={() => {
-          Keyboard.dismiss();
-          onClose();
-        }}
-      />
+    <>
+      {/* Bottom Sheet Investment Modal */}
+      <Modal animationType="slide" transparent visible={visible}>
+        <Pressable
+          style={dynamicStyles.backdrop}
+          onPress={() => {
+            Keyboard.dismiss();
+          }}
+        />
 
-      <SafeAreaView style={dynamicStyles.sheet}>
-        <KeyboardAwareScrollView>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {step === 'form' ? (
-              <>
-                <View style={dynamicStyles.header}>
-                  <Text style={dynamicStyles.title}>Invest in Property</Text>
-                  <Pressable onPress={onClose} hitSlop={8}>
-                    <Text style={dynamicStyles.close}>✕</Text>
-                  </Pressable>
-                </View>
+        <SafeAreaView style={dynamicStyles.sheet}>
+          <KeyboardAwareScrollView>
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              {/* Header */}
+              <View style={dynamicStyles.header}>
+                <Text style={dynamicStyles.title}>Invest in Property</Text>
 
-                <Text style={dynamicStyles.label}>
-                  Number of Shares to Buy{' '}
-                  <Text style={dynamicStyles.required}>*</Text>
+                <Pressable onPress={onClose} hitSlop={8}>
+                  <Text style={dynamicStyles.close}>✕</Text>
+                </Pressable>
+              </View>
+              <Text style={dynamicStyles.propertyName}>{name}</Text>
+              {/* Input */}
+              <Text style={dynamicStyles.label}>
+                Number of Shares to Buy{' '}
+                <Text style={dynamicStyles.required}>*</Text>
+              </Text>
+              <TextInput
+                value={shares}
+                onChangeText={handleSharesChange}
+                keyboardType="number-pad"
+                placeholder="0"
+                placeholderTextColor={Colors.textMuted}
+                style={dynamicStyles.input}
+                cursorColor={Colors.outline}
+              />
+              <Text style={dynamicStyles.hint}>
+                Min: 1 • Max: {MAX_LIMIT} shares
+              </Text>
+              {/* Summary */}
+              <View style={dynamicStyles.card}>
+                <Row label="Shares" value={shares || 0} />
+                <Row label="Price per Share" value={`${pricePerShare} ETH`} />
+
+                <View style={dynamicStyles.divider} />
+
+                <Row
+                  label="Total Cost"
+                  value={`${totalCost.toFixed(3)} ETH`}
+                  bold
+                  large
+                />
+              </View>
+              {/* Info */}
+              <View style={dynamicStyles.info}>
+                <Text style={dynamicStyles.infoText}>
+                  Transaction Fee: ~0.05 ETH
                 </Text>
 
-                <TextInput
-                  value={shares}
-                  onChangeText={handleSharesChange}
-                  keyboardType="number-pad"
-                  placeholder="0"
-                  placeholderTextColor={Colors.textMuted}
-                  style={dynamicStyles.input}
-                  cursorColor={Colors.outline}
+                <Text style={dynamicStyles.infoSub}>
+                  You will receive an Investment NFT representing your share.
+                </Text>
+              </View>
+              {/* Footer */}
+              <View style={dynamicStyles.footer}>
+                <Button
+                  title="Cancel"
+                  variant="outline"
+                  onPress={onClose}
+                  textStyle={{ color: Colors.primary }}
                 />
 
-                <Text style={dynamicStyles.hint}>
-                  Min: 1 • Max: {MAX_LIMIT} shares
-                </Text>
+                <Button
+                  title={`Invest ${totalCost.toFixed(3)} ETH`}
+                  onPress={handleProceedToConfirm}
+                />
+              </View>
+            </ScrollView>
+          </KeyboardAwareScrollView>
+        </SafeAreaView>
 
-                {/* SUMMARY CARD */}
-                <View style={dynamicStyles.card}>
-                  <Row label="Shares" value={shares || 0} />
-                  <Row label="Price per Share" value={`${pricePerShare} ETH`} />
-                  <View style={dynamicStyles.divider} />
-                  <Row
-                    label="Total Cost"
-                    value={`${totalCost.toFixed(3)} ETH`}
-                    bold
-                    large
-                  />
-                </View>
+        <Toast config={toastConfig} />
+      </Modal>
 
-                <View style={dynamicStyles.info}>
-                  <Text style={dynamicStyles.infoText}>
-                    Transaction Fee: ~0.05 ETH
-                  </Text>
-                  <Text style={dynamicStyles.infoSub}>
-                    You will receive an Investment NFT representing your share.
-                  </Text>
-                </View>
+      {/* Center Confirmation Modal */}
+      <Modal
+        visible={showConfirmModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowConfirmModal(false)}
+      >
+        <View style={dynamicStyles.centerOverlay}>
+          <View style={dynamicStyles.centerModal}>
+            <Text style={dynamicStyles.centerTitle}>Confirm Investment</Text>
 
-                {/* FOOTER */}
-                <View style={dynamicStyles.footer}>
-                  <Button
-                    title="Cancel"
-                    variant="outline"
-                    onPress={onClose}
-                    textStyle={{ color: Colors.primary }}
-                  />
+            <Text style={dynamicStyles.centerText}>
+              Please confirm your investment details.
+            </Text>
 
-                  <Button
-                    title={`Invest ${totalCost.toFixed(3)} ETH`}
-                    onPress={handleProceedToConfirm}
-                  />
-                </View>
-              </>
-            ) : (
-              <>
-                <View style={dynamicStyles.header}>
-                  <Text style={dynamicStyles.title}>Confirm Investment</Text>
-                  <Pressable onPress={onClose}>
-                    <Text style={dynamicStyles.close}>✕</Text>
-                  </Pressable>
-                </View>
+            <View style={dynamicStyles.card}>
+              <Row label="Shares" value={shares} />
+              <Row label="Price per Share" value={`${pricePerShare} ETH`} />
 
-                <View style={dynamicStyles.card}>
-                  <Row label="Shares" value={shares} />
-                  <Row label="Price per Share" value={`${pricePerShare} ETH`} />
-                  <View style={dynamicStyles.divider} />
-                  <Row
-                    label="Total Cost"
-                    value={`${totalCost.toFixed(3)} ETH`}
-                    bold
-                    large
-                  />
-                </View>
+              <View style={dynamicStyles.divider} />
 
-                <View style={dynamicStyles.info}>
-                  <Text style={dynamicStyles.infoText}>
-                    Transaction Fee: ~0.05 ETH
-                  </Text>
-                  <Text style={dynamicStyles.infoSub}>
-                    Please confirm this blockchain transaction.
-                  </Text>
-                </View>
+              <Row
+                label="Total Cost"
+                value={`${totalCost.toFixed(3)} ETH`}
+                bold
+                large
+              />
+            </View>
 
-                <View style={dynamicStyles.footer}>
-                  <Button
-                    title="Cancel"
-                    variant="outline"
-                    textStyle={{ color: Colors.primary }}
-                    onPress={() => setStep('form')}
-                  />
+            <View style={dynamicStyles.modalButtonRow}>
+              <Button
+                onPress={() => setShowConfirmModal(false)}
+                title="Cancel"
+                variant="outline"
+                textStyle={{ color: Colors.primary }}
+              ></Button>
 
-                  <Button
-                    title={loading ? 'Processing...' : 'Confirm Investment'}
-                    onPress={handleConfirmInvestment}
-                    disabled={loading}
-                  />
-                </View>
-              </>
-            )}
-          </ScrollView>
-        </KeyboardAwareScrollView>
-      </SafeAreaView>
-
-      <Toast config={toastConfig} />
-    </Modal>
+              <Button
+                onPress={handleConfirmInvestment}
+                title={loading ? 'Submitting' : 'Confirm'}
+              ></Button>
+            </View>
+          </View>
+        </View>
+        <Toast config={toastConfig} />
+      </Modal>
+    </>
   );
 }
 
@@ -277,6 +275,7 @@ function Row({
   return (
     <View style={dynamicStyles.row}>
       <Text style={dynamicStyles.rowLabel}>{label}</Text>
+
       <Text
         style={[
           dynamicStyles.rowValue,

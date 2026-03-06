@@ -12,6 +12,7 @@ import Step3Icon from '@assets/svg/Step3Icon.svg';
 import Step4Icon from '@assets/svg/Step4Icon.svg';
 import Drawer from '@assets/svg/drawer-svgrepo-com.svg';
 import BackLogo from '@assets/svg/navigation-back-arrow-svgrepo-com.svg';
+import BellIcon from '@assets/svg/bell-svgrepo-com.svg';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 const iconStyle = ({
@@ -49,4 +50,5 @@ export const Icons = {
   Step4Icon: (params: iconProps) => Step4Icon({ ...iconStyle({ ...params }) }),
   Drawer: (params: iconProps) => Drawer({ ...iconStyle({ ...params }) }),
   BackLogo: (params: iconProps) => BackLogo({ ...iconStyle({ ...params }) }),
+  BellIcon: (params: iconProps) => BellIcon({ ...iconStyle({ ...params }) }),
 };

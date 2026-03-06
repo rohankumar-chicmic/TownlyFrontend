@@ -7,14 +7,14 @@ interface InitialStateType {
   userData: any;
   theme: THEME;
   kycStatus: number;
-  unreadNotifcations: boolean;
+  unreadNotifications: boolean;
 }
 
 const initialState: InitialStateType = {
   userToken: undefined,
   userData: undefined,
   theme: THEME.DEVICE,
-  unreadNotifcations: false,
+  unreadNotifications: false,
   kycStatus: 0,
 };
 
@@ -35,7 +35,7 @@ const authReducer = createSlice({
       state.theme = action.payload;
     },
     hasUnreadNotifications(state, action) {
-      state.unreadNotifcations = action.payload;
+      state.unreadNotifications = action.payload;
     },
   },
 });

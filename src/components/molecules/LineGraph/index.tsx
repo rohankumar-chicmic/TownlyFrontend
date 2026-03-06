@@ -4,6 +4,7 @@ import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import { hexToRGBA } from '@utils/utility';
+import { LineGraphSkeleton } from '../SkeletonPortfolio';
 
 export interface LinePoint {
   label: string;
@@ -17,15 +18,19 @@ export interface LineGraphProps {
 const getYAxisScale = (data: number[], sections = 4) => {
   const min = Math.min(...data);
   const max = Math.max(...data);
+  const isFlat = max - min < 0.001;
 
-  const range = max - min || max * 0.02;
-  const step = range / sections;
-  const padding = range * 0.1;
+  const range = isFlat ? min * 0.01 : max - min;
+  const padding = range * 0.2;
+
+  const adjustedMin = min - padding;
+  const adjustedMax = max + padding;
+  const step = (adjustedMax - adjustedMin) / sections;
 
   return {
-    maxValue: range + padding,
+    maxValue: adjustedMax - adjustedMin,
     stepValue: step,
-    minValue: min,
+    minValue: adjustedMin,
   };
 };
 
@@ -38,10 +43,20 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
     label: item.label || String(index),
   }));
 
+  const chartWidth = Dimensions.get('window').width * 0.7;
+  const spacing =
+    lineData.length > 1
+      ? (chartWidth - 30) / (lineData.length - 1)
+      : chartWidth;
+
   const values = data.map(d => Number(d.value) || 0);
   const { maxValue, minValue } = getYAxisScale(values, 4);
 
-  console.log(lineData);
+  if (!lineData || lineData.length === 0) {
+    return (
+      <LineGraphSkeleton surface={Colors.surface} border={Colors.border} />
+    ); // Or a loading skeleton/placeholder
+  }
 
   return (
     <Pressable>
@@ -56,6 +71,7 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             paddingRight: 10,
             paddingBottom: 10,
             alignItems: 'center',
+            overflow: 'visible',
           }}
         >
           <LineChart
@@ -63,19 +79,24 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             yAxisLabelWidth={40}
             yAxisOffset={minValue}
             curved
+            onlyPositive
+            interpolateMissingValues
+            extrapolateMissingValues
+            // stepValue={stepValue}
             curvature={0.04}
             data={lineData}
-            width={Dimensions.get('window').width * 0.7}
             overflowBottom={20}
             thickness={2}
             isAnimated
-            spacing={Dimensions.get('window').width * 0.11}
-            initialSpacing={15}
+            width={chartWidth}
+            spacing={spacing}
+            initialSpacing={13}
             endSpacing={0}
             color={hexToRGBA(Colors.primary)}
             height={Dimensions.get('window').height * 0.15}
-            dataPointsHeight={8}
-            dataPointsWidth={8}
+            adjustToWidth
+            dataPointsHeight={10}
+            dataPointsWidth={10}
             dataPointsColor={hexToRGBA(Colors.primary)}
             startFillColor={hexToRGBA(Colors.primary)}
             startOpacity={0.02}
@@ -93,7 +114,6 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
               marginTop: 3,
             }}
             rulesColor={Colors.border}
-            animateOnDataChange
             showVerticalLines
             verticalLinesColor={Colors.border}
             noOfSections={4}

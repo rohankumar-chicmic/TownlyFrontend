@@ -7,7 +7,7 @@ const SCREEN_WIDTH = Dimensions.get('window').width;
 const CARD_WIDTH = SCREEN_WIDTH * 0.7;
 
 // Matches PortfolioHeader
-function HeaderSkeleton() {
+export function HeaderSkeleton() {
   return (
     <View style={{ paddingVertical: 12, gap: 8 }}>
       <SkeletonBox width={160} height={14} />
@@ -17,7 +17,7 @@ function HeaderSkeleton() {
 }
 
 // Matches InvestmentSummaryBar — horizontal scroll of 4 cards
-function SummaryBarSkeleton({
+export function SummaryBarSkeleton({
   borderColor,
 }: Readonly<{ borderColor: string }>) {
   return (
@@ -48,7 +48,7 @@ function SummaryBarSkeleton({
 }
 
 // Matches DonutGraph
-function DonutSkeleton({
+export function DonutSkeleton({
   surface,
   border,
 }: Readonly<{
@@ -95,7 +95,7 @@ function DonutSkeleton({
 }
 
 // Matches LineGraph
-function LineGraphSkeleton({
+export function LineGraphSkeleton({
   surface,
   border,
 }: Readonly<{

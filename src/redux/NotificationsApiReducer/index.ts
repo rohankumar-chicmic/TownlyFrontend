@@ -18,7 +18,7 @@ const NotificationApi = api.injectEndpoints({
         method: 'GET',
         params: { page, pageSize },
       }),
-
+      providesTags: ['Notifications'],
       serializeQueryArgs: ({ endpointName }) => endpointName,
 
       merge: (currentCache, newData, { arg }) => {
@@ -55,6 +55,7 @@ const NotificationApi = api.injectEndpoints({
         method: 'GET',
         params: { page, pageSize },
       }),
+      providesTags: ['Notifications'],
 
       serializeQueryArgs: ({ endpointName }) => endpointName,
 
@@ -76,17 +77,21 @@ const NotificationApi = api.injectEndpoints({
         return currentArg?.page !== previousArg?.page;
       },
     }),
+
     readNotification: builder.mutation<void, string>({
       query: (notificationId: string) => ({
         url: `/notifications/${notificationId}/read`,
         method: 'POST',
       }),
+      invalidatesTags: ['Notifications'],
     }),
+
     readAllNotification: builder.mutation<void, void>({
       query: () => ({
         url: `/notifications/me/read-all`,
         method: 'POST',
       }),
+      invalidatesTags: ['Notifications'],
     }),
     sendFCMToken: builder.mutation<
       void,
@@ -101,6 +106,13 @@ const NotificationApi = api.injectEndpoints({
         },
       }),
     }),
+    deleteNotification: builder.mutation({
+      query: id => ({
+        url: `/api/notifications/{id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Notifications'],
+    }),
   }),
   overrideExisting: true,
 });
@@ -110,6 +122,7 @@ export const {
   useGetMyUnreadNotificationsQuery,
   useReadAllNotificationMutation,
   useReadNotificationMutation,
+  useDeleteNotificationMutation,
   useSendFCMTokenMutation,
 } = NotificationApi;
 

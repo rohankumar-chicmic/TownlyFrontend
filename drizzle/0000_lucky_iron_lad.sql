@@ -1,3 +1,28 @@
+CREATE TABLE `accountBalances` (
+	`walletAddress` text PRIMARY KEY NOT NULL,
+	`totalGranted` real DEFAULT 0 NOT NULL,
+	`totalUsed` real DEFAULT 0 NOT NULL,
+	`availableBalance` real DEFAULT 0 NOT NULL,
+	`syncedAt` text
+);
+--> statement-breakpoint
+CREATE TABLE `featuredProperties` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`location` text NOT NULL,
+	`imageUrl` text NOT NULL,
+	`propertyType` text NOT NULL,
+	`annualYieldPercent` real NOT NULL,
+	`approvedValuation` real NOT NULL,
+	`availableUnits` integer NOT NULL,
+	`totalUnits` integer NOT NULL,
+	`riskScore` real,
+	`pricePerUnitEth` real NOT NULL,
+	`description` text,
+	`userOwned` integer DEFAULT false,
+	`status` integer
+);
+--> statement-breakpoint
 CREATE TABLE `portfolioAllocation` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`category` text NOT NULL,
@@ -16,10 +41,9 @@ CREATE TABLE `portfolioSummary` (
 );
 --> statement-breakpoint
 CREATE TABLE `portfolioValueHistory` (
-	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`label` text NOT NULL,
-	`value` real NOT NULL,
-	`recordedAt` text
+	`id` integer PRIMARY KEY NOT NULL,
+	`data` text NOT NULL,
+	`updatedAt` text
 );
 --> statement-breakpoint
 CREATE TABLE `properties` (
@@ -31,13 +55,10 @@ CREATE TABLE `properties` (
 	`status` integer,
 	`approvedValuation` real NOT NULL,
 	`totalUnits` integer NOT NULL,
-	`soldUnits` integer NOT NULL,
 	`availableUnits` integer NOT NULL,
-	`investmentProgressPercent` real NOT NULL,
-	`totalAmountInvestedUsd` real NOT NULL,
 	`pricePerUnitEth` real NOT NULL,
 	`annualYieldPercent` real NOT NULL,
-	`riskScore` real NOT NULL
+	`riskScore` real
 );
 --> statement-breakpoint
 CREATE TABLE `transactions` (
@@ -49,7 +70,7 @@ CREATE TABLE `transactions` (
 	`currency` text NOT NULL,
 	`amountUsd` real NOT NULL,
 	`amountEth` real NOT NULL,
-	`ethAmountAtExecution` real NOT NULL,
+	`ethAmountAtExecution` real,
 	`ethUsdRateAtExecution` real NOT NULL,
 	`createdAt` text NOT NULL,
 	`syncedAt` text
@@ -62,7 +83,7 @@ CREATE TABLE `userInvestments` (
 	`propertyType` text NOT NULL,
 	`propertyImageUrl` text,
 	`location` text NOT NULL,
-	`riskScore` real NOT NULL,
+	`riskScore` real,
 	`annualYieldPercent` real NOT NULL,
 	`sharesPurchased` integer NOT NULL,
 	`totalInvestedEth` real NOT NULL,

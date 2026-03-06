@@ -54,7 +54,14 @@ const baseQueryWithInterceptor: BaseQueryFn<
 const api = createApi({
   baseQuery: baseQueryWithInterceptor,
   endpoints: () => ({}),
-  tagTypes: ['MyInvestedProperties', 'MyProperties', 'MyPropertyDetail'],
+  tagTypes: [
+    'MyInvestedProperties',
+    'MyProperties',
+    'MyPropertyDetail',
+    'Properties',
+    'FeaturedProperties',
+    'Notifications',
+  ],
 });
 
 export default api;

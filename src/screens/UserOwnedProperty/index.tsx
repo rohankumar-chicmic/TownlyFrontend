@@ -80,7 +80,7 @@ export default function UserOwnedProperty() {
   };
 
   if (isLoading) return <PropertyDetailsSkeleton />;
-  console.log(data);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView

@@ -50,7 +50,6 @@ const propertyApi = api.injectEndpoints({
           formData.append(`Documents[${idx}].Title`, doc.documentName ?? '');
         });
 
-        console.log(data?.documents);
         return {
           url: '/properties',
           method: 'POST',
@@ -107,6 +106,8 @@ const propertyApi = api.injectEndpoints({
         params,
       }),
 
+      providesTags: ['Properties'],
+
       serializeQueryArgs: ({ endpointName, queryArgs }) => {
         return `${endpointName}-${queryArgs.search}-${queryArgs.propertyType}`;
       },
@@ -150,10 +151,12 @@ const propertyApi = api.injectEndpoints({
 
     getFeaturedProperties: builder.query<PropertyCardProps[], void>({
       query: () => ({ url: '/properties/featured', method: 'GET' }),
+      providesTags: ['FeaturedProperties'],
     }),
 
     getPropertyDetails: builder.query<PropertyDetailsType, string>({
       query: id => ({ url: `/properties/${id}`, method: 'GET' }),
+      providesTags: ['Properties'],
     }),
 
     getMyPropertyDetails: builder.query<MyPropertyDetailsType, string>({
@@ -233,7 +236,11 @@ const propertyApi = api.injectEndpoints({
       { propertyId: string; shares: number }
     >({
       query: body => ({ url: '/investments', method: 'POST', body }),
-      invalidatesTags: ['MyInvestedProperties'],
+      invalidatesTags: [
+        'MyInvestedProperties',
+        'Properties',
+        'FeaturedProperties',
+      ],
     }),
 
     deleteProperty: builder.mutation<void, string>({

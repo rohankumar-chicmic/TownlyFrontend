@@ -196,8 +196,16 @@ export default function Step2(props: Readonly<StepProps>) {
           onPress={() => props.setStep(prev => prev - 1)}
         />
 
-        <Button title="Continue" onPress={handleSubmit(handleContinue)}>
-          <Icons.Arrow height={15} width={15} />
+        <Button
+          title="Continue"
+          onPress={handleSubmit(handleContinue)}
+          textStyle={{ marginHorizontal: 10 }}
+        >
+          <Icons.Arrow
+            height={15}
+            width={15}
+            color={Colors.background}
+          ></Icons.Arrow>
         </Button>
       </View>
     </View>

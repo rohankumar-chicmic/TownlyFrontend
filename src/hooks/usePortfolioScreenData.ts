@@ -164,7 +164,7 @@ export const usePortfolioScreenData = () => {
   );
 
   const lineGraphData = useMemo(
-    () => lineData ?? dbData.valueHistory ?? [],
+    () => lineData ?? dbData.valueHistory?.[0]?.data ?? [],
     [lineData, dbData.valueHistory],
   );
 

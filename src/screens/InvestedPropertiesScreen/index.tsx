@@ -95,9 +95,7 @@ const InvestedPropertiesScreen = () => {
           marginVertical: 15,
           color: Colors.textSecondary,
         }}
-      >
-        No more invested properties
-      </Text>
+      ></Text>
     );
   }
 

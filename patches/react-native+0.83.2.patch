@@ -1,0 +1,53 @@
+diff --git a/node_modules/react-native/Libraries/Components/TextInput/TextInput.js b/node_modules/react-native/Libraries/Components/TextInput/TextInput.js
+index 5cebe10..46df2c5 100644
+--- a/node_modules/react-native/Libraries/Components/TextInput/TextInput.js
++++ b/node_modules/react-native/Libraries/Components/TextInput/TextInput.js
+@@ -899,7 +899,7 @@ const TextInput: component(
+   ...props: React.ElementConfig<typeof InternalTextInput>
+ ) = function TextInput({
+   ref: forwardedRef,
+-  allowFontScaling = true,
++  allowFontScaling = false,
+   rejectResponderTermination = true,
+   underlineColorAndroid = 'transparent',
+   autoComplete,
+@@ -918,7 +918,7 @@ const TextInput: component(
+ }) {
+   return (
+     <InternalTextInput
+-      allowFontScaling={allowFontScaling}
++      allowFontScaling={false}
+       rejectResponderTermination={rejectResponderTermination}
+       underlineColorAndroid={underlineColorAndroid}
+       editable={readOnly !== undefined ? !readOnly : editable}
+diff --git a/node_modules/react-native/Libraries/Text/Text.js b/node_modules/react-native/Libraries/Text/Text.js
+index f30261d..a193113 100644
+--- a/node_modules/react-native/Libraries/Text/Text.js
++++ b/node_modules/react-native/Libraries/Text/Text.js
+@@ -46,7 +46,7 @@ if (ReactNativeFeatureFlags.reduceDefaultPropsInText()) {
+     accessible,
+     accessibilityLabel,
+     accessibilityState,
+-    allowFontScaling,
++    allowFontScaling=false,
+     'aria-busy': ariaBusy,
+     'aria-checked': ariaChecked,
+     'aria-disabled': ariaDisabled,
+@@ -318,7 +318,7 @@ if (ReactNativeFeatureFlags.reduceDefaultPropsInText()) {
+     importantForAccessibility,
+     accessibilityLabel,
+     accessibilityState,
+-    allowFontScaling,
++    allowFontScaling=false,
+     'aria-busy': ariaBusy,
+     'aria-checked': ariaChecked,
+     'aria-disabled': ariaDisabled,
+@@ -575,7 +575,7 @@ if (ReactNativeFeatureFlags.reduceDefaultPropsInText()) {
+           accessibilityLabel={_accessibilityLabel}
+           accessibilityState={_accessibilityState}
+           accessible={_accessible}
+-          allowFontScaling={allowFontScaling !== false}
++          allowFontScaling={false}
+           disabled={_disabled}
+           ellipsizeMode={ellipsizeMode ?? 'tail'}
+           importantForAccessibility={_importantForAccessibility}

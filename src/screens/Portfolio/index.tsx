@@ -41,7 +41,7 @@ export default function Portfolio() {
 
   if (!userToken) return <PortfolioWithoutAuth />;
   if (kycStatus !== 2) return <KYCpendingPortfolio />;
-  console.log(listedItems);
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}

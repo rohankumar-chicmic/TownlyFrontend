@@ -76,7 +76,10 @@ const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
           <View style={dynamicStyles.locationRow}>
             <Icons.Location width={12} height={12} color={Colors.primary} />
             <Text
-              style={[dynamicStyles.locationText, { color: Colors.textMuted }]}
+              style={[
+                dynamicStyles.locationText,
+                { color: Colors.textPrimary },
+              ]}
               numberOfLines={1}
             >
               {data?.location}
@@ -98,7 +101,7 @@ const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
 
           <View style={dynamicStyles.riskRow}>
             <Text
-              style={[dynamicStyles.riskLabel, { color: Colors.textMuted }]}
+              style={[dynamicStyles.riskLabel, { color: Colors.textSecondary }]}
             >
               Shares Owned
             </Text>

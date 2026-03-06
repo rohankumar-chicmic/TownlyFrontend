@@ -78,12 +78,14 @@ export default function WalletScreen() {
   const { disconnect } = useAppKit();
   const navigation = useAppNavigation();
   const [inputError, setInputError] = useState('');
-  const [requestCurrency, { isSuccess }] = useRequestCurrencyMutation();
+  const [requestCurrency] = useRequestCurrencyMutation();
   const { data: balance } = useAccountBalance(walletAddress);
   const [isTemporarilyDisabled, setIsTemporarilyDisabled] = useState(false);
   const handleRequestCurrency = async (rawAmount: string) => {
     try {
+      setIsTemporarilyDisabled(true);
       if (!rawAmount) return;
+
       const cleaned = rawAmount.replaceAll(',', '').trim();
       const num = Number(cleaned);
 
@@ -91,20 +93,37 @@ export default function WalletScreen() {
         setInputError('Invalid number');
         return;
       }
+
       if (num < 1 || num > 999) {
         setInputError('Amount must be between 1 and 999');
         return;
       }
+
       await requestCurrency(rawAmount.toString());
+
       setInputError('');
       setAmount('');
 
       Toast.show({
         type: 'info',
-        text1: 'request sent to admin',
+        text1: 'Request succesful',
+        text2:
+          'Request of ' +
+          rawAmount +
+          ' dummy tokens has been succesfully sent to admin',
       });
     } catch (e: any) {
       console.log(e);
+
+      Toast.show({
+        type: 'error',
+        text1: 'Request failed',
+        text2: 'Sorry, Your Request failed.',
+      });
+    } finally {
+      setTimeout(() => {
+        setIsTemporarilyDisabled(false);
+      }, 2000);
     }
   };
 
@@ -151,18 +170,6 @@ export default function WalletScreen() {
     totalUsed: balance?.totalUsed ?? 0,
     available: balance?.availableBalance ?? 0,
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      setIsTemporarilyDisabled(true);
-
-      const timer = setTimeout(() => {
-        setIsTemporarilyDisabled(false);
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [isSuccess]);
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -255,6 +262,7 @@ export default function WalletScreen() {
                 maxLength={3}
                 value={amount}
                 onChangeText={setAmount}
+                hintText="Min: 1 - Max: 999"
                 error={inputError}
               ></FormInput>
             </View>

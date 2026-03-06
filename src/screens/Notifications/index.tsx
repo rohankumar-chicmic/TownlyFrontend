@@ -27,11 +27,13 @@ const Notifications = () => {
   const dispatch = useAppDispatch();
 
   const userToken = useAppSelector(state => state.auth.userToken);
+  const hasUnread = useAppSelector(state => state.auth.unreadNotifications);
 
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [isPressed, setIsPressed] = useState(false);
   const [pageAll, setPageAll] = useState(1);
   const [pageUnread, setPageUnread] = useState(1);
+  const [isMarkingAllRead, setIsMarkingAllRead] = useState(false);
 
   const isAllFilter = filter === 'all';
 
@@ -91,7 +93,7 @@ const Notifications = () => {
   const handleMarkAllAsRead = async () => {
     try {
       if (!userToken) return;
-
+      setIsMarkingAllRead(true);
       await readAllNotifications().unwrap();
 
       setPageAll(1);
@@ -102,6 +104,8 @@ const Notifications = () => {
       dispatch(hasUnreadNotifications(false));
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsMarkingAllRead(false);
     }
   };
 
@@ -114,9 +118,12 @@ const Notifications = () => {
 
       if (item.isRead) return;
 
+      if (unreadCount === 1) {
+        dispatch(hasUnreadNotifications(false));
+      }
+
       await readSingleNotification(item.id);
-      refetchAll();
-      refetchUnread();
+      await Promise.all([refetchAll(), refetchUnread()]);
     } catch (error) {
       console.log(error);
     }
@@ -139,6 +146,15 @@ const Notifications = () => {
       setPageUnread(1);
     }
   }, [isAllFilter]);
+
+  useEffect(() => {
+    if (hasUnread) {
+      setPageAll(1);
+      setPageUnread(1);
+      refetchAll();
+      refetchUnread();
+    }
+  }, [hasUnread, refetchAll, refetchUnread]);
 
   const renderItem = ({ item }: { item: NotificationItem }) => (
     <Notification
@@ -245,7 +261,7 @@ const Notifications = () => {
       </View>
 
       <View style={dynamicStyles.container}>
-        {isLoadingNotifications ? (
+        {isLoadingNotifications || isMarkingAllRead ? (
           <View style={{ width: '100%', alignContent: 'center' }}>
             <Text style={[dynamicStyles.heroText, { textAlign: 'center' }]}>
               Loading Notifications...
@@ -265,7 +281,13 @@ const Notifications = () => {
             refreshing={isRefreshing}
             ListFooterComponent={
               shouldShowFooter ? (
-                <Text style={{ textAlign: 'center', padding: 10 }}>
+                <Text
+                  style={{
+                    textAlign: 'center',
+                    padding: 10,
+                    color: Colors.textMuted,
+                  }}
+                >
                   Loading...
                 </Text>
               ) : null

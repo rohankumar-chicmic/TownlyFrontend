@@ -13,7 +13,7 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
     { label: 'Name', value: item.propertyName },
     { label: 'Type', value: isIncome ? 'Income' : 'Purchase' },
     { label: 'Amount (USD)', value: `$${item.amountUsd?.toLocaleString()}` },
-    { label: 'Amount (ETH)', value: `${item.amountEth?.toFixed(2)} ETH` },
+    { label: 'Amount (ETH)', value: `${item.amountEth} ETH` },
     ...(item.tokens ? [{ label: 'Tokens', value: `${item.tokens}` }] : []),
     { label: 'Date', value: item.createdAt.toString().split('T')[0] },
     {

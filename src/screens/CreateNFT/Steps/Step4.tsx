@@ -30,7 +30,7 @@ interface StepProps {
 export default function Step4(props: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
-  console.log(props.formData);
+
   const [makeProperty, { isLoading: isCreating }] = useMakePropertyMutation();
   const [editProperty, { isLoading: isEditing }] = useEditPropertyMutation();
   const [resubmitProperty, { isLoading: isResubmitting }] =
@@ -102,8 +102,6 @@ export default function Step4(props: Readonly<StepProps>) {
       });
     }
   }, 200);
-
-  console.log(props.isEdit);
 
   return (
     <View style={dynamicStyles.containerSurface}>
@@ -188,7 +186,7 @@ export default function Step4(props: Readonly<StepProps>) {
               key={document.documentName}
               style={{
                 flexDirection: 'row',
-                width: '100%',
+                width: '98%',
                 justifyContent: 'space-between',
                 alignItems: 'flex-start',
               }}
@@ -208,7 +206,6 @@ export default function Step4(props: Readonly<StepProps>) {
               >
                 <Text
                   style={{
-                    marginLeft: 6,
                     color: Colors.primary,
                     fontSize: 13,
                     textAlign: 'right',

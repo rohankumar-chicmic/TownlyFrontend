@@ -22,14 +22,13 @@ export const usePortfolioData = () => {
   const { data: summary } = useLiveQuery(db.select().from(portfolioSummary));
   const { data: holdings } = useLiveQuery(db.select().from(userInvestments));
   const { data: valueHistory } = useLiveQuery(
-    db.select().from(portfolioValueHistory),
+    db.select().from(portfolioValueHistory).limit(1),
   );
   const { data: allocation } = useLiveQuery(
     db.select().from(portfolioAllocation),
   );
   const { data: txHistory } = useLiveQuery(db.select().from(transactions));
   const { data: myProperties } = useLiveQuery(db.select().from(properties));
-
   return {
     summary: summary?.[0] ?? null,
     holdings,
@@ -129,16 +128,24 @@ export const saveUserInvestments = async (data: NewUserInvestment[]) => {
 export const savePortfolioSnapshot = async (data: NewPortfolioSnapshot) => {
   return await db
     .insert(portfolioValueHistory)
-    .values({ ...data, recordedAt: new Date().toISOString() });
+    .values({ ...data, updatedAt: new Date().toISOString() });
 };
 
-export const savePortfolioSnapshots = async (data: NewPortfolioSnapshot[]) => {
-  const rows = data.map(d => ({ ...d, recordedAt: new Date().toISOString() }));
-
-  await db.transaction(async tx => {
-    await tx.delete(portfolioValueHistory);
-    await tx.insert(portfolioValueHistory).values(rows);
-  });
+export const savePortfolioSnapshots = async (data: any[]) => {
+  await db
+    .insert(portfolioValueHistory)
+    .values({
+      id: 1,
+      data,
+      updatedAt: new Date().toISOString(),
+    })
+    .onConflictDoUpdate({
+      target: portfolioValueHistory.id,
+      set: {
+        data,
+        updatedAt: new Date().toISOString(),
+      },
+    });
 };
 
 export const savePortfolioAllocation = async (

@@ -27,6 +27,51 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import Toast from 'react-native-toast-message';
 
+// ─── Reusable wrapper that mirrors the FormInput shell ───────────────────────
+interface FieldWrapperProps {
+  label: string;
+  required?: boolean;
+  error?: string;
+  hintText?: string;
+  children: React.ReactNode;
+}
+
+function FieldWrapper({
+  label,
+  required,
+  error,
+  hintText,
+  children,
+}: Readonly<FieldWrapperProps>) {
+  const { Colors } = useTheme();
+  const { dynamicStyles } = useStyles(styles);
+
+  return (
+    <View style={{ padding: 5, paddingBottom: 0 }}>
+      <Text style={dynamicStyles.label}>
+        {label} {required && <Text style={{ color: Colors.primary }}>*</Text>}
+      </Text>
+
+      {/* Caller renders the interactive element (button / image strip) here */}
+      {children}
+
+      {/* Error / hint line – identical to FormInput */}
+      <Text
+        style={{
+          color: error ? Colors.error : Colors.textSecondary,
+          fontSize: 10,
+          marginLeft: 10,
+          marginTop: 2,
+          marginBottom: 2,
+        }}
+      >
+        {error ?? hintText}
+      </Text>
+    </View>
+  );
+}
+
+// ─── Screen ──────────────────────────────────────────────────────────────────
 export default function KYCVerificationScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
@@ -95,7 +140,7 @@ export default function KYCVerificationScreen() {
         name: 'selfie.jpg',
         type: 'image/jpeg',
       } as any);
-      console.log(formData);
+
       await submitKYC(formData).unwrap();
 
       navigation.navigate(ROUTES.TABS);
@@ -172,33 +217,36 @@ export default function KYCVerificationScreen() {
               Verify Your Identity
             </Text>
           </View>
+
           <Text
-            style={[
-              {
-                alignSelf: 'center',
-                color: Colors.textSecondary,
-                fontSize: 15,
-                textAlign: 'center',
-                marginBottom: 20,
-              },
-            ]}
+            style={{
+              alignSelf: 'center',
+              color: Colors.textSecondary,
+              fontSize: 15,
+              textAlign: 'center',
+              marginBottom: 20,
+            }}
           >
             To keep your account secure and comply with financial regulations,
             we need to verify a few details. It only takes about 2 minutes.
           </Text>
-          <View style={dynamicStyles.containerSurface}>
-            <Text style={[dynamicStyles.heading]}>Your Info</Text>
-            <Text
-              style={{
-                color: Colors.textSecondary,
-                marginBottom: 10,
-                paddingVertical: 5,
-                fontSize: 12,
-              }}
-            >
-              Let&apos;s start with the basic information about your identity
-            </Text>
 
+          <View style={dynamicStyles.containerSurface}>
+            <View style={{ marginHorizontal: 10 }}>
+              <Text style={dynamicStyles.heading}>Your Info</Text>
+              <Text
+                style={{
+                  color: Colors.textSecondary,
+                  marginBottom: 10,
+                  paddingVertical: 5,
+                  fontSize: 12,
+                }}
+              >
+                Let&apos;s start with the basic information about your identity
+              </Text>
+            </View>
+
+            {/* Full Name */}
             <Controller
               control={control}
               name="fullName"
@@ -216,19 +264,20 @@ export default function KYCVerificationScreen() {
               )}
             />
 
+            {/* Date of Birth */}
             <Controller
               control={control}
               name="dateOfBirth"
               render={({ field: { value, onChange } }) => (
-                <View style={{ flex: 1, marginTop: 6 }}>
-                  <Text style={dynamicStyles.label}>
-                    Date of Birth
-                    <Text style={{ color: Colors.primary }}> *</Text>
-                  </Text>
-
+                <FieldWrapper
+                  label="Date of Birth"
+                  required
+                  error={errors.dateOfBirth?.message}
+                  hintText="As per your official document"
+                >
                   <Button
                     title=""
-                    style={[dynamicStyles.input, { marginBottom: 2 }]}
+                    style={[dynamicStyles.input, { marginBottom: 0 }]}
                     onPress={() => setShowDatePicker(true)}
                   >
                     <Text
@@ -240,30 +289,6 @@ export default function KYCVerificationScreen() {
                       {value ? formatDate(value) : 'Select Date'}
                     </Text>
                   </Button>
-
-                  {errors.dateOfBirth && (
-                    <Text
-                      style={{
-                        color: Colors.error,
-                        fontSize: 10,
-                        marginLeft: 5,
-                        marginTop: 2,
-                      }}
-                    >
-                      {errors.dateOfBirth.message}
-                    </Text>
-                  )}
-
-                  <Text
-                    style={{
-                      color: Colors.textSecondary,
-                      fontSize: 10,
-                      marginLeft: 5,
-                      marginTop: 4,
-                    }}
-                  >
-                    As per your official document
-                  </Text>
 
                   {showDatePicker && (
                     <DateTimePicker
@@ -279,45 +304,30 @@ export default function KYCVerificationScreen() {
                       }}
                     />
                   )}
-                </View>
+                </FieldWrapper>
               )}
             />
 
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-              }}
-            >
-              <View style={{ flex: 1 }}>
-                <Controller
-                  control={control}
-                  name="fullAddress"
-                  render={({ field: { onChange, value } }) => (
-                    <FormInput
-                      label="Full Address"
-                      required
-                      value={value}
-                      placeholder="Full address"
-                      // ✅ Guard: reject update instead of using maxLength,
-                      // prevents phantom backspace bug on controlled TextInput
-                      onChangeText={text => {
-                        if (text.length <= 255) onChange(text);
-                      }}
-                      error={errors.fullAddress?.message}
-                    />
-                  )}
+            {/* Full Address */}
+            <Controller
+              control={control}
+              name="fullAddress"
+              render={({ field: { onChange, value } }) => (
+                <FormInput
+                  label="Full Address"
+                  required
+                  value={value}
+                  placeholder="Full address"
+                  onChangeText={text => {
+                    if (text.length <= 255) onChange(text);
+                  }}
+                  error={errors.fullAddress?.message}
                 />
-              </View>
-            </View>
+              )}
+            />
 
-            <View
-              style={{
-                flexDirection: 'row',
-                gap: 8,
-              }}
-            >
+            {/* Document Type + Upload Document (side by side) */}
+            <View style={{ flexDirection: 'row', gap: 8 }}>
               <View style={{ width: '46%' }}>
                 <Controller
                   control={control}
@@ -336,58 +346,42 @@ export default function KYCVerificationScreen() {
                   )}
                 />
               </View>
-              <View style={{ width: '51%', marginTop: 6 }}>
-                <Text style={[dynamicStyles.label]}>
-                  Upload Document
-                  <Text style={{ color: Colors.primary }}> *</Text>
-                </Text>
-                <Button
-                  title=""
-                  style={[dynamicStyles.input, { marginBottom: 2 }]}
-                  onPress={handlePickFile}
+
+              <View style={{ width: '51%' }}>
+                <FieldWrapper
+                  label="Upload Document"
+                  required
+                  error={errors.document?.message as string | undefined}
+                  hintText="Allowed: jpeg, png, jpg and pdf."
                 >
-                  <Text
-                    style={{
-                      color: pickedFile ? Colors.primary : Colors.textMuted,
-                      fontSize: 13,
-                    }}
+                  <Button
+                    title=""
+                    style={[dynamicStyles.input, { marginBottom: 0 }]}
+                    onPress={handlePickFile}
                   >
-                    {pickedFile ? pickedFile?.name : 'Select Document'}
-                  </Text>
-                </Button>
-                {errors.document && (
-                  <Text
-                    style={{
-                      color: Colors.error,
-                      fontSize: 10,
-                      marginLeft: 5,
-                      marginTop: 2,
-                    }}
-                  >
-                    {errors.document.message}
-                  </Text>
-                )}
-                <Text
-                  style={{
-                    color: Colors.textSecondary,
-                    fontSize: 10,
-                    marginLeft: 5,
-                    marginTop: 4,
-                  }}
-                >
-                  Allowed: jpeg, png, jpg and pdf.
-                </Text>
+                    <Text
+                      style={{
+                        color: pickedFile ? Colors.primary : Colors.textMuted,
+                        fontSize: 13,
+                      }}
+                    >
+                      {pickedFile ? pickedFile?.name : 'Select Document'}
+                    </Text>
+                  </Button>
+                </FieldWrapper>
               </View>
             </View>
 
-            <View style={{ flex: 1, marginTop: 6 }}>
-              <Text style={dynamicStyles.label}>
-                Upload Selfie
-                <Text style={{ color: Colors.primary }}> *</Text>
-              </Text>
+            {/* Upload Selfie */}
+            <FieldWrapper
+              label="Upload Selfie"
+              required
+              error={errors.selfieUrl?.message}
+              hintText="Take a clear photo of your face"
+            >
               <Button
                 title=""
-                style={[dynamicStyles.input, { marginBottom: 2 }]}
+                style={[dynamicStyles.input, { marginBottom: 0 }]}
                 onPress={handleSelfiePick}
               >
                 <Text
@@ -399,34 +393,14 @@ export default function KYCVerificationScreen() {
                   {selfieUploaded ? '✓ Selfie Uploaded' : 'Upload Selfie'}
                 </Text>
               </Button>
-              {errors.selfieUrl && (
-                <Text
-                  style={{
-                    color: Colors.error,
-                    fontSize: 10,
-                    marginLeft: 5,
-                    marginTop: 2,
-                  }}
-                >
-                  {errors.selfieUrl.message}
-                </Text>
-              )}
-              <Text
-                style={{
-                  color: Colors.textSecondary,
-                  fontSize: 10,
-                  marginLeft: 5,
-                  marginTop: 4,
-                }}
-              >
-                Take a clear photo of your face
-              </Text>
-            </View>
+            </FieldWrapper>
 
+            {/* Selfie preview */}
             {selfieUploaded && (
               <View
                 style={{
-                  marginTop: 10,
+                  marginTop: 4,
+                  marginLeft: 5,
                   alignSelf: 'flex-start',
                   borderRadius: 10,
                   overflow: 'hidden',
@@ -436,10 +410,7 @@ export default function KYCVerificationScreen() {
               >
                 <Image
                   source={{ uri: control._formValues.selfieUrl }}
-                  style={{
-                    width: 120,
-                    height: 120,
-                  }}
+                  style={{ width: 120, height: 120 }}
                   resizeMode="cover"
                 />
               </View>

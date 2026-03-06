@@ -123,8 +123,13 @@ export default function Step3({
           title="Continue"
           onPress={() => setStep(prev => prev + 1)}
           disabled={!pickedImage}
+          textStyle={{ marginHorizontal: 10 }}
         >
-          <Icons.Arrow height={15} width={15} borderColor={Colors.background} />
+          <Icons.Arrow
+            height={15}
+            width={15}
+            color={Colors.background}
+          ></Icons.Arrow>
         </Button>
       </View>
     </View>

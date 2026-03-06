@@ -13,7 +13,7 @@ export const featuredProperties = sqliteTable('featuredProperties', {
   availableUnits: integer('availableUnits').notNull(),
   totalUnits: integer('totalUnits').notNull(),
 
-  riskScore: real('riskScore').notNull(),
+  riskScore: real('riskScore'),
 
   pricePerUnitEth: real('pricePerUnitEth').notNull(),
 
@@ -47,7 +47,7 @@ export const properties = sqliteTable('properties', {
 
   pricePerUnitEth: real('pricePerUnitEth').notNull(),
   annualYieldPercent: real('annualYieldPercent').notNull(),
-  riskScore: real('riskScore').notNull(),
+  riskScore: real('riskScore'),
 });
 
 export const userInvestments = sqliteTable('userInvestments', {
@@ -58,7 +58,7 @@ export const userInvestments = sqliteTable('userInvestments', {
   propertyImageUrl: text('propertyImageUrl'),
   location: text('location').notNull(),
 
-  riskScore: real('riskScore').notNull(),
+  riskScore: real('riskScore'),
   annualYieldPercent: real('annualYieldPercent').notNull(),
 
   sharesPurchased: integer('sharesPurchased').notNull(),
@@ -72,10 +72,9 @@ export const userInvestments = sqliteTable('userInvestments', {
 });
 
 export const portfolioValueHistory = sqliteTable('portfolioValueHistory', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  label: text('label').notNull(),
-  value: real('value').notNull(),
-  recordedAt: text('recordedAt'),
+  id: integer('id').primaryKey(),
+  data: text('data', { mode: 'json' }).notNull(),
+  updatedAt: text('updatedAt'),
 });
 
 export const portfolioAllocation = sqliteTable('portfolioAllocation', {
@@ -96,7 +95,7 @@ export const transactions = sqliteTable('transactions', {
 
   amountUsd: real('amountUsd').notNull(),
   amountEth: real('amountEth').notNull(),
-  ethAmountAtExecution: real('ethAmountAtExecution').notNull(),
+  ethAmountAtExecution: real('ethAmountAtExecution'),
   ethUsdRateAtExecution: real('ethUsdRateAtExecution').notNull(),
 
   createdAt: text('createdAt').notNull(),
@@ -107,12 +106,12 @@ export const transactions = sqliteTable('transactions', {
 
 export const accountBalances = sqliteTable('accountBalances', {
   walletAddress: text('walletAddress').primaryKey(),
-  
+
   totalGranted: real('totalGranted').notNull().default(0),
-  
+
   totalUsed: real('totalUsed').notNull().default(0),
-  
+
   availableBalance: real('availableBalance').notNull().default(0),
-  
+
   syncedAt: text('syncedAt').$defaultFn(() => new Date().toISOString()),
 });

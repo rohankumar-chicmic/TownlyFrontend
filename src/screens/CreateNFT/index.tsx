@@ -106,7 +106,6 @@ export default function CreateNFTScreen() {
     }
   }, [isEdit, initialValues]);
 
-  console.log(initialValues?.documents);
   return (
     <SafeAreaView style={dynamicStyles.safeArea}>
       <KeyboardAwareScrollView

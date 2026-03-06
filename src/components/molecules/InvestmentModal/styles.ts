@@ -146,6 +146,49 @@ const styles = (Colors: ThemeColors) =>
       color: '#000',
       fontWeight: '700',
     },
+    centerOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    centerModal: {
+      width: '85%',
+      backgroundColor: Colors.background,
+      borderRadius: 16,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: Colors.outline,
+    },
+
+    centerTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: Colors.textPrimary,
+      marginBottom: 10,
+    },
+
+    centerText: {
+      fontSize: 14,
+      color: Colors.textSecondary,
+      marginBottom: 16,
+    },
+
+    modalButtonRow: {
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      marginTop: 20,
+      gap: 12,
+    },
+
+    propertyName: {
+      color: Colors.textSecondary,
+      fontWeight: '600',
+      fontSize: 18,
+      marginVertical: 12,
+      marginTop: 3,
+    },
   });
 
 export default styles;

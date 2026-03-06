@@ -67,7 +67,7 @@ const InvestmentInfo = ({ data }: Props) => {
           <View key={item.label} style={dynamicStyles.card}>
             <View style={dynamicStyles.iconWrapper}>
               <MaterialCommunityIcons
-                name={item.icon as any}
+                name={item.icon}
                 size={20}
                 color={dynamicStyles.iconColor.color}
               />

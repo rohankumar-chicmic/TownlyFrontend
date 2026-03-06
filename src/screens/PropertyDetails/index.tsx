@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView, Dimensions, FlatList } from 'react-native';
 
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
@@ -29,15 +29,18 @@ import { throttle } from '@utils/utility';
 import { ROUTES } from 'src/navigation/constants';
 import FastImage from 'react-native-fast-image';
 import { useNetInfo } from '@react-native-community/netinfo';
+import Toast from 'react-native-toast-message';
 
 export default function PropertyDetails() {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const route = useAppRoute();
   const params = route.params;
-  console.log(params?.item);
   const [showModal, setShowModal] = useState(false);
-  const { data } = useGetPropertyDetailsQuery(params?.item?.id || params?.id);
+  const [invested, setInvested] = useState(false);
+  const { data, refetch } = useGetPropertyDetailsQuery(
+    params?.item?.id || params?.id,
+  );
   const { data: investmentData } = useInvestmentInfoQuery(
     params?.item?.id || params?.id,
   );
@@ -51,14 +54,36 @@ export default function PropertyDetails() {
   const throttledHandleCardPressed = throttle(item =>
     navigation.push(ROUTES.PROPERTY_DETAILS, { item: item }),
   );
+
+  const modalOnClose = () => {
+    setShowModal(false);
+  };
+
+  const handleSubmit = () => {
+    setShowModal(false);
+    setInvested(true);
+    refetch();
+  };
+
   const { isConnected } = useNetInfo();
 
   const isLoading = !data || !investmentData || !relatedProperties.data;
 
   const fallbackProperty = params?.item ?? null;
 
-  // prefer API data, fallback to params item
   const property = data ?? fallbackProperty;
+
+  useEffect(() => {
+    if (invested) {
+      Toast.show({
+        type: 'success',
+        text1: 'Investment Successfull',
+        text2: 'Invested in Property ' + property?.name + ' Successfully',
+        visibilityTime: 1500,
+      });
+      setInvested(false);
+    }
+  }, [invested, property?.name]);
 
   if (isConnected && isLoading) return <PropertyDetailsSkeleton />;
 
@@ -346,7 +371,9 @@ export default function PropertyDetails() {
         {kycStatus === 2 ? (
           <InvestPropertyModal
             visible={showModal}
-            onClose={() => setShowModal(false)}
+            name={String(data?.name ?? '')}
+            onClose={modalOnClose}
+            handleSubmit={handleSubmit}
             id={String(data?.id ?? '')}
             pricePerShare={Number(data?.pricePerUnitEth ?? 0)}
             availableUnits={Number(data?.availableUnits ?? 0)}

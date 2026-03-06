@@ -11,10 +11,8 @@ import Home from '@screens/Home';
 import Marketplace from '@screens/Marketplace';
 import Portfolio from '@screens/Portfolio';
 import Notifications from '@screens/Notifications';
-import Feather from '@expo/vector-icons/Feather';
 import { View } from 'react-native';
 import { useAppSelector } from '@redux/store';
-import { useGetMyUnreadNotificationsQuery } from '@redux/NotificationsApiReducer';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
@@ -26,6 +24,7 @@ export default function Tabs() {
   const unreadNotifcations = useAppSelector(
     state => state.auth.unreadNotifcations,
   );
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.surface }}>
       <Tab.Navigator
@@ -102,7 +101,12 @@ export default function Tabs() {
                     }}
                   ></View>
                 )}
-                <Feather name="bell" size={size + 5} color={color} />
+                <Icons.BellIcon
+                  width={size}
+                  height={size}
+                  color={color}
+                  borderColor={color}
+                />
               </View>
             ),
           }}

@@ -63,15 +63,15 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textPrimary,
     },
     label: {
-      marginBottom: 6,
+      marginBottom: 5,
       fontSize: 14,
-      paddingHorizontal: 10,
+      paddingHorizontal: 5,
       color: Colors.textPrimary,
     },
     input: {
       borderRadius: 10,
       padding: 12,
-      marginHorizontal: 5,
+      marginHorizontal: 1,
       borderWidth: 1,
       marginBottom: 15,
       minHeight: Dimensions.get('screen').height * 0.047,

@@ -20,7 +20,7 @@ export default function RecentTransactionsSection({
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-  console.log(transactions);
+
   return (
     <View
       style={[
