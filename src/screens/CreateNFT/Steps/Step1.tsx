@@ -31,6 +31,7 @@ const propertyTypeOptions = [
   { label: 'Land', value: 'Land' },
   { label: 'Residential', value: 'Residential' },
   { label: 'Commercial', value: 'Commercial' },
+  { label: 'Industrial', value: 'Industrial' },
 ];
 
 export default function Step1(props: Readonly<StepProps>) {

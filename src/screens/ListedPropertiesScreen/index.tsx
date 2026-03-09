@@ -92,7 +92,6 @@ const ListedProperiesScreen = () => {
             color: Colors.textMuted,
           }}
         >
-          No more properties
         </Text>
       );
     }

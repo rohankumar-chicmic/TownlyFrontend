@@ -1,5 +1,11 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, ActivityIndicator, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  FlatList,
+  ScrollView,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -14,6 +20,7 @@ import FilterButton from '@components/atoms/FilterButton';
 
 import { useGetMyInvestedPropertiesQuery } from '@redux/PropertyApiReducer';
 import { debounce, sanitizeSearch } from '@utils/utility';
+import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 
 const PAGE_SIZE = 10;
 
@@ -131,30 +138,38 @@ const InvestedPropertiesScreen = () => {
           paddingTop: 0,
         }}
       >
-        <FilterButton
-          label="All"
-          value=""
-          currentValue={filter}
-          onPress={() => handleFilterChange('')}
-        />
-        <FilterButton
-          label="Land"
-          value="land"
-          currentValue={filter}
-          onPress={() => handleFilterChange('land')}
-        />
-        <FilterButton
-          label="Commercial"
-          value="commercial"
-          currentValue={filter}
-          onPress={() => handleFilterChange('commercial')}
-        />
-        <FilterButton
-          label="Residential"
-          value="residential"
-          currentValue={filter}
-          onPress={() => handleFilterChange('residential')}
-        />
+        <ScrollView horizontal style={{ overflow: 'visible' }}>
+          <FilterButton
+            label="All"
+            value=""
+            currentValue={filter}
+            onPress={() => handleFilterChange('')}
+          />
+          <FilterButton
+            label="Land"
+            value="land"
+            currentValue={filter}
+            onPress={() => handleFilterChange('land')}
+          />
+          <FilterButton
+            label="Commercial"
+            value="commercial"
+            currentValue={filter}
+            onPress={() => handleFilterChange('commercial')}
+          />
+          <FilterButton
+            label="Residential"
+            value="residential"
+            currentValue={filter}
+            onPress={() => handleFilterChange('residential')}
+          />
+          <FilterButton
+            label="Industrial"
+            value="industrial"
+            currentValue={filter}
+            onPress={() => handleFilterChange('industrial')}
+          />
+        </ScrollView>
       </View>
 
       {/* LOADING (FIRST PAGE) */}
@@ -174,6 +189,7 @@ const InvestedPropertiesScreen = () => {
           onEndReachedThreshold={0.5}
           style={{ backgroundColor: Colors.background }}
           ListFooterComponent={footerComponent}
+          ListEmptyComponent={ListEmptyComponent}
         />
       )}
     </SafeAreaView>

@@ -189,11 +189,13 @@ export default function Step4(props: Readonly<StepProps>) {
                 width: '98%',
                 justifyContent: 'space-between',
                 alignItems: 'flex-start',
+                overflow: 'hidden',
               }}
             >
               <Text
                 style={{
                   color: Colors.textPrimary,
+                  width: '38%',
                 }}
               >
                 {document.documentName || 'Document Name'}

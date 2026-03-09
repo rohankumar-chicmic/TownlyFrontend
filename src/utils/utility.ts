@@ -132,3 +132,22 @@ export const formToApiDocument = (doc: any) => ({
   fileName: doc.file?.name,
   documentUrl: doc.file?.uri,
 });
+
+export const getYAxisScale = (data: number[], sections = 4) => {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const isFlat = max - min < 0.001;
+
+  const range = isFlat ? min * 0.01 : max - min;
+  const padding = range * 0.2;
+
+  const adjustedMin = min - padding;
+  const adjustedMax = max + padding;
+  const step = (adjustedMax - adjustedMin) / sections;
+
+  return {
+    maxValue: adjustedMax - adjustedMin,
+    stepValue: step,
+    minValue: adjustedMin,
+  };
+};

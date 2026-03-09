@@ -5,6 +5,7 @@ import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import { hexToRGBA } from '@utils/utility';
 import { LineGraphSkeleton } from '../SkeletonPortfolio';
+import { useState } from 'react';
 
 export interface LinePoint {
   label: string;
@@ -43,7 +44,10 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
     label: item.label || String(index),
   }));
 
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
   const chartWidth = Dimensions.get('window').width * 0.7;
+
   const spacing =
     lineData.length > 1
       ? (chartWidth - 30) / (lineData.length - 1)
@@ -55,38 +59,46 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
   if (!lineData || lineData.length === 0) {
     return (
       <LineGraphSkeleton surface={Colors.surface} border={Colors.border} />
-    ); // Or a loading skeleton/placeholder
+    );
   }
+
+  const selectedValue =
+    selectedIndex !== null ? lineData[selectedIndex]?.value : null;
+
+  const chartRange = maxValue;
+  const normalizedPosition =
+    selectedValue !== null ? (selectedValue - minValue) / chartRange : 0;
+
+  const tooltipBelow = normalizedPosition > 0.5;
 
   return (
     <Pressable>
       <View style={dynamicStyles.container}>
         <Text style={dynamicStyles.heading}>Portfolio Growth</Text>
+
         <Text style={[dynamicStyles.smallText, { paddingBottom: 10 }]}>
           Value over time
         </Text>
+
         <View
           style={{
-            paddingLeft: 10,
-            paddingRight: 10,
-            paddingBottom: 10,
+            padding: 10,
             alignItems: 'center',
             overflow: 'visible',
           }}
         >
           <LineChart
             maxValue={maxValue}
-            yAxisLabelWidth={40}
             yAxisOffset={minValue}
+            yAxisLabelWidth={40}
             curved
             onlyPositive
             interpolateMissingValues
             extrapolateMissingValues
-            // stepValue={stepValue}
             curvature={0.04}
             data={lineData}
-            overflowBottom={20}
             thickness={2}
+            overflowBottom={20}
             isAnimated
             width={chartWidth}
             spacing={spacing}
@@ -117,6 +129,84 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
             showVerticalLines
             verticalLinesColor={Colors.border}
             noOfSections={4}
+            focusEnabled
+            onFocus={(item: any, index: number) => {
+              setSelectedIndex(prev => (prev === index ? null : index));
+            }}
+            pointerConfig={{
+              initialPointerIndex: selectedIndex ?? -1,
+              persistPointer: selectedIndex !== null,
+              activatePointersOnLongPress: false,
+              hidePointer1: selectedIndex === null,
+
+              pointerStripHeight:
+                selectedIndex === null
+                  ? 0
+                  : Dimensions.get('window').height * 0.15 + 20,
+
+              pointerStripColor: Colors.outline,
+              pointerStripWidth: 1.5,
+
+              pointerColor: hexToRGBA(Colors.primary),
+              radius: 5,
+
+              pointerLabelWidth: 100,
+              pointerLabelHeight: 48,
+              autoAdjustPointerLabelPosition: true,
+
+              pointerLabelComponent: (
+                items: Array<{ label: string; value: number }>
+              ) => {
+                if (selectedIndex === null) return null;
+
+                const item = items[0];
+                if (!item) return null;
+
+                return (
+                  <View
+                    style={{
+                      marginTop: tooltipBelow ? '50%' : '-50%',
+                      top:0,
+                      backgroundColor: Colors.elevated,
+                      borderRadius: 6,
+                      paddingHorizontal: 9,
+                      paddingVertical: 5,
+                      borderWidth: 1,
+                      borderColor: Colors.border,
+                      shadowColor: '#000',
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.35,
+                      shadowRadius: 5,
+                      elevation: 5,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        color: '#9ca3af',
+                        fontSize: 9,
+                        fontWeight: '500',
+                        textTransform: 'uppercase',
+                        letterSpacing: 0.6,
+                        marginBottom: 1,
+                      }}
+                    >
+                      {item.label}
+                    </Text>
+
+                    <Text
+                      style={{
+                        color: hexToRGBA(Colors.primary),
+                        fontSize: 13,
+                        fontWeight: '700',
+                        letterSpacing: 0.2,
+                      }}
+                    >
+                      ETH {item.value.toLocaleString()}
+                    </Text>
+                  </View>
+                );
+              },
+            }}
           />
         </View>
       </View>

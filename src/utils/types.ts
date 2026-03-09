@@ -36,7 +36,7 @@ interface InvestmentCardType {
 interface PropertyPortfolioData {
   propertyId: string;
   propertyName: string;
-  propertyType: 'Commercial' | 'Residential' | 'Land';
+  propertyType: 'Commercial' | 'Residential' | 'Land' | 'Industrial';
   location: string;
   propertyImageUrl: string;
 
@@ -145,3 +145,17 @@ export {
   NotificationItem,
   Transaction,
 };
+
+export enum OfflineTaskType {
+  CREATE_PROPERTY = 'CREATE_PROPERTY',
+  EDIT_PROPERTY = 'EDIT_PROPERTY',
+  RESUBMIT_PROPERTY = 'RESUBMIT_PROPERTY',
+}
+
+
+export interface OfflineTask {
+  id: string;
+  type: OfflineTaskType;
+  payload: any;
+  createdAt: number;
+}

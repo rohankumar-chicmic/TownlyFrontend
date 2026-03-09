@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, FlatList } from 'react-native';
+import { View, FlatList, ScrollView } from 'react-native';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import SearchInput from '@components/molecules/SearchInput';
@@ -93,35 +93,42 @@ const Marketplace = () => {
           flexDirection: 'row',
           borderBottomColor: Colors.border,
           borderBottomWidth: 1,
-
           padding: 10,
           paddingTop: 0,
         }}
       >
-        <FilterButton
-          label="All"
-          value=""
-          currentValue={filter}
-          onPress={() => handleFilterChange('')}
-        />
-        <FilterButton
-          label="Land"
-          value="land"
-          currentValue={filter}
-          onPress={() => handleFilterChange('land')}
-        />
-        <FilterButton
-          label="Commercial"
-          value="commercial"
-          currentValue={filter}
-          onPress={() => handleFilterChange('commercial')}
-        />
-        <FilterButton
-          label="Residential"
-          value="residential"
-          currentValue={filter}
-          onPress={() => handleFilterChange('residential')}
-        />
+        <ScrollView horizontal style={{ overflow: 'visible' }}>
+          <FilterButton
+            label="All"
+            value=""
+            currentValue={filter}
+            onPress={() => handleFilterChange('')}
+          />
+          <FilterButton
+            label="Land"
+            value="land"
+            currentValue={filter}
+            onPress={() => handleFilterChange('land')}
+          />
+          <FilterButton
+            label="Commercial"
+            value="commercial"
+            currentValue={filter}
+            onPress={() => handleFilterChange('commercial')}
+          />
+          <FilterButton
+            label="Residential"
+            value="residential"
+            currentValue={filter}
+            onPress={() => handleFilterChange('residential')}
+          />
+          <FilterButton
+            label="Industrial"
+            value="industrial"
+            currentValue={filter}
+            onPress={() => handleFilterChange('industrial')}
+          />
+        </ScrollView>
       </View>
 
       <FlatList

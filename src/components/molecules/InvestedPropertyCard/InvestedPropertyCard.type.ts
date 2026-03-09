@@ -1,7 +1,7 @@
 export default interface InvestedPropertyCardProps {
   propertyId: string;
   propertyName: string;
-  propertyType: 'Commercial' | 'Residential' | 'Land'; // Narrowed to Commercial based on data
+  propertyType: 'Commercial' | 'Residential' | 'Land' | 'Industrial'; // Narrowed to Commercial based on data
   location: string;
   propertyImageUrl: string;
 
