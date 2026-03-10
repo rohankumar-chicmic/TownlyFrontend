@@ -61,6 +61,7 @@ const api = createApi({
     'Properties',
     'FeaturedProperties',
     'Notifications',
+    'Transactions',
   ],
 });
 

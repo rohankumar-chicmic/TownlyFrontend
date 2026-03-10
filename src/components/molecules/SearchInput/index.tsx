@@ -15,6 +15,11 @@ export default function SearchInput(props: Readonly<SearchPropsType>) {
   const ref = useRef<TextInput>(null);
   const { Colors } = useTheme();
 
+  const localOnChangeText = (value: string) => {
+    const sanitizedValue = value.replace(/^\s+/, '');
+    props.onChangeText?.(sanitizedValue);
+  };
+
   useEffect(() => {
     const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
       ref.current?.blur();
@@ -44,10 +49,11 @@ export default function SearchInput(props: Readonly<SearchPropsType>) {
         <TextInput
           {...props}
           ref={ref}
+          maxLength={150}
           cursorColor={Colors.primary}
           placeholder="Search by location or property name..."
           placeholderTextColor={Colors.textMuted}
-          onChangeText={props.onChangeText}
+          onChangeText={localOnChangeText}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           value={props.text}

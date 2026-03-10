@@ -18,6 +18,9 @@ import Toast from 'react-native-toast-message';
 import { ROUTES } from 'src/navigation/constants';
 import { debounce } from '@utils/utility';
 import InfoRow from '@components/atoms/InfoRow';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { addOfflineTask } from 'src/db/hooks/useOfflineQueue';
+import { OfflineTaskType } from '@utils/types';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -30,6 +33,7 @@ interface StepProps {
 export default function Step4(props: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
+  const { isConnected } = useNetInfo();
 
   const [makeProperty, { isLoading: isCreating }] = useMakePropertyMutation();
   const [editProperty, { isLoading: isEditing }] = useEditPropertyMutation();
@@ -42,6 +46,27 @@ export default function Step4(props: Readonly<StepProps>) {
   const handleSubmitProperty = debounce(async () => {
     if (!userToken) {
       console.error('No token available!');
+      Toast.show({
+        type: 'error',
+        text1: 'No token available!',
+      });
+      return;
+    }
+
+    if (!isConnected) {
+      await addOfflineTask(OfflineTaskType.CREATE_PROPERTY, {
+        data: props.formData,
+        token: userToken,
+      });
+
+      Toast.show({
+        type: 'info',
+        text1: 'Saved Offline',
+        text2: 'Property will be submitted when internet is available',
+      });
+
+      navigation.navigate(ROUTES.TABS);
+
       return;
     }
 

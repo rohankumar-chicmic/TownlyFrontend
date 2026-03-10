@@ -44,36 +44,36 @@ export default function DonutGraph({ data }: Readonly<DonutData>) {
     },
   ]);
 
- useEffect(() => {
-  if (!data?.length) return;
+  useEffect(() => {
+    if (!data?.length) return;
 
-  setPieData([
-    {
-      value: data?.[0]?.percentage ?? 0,
-      color: '#9161f3',
-      text: 'Residential',
-      focused: false,
-    },
-    {
-      value: data?.[1]?.percentage ?? 0,
-      color: '#3b82f6',
-      text: 'Commercial',
-      focused: false,
-    },
-    {
-      value: data?.[2]?.percentage ?? 0,
-      color: '#f59e0b',
-      text: 'Land',
-      focused: false,
-    },
-    {
-      value: data?.[3]?.percentage ?? 0,
-      color: '#10b981',
-      text: 'Industrial',
-      focused: false,
-    },
-  ]);
-}, [data]);
+    setPieData([
+      {
+        value: data?.[0]?.percentage ?? 0,
+        color: '#9161f3',
+        text: 'Residential',
+        focused: false,
+      },
+      {
+        value: data?.[1]?.percentage ?? 0,
+        color: '#3b82f6',
+        text: 'Commercial',
+        focused: false,
+      },
+      {
+        value: data?.[2]?.percentage ?? 0,
+        color: '#f59e0b',
+        text: 'Land',
+        focused: false,
+      },
+      {
+        value: data?.[3]?.percentage ?? 0,
+        color: '#10b981',
+        text: 'Industrial',
+        focused: false,
+      },
+    ]);
+  }, [data]);
 
   const handlePress = (index: number) => {
     setPieData(prev =>
@@ -111,7 +111,10 @@ export default function DonutGraph({ data }: Readonly<DonutData>) {
         >
           <View style={{ paddingVertical: 16, justifyContent: 'space-evenly' }}>
             {pieData.map(dataPoint => (
-              <View key={dataPoint.text} style={{ flexDirection: 'row' }}>
+              <View
+                key={dataPoint.text}
+                style={{ flexDirection: 'row', alignItems: 'center' }}
+              >
                 <View
                   key={dataPoint.text}
                   style={{

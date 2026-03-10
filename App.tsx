@@ -19,6 +19,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import 'react-native-reanimated';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
@@ -26,6 +27,8 @@ import { appKit, wagmiAdapter } from './src/AppkitConfig'; // Your configured Ap
 import { AppKitProvider, AppKit } from '@reown/appkit-react-native';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import useOfflineQueue from 'src/db/hooks/useOfflineQueue';
+
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
@@ -58,6 +61,8 @@ export default function App() {
     })();
   }, []);
 
+  useOfflineQueue();
+
   return (
     <SafeAreaProvider>
       <KeyboardProvider>
@@ -66,8 +71,10 @@ export default function App() {
             <QueryClientProvider client={queryClient}>
               <Provider store={store}>
                 <PersistGate persistor={persistor}>
-                  <RootNavigator />
-                  <AppKit />
+                  <GestureHandlerRootView style={{ flex: 1 }}>
+                    <RootNavigator />
+                    <AppKit />
+                  </GestureHandlerRootView>
                 </PersistGate>
               </Provider>
             </QueryClientProvider>

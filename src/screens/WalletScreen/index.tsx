@@ -30,6 +30,9 @@ import {
   saveAccountBalance,
   useAccountBalance,
 } from 'src/db/hooks/useWalletScreenData';
+import { addOfflineTask } from 'src/db/hooks/useOfflineQueue';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { OfflineTaskType } from '@utils/types';
 
 const InfoRow = ({
   field,
@@ -81,8 +84,23 @@ export default function WalletScreen() {
   const [requestCurrency] = useRequestCurrencyMutation();
   const { data: balance } = useAccountBalance(walletAddress);
   const [isTemporarilyDisabled, setIsTemporarilyDisabled] = useState(false);
+  const { isConnected } = useNetInfo();
+
   const handleRequestCurrency = async (rawAmount: string) => {
     try {
+      if (!isConnected) {
+        await addOfflineTask(OfflineTaskType.REQUEST_TOKEN, {
+          tokens: rawAmount.toString(),
+        });
+
+        Toast.show({
+          type: 'info',
+          text1: 'Saved Offline',
+          text2: 'Request will be sent when internet returns',
+        });
+
+        return;
+      }
       setIsTemporarilyDisabled(true);
       if (!rawAmount) return;
 
@@ -242,7 +260,6 @@ export default function WalletScreen() {
                 marginVertical: 10,
                 padding: 15,
                 borderRadius: 10,
-                gap: 10,
               },
             ]}
           >
@@ -255,7 +272,7 @@ export default function WalletScreen() {
             >
               Request currency
             </Text>
-            <View style={{ flex: 1 }}>
+            <View>
               <FormInput
                 placeholder="Amount to request"
                 keyboardType="number-pad"

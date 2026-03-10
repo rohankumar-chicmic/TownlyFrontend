@@ -22,7 +22,7 @@ export default function Tabs() {
   const userToken = useAppSelector(state => state.auth.userToken);
 
   const unreadNotifcations = useAppSelector(
-    state => state.auth.unreadNotifcations,
+    state => state.auth.unreadNotifications,
   );
 
   return (
@@ -101,12 +101,7 @@ export default function Tabs() {
                     }}
                   ></View>
                 )}
-                <Icons.BellIcon
-                  width={size}
-                  height={size}
-                  color={color}
-                  borderColor={color}
-                />
+                <Icons.BellIcon width={28} height={28} borderColor={color} />
               </View>
             ),
           }}

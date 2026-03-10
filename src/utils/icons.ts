@@ -20,11 +20,13 @@ const iconStyle = ({
   height = 0,
   color = 'none',
   borderColor = 'none',
+  strokeWidth = 1.8,
 }) => ({
   width: RFValue(width),
   height: RFValue(height),
   fill: color,
   stroke: borderColor,
+  strokeWidth: strokeWidth,
 });
 
 export type iconProps = {
@@ -32,6 +34,7 @@ export type iconProps = {
   height: number;
   color?: string;
   borderColor?: string;
+  strokeWidth?: number;
 };
 
 export const Icons = {

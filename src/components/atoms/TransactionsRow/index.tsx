@@ -1,13 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  LinearTransition,
+} from 'react-native-reanimated';
+
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import { Transaction } from '@utils/types';
 
+const AnimatedChevron = Animated.createAnimatedComponent(Text);
+
 const TransactionRow = ({ item }: { item: Transaction }) => {
   const isIncome = item?.type === 2;
   const { dynamicStyles } = useStyles(styles);
+
   const [isOpen, setIsOpen] = useState(false);
+
+  const rotation = useSharedValue(0);
+
+  const toggle = () => {
+    const next = !isOpen;
+    setIsOpen(next);
+    rotation.value = withTiming(next ? 180 : 0, { duration: 200 });
+  };
+
+  const chevronStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }));
 
   const details = [
     { label: 'Name', value: item.propertyName },
@@ -20,19 +44,27 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
       label: 'Time',
       value: item.createdAt.toString().split('T')[1]?.slice(0, 5) ?? '—',
     },
+    {
+      label: 'From',
+      value: item.fromWalletAddress ?? 'Not Available',
+    },
   ];
 
   return (
-    <View style={dynamicStyles.wrapper}>
+    <Animated.View
+      layout={LinearTransition.springify()}
+      style={dynamicStyles.wrapper}
+    >
       <TouchableOpacity
-        style={dynamicStyles.row}
-        onPress={() => setIsOpen(prev => !prev)}
+        style={[dynamicStyles.row, !isOpen && dynamicStyles.rowClosed]}
+        onPress={toggle}
         activeOpacity={0.7}
       >
         <View style={dynamicStyles.propertyContainer}>
           <Text style={dynamicStyles.propertyTitle} numberOfLines={1}>
             {item.propertyName}
           </Text>
+
           {!!item.tokens && (
             <Text style={dynamicStyles.tokenText}>{item.tokens} tokens</Text>
           )}
@@ -54,27 +86,27 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
           {item.createdAt.toString().split('T')[0]}
         </Text>
 
-        <Text
-          style={[
-            dynamicStyles.chevronIcon,
-            isOpen && dynamicStyles.chevronOpen,
-          ]}
-        >
+        <AnimatedChevron style={[dynamicStyles.chevronIcon, chevronStyle]}>
           ▾
-        </Text>
+        </AnimatedChevron>
       </TouchableOpacity>
 
       {isOpen && (
-        <View style={dynamicStyles.detailsContainer}>
+        <Animated.View
+          entering={FadeIn.duration(160)}
+          exiting={FadeOut.duration(120)}
+          layout={LinearTransition.springify()}
+          style={dynamicStyles.detailsContainer}
+        >
           {details.map(({ label, value }) => (
             <View key={label} style={dynamicStyles.detailRow}>
               <Text style={dynamicStyles.detailLabel}>{label}</Text>
               <Text style={dynamicStyles.detailValue}>{value}</Text>
             </View>
           ))}
-        </View>
+        </Animated.View>
       )}
-    </View>
+    </Animated.View>
   );
 };
 

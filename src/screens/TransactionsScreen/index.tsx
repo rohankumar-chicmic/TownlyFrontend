@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, FlatList } from 'react-native';
+import { View, Text, FlatList, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -19,11 +19,14 @@ const TransactionsScreen = () => {
   const [type, setType] = useState<number | undefined>(undefined);
   const [page, setPage] = useState(1);
 
-  const { data, isFetching, isLoading } = useGetTransactionsQuery({
-    page,
-    type,
-    pageSize: PAGE_SIZE,
-  });
+  const { data, isFetching, isLoading } = useGetTransactionsQuery(
+    {
+      page,
+      type,
+      pageSize: PAGE_SIZE,
+    },
+    { refetchOnMountOrArgChange: true },
+  );
 
   const transactions = data?.items ?? [];
   const hasMore = data?.hasMore ?? false;
@@ -89,9 +92,10 @@ const TransactionsScreen = () => {
 
       {/* LOADER */}
       {isLoading && page === 1 && (
-        <Text style={[dynamicStyles.heroText, { textAlign: 'center' }]}>
-          Loading transactions...
-        </Text>
+        <View style={dynamicStyles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={dynamicStyles.loadingText}>Loading Transactions...</Text>
+        </View>
       )}
 
       {/* LIST */}

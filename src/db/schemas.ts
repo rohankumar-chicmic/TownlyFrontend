@@ -1,4 +1,11 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { OfflineTaskType } from '@utils/types';
+import {
+  sqliteTable,
+  text,
+  integer,
+  real,
+  blob,
+} from 'drizzle-orm/sqlite-core';
 
 export const featuredProperties = sqliteTable('featuredProperties', {
   id: text('id').primaryKey(),
@@ -102,8 +109,6 @@ export const transactions = sqliteTable('transactions', {
   syncedAt: text('syncedAt'),
 });
 
-// wallet Screen schema
-
 export const accountBalances = sqliteTable('accountBalances', {
   walletAddress: text('walletAddress').primaryKey(),
 
@@ -114,4 +119,37 @@ export const accountBalances = sqliteTable('accountBalances', {
   availableBalance: real('availableBalance').notNull().default(0),
 
   syncedAt: text('syncedAt').$defaultFn(() => new Date().toISOString()),
+});
+
+export const offlineTasks = sqliteTable('offline_tasks', {
+  id: text('id').primaryKey(),
+  type: text('type').$type<OfflineTaskType>().notNull(),
+  payload: text('payload', { mode: 'json' }).$type<any>().notNull(),
+  status: text('status').default('pending'),
+  retries: integer('retries').default(0),
+  createdAt: integer('created_at').notNull(),
+});
+
+export const offlinePropertyDrafts = sqliteTable('offlinePropertyDrafts', {
+  id: text('id').primaryKey(),
+
+  propertyName: text('propertyName').notNull(),
+  description: text('description').notNull(),
+  location: text('location').notNull(),
+  propertyType: text('propertyType').notNull(),
+  documents: text('documents', { mode: 'json' })
+    .$type<
+      {
+        documentName: string;
+        file: any;
+      }[]
+    >()
+    .notNull(),
+  totalPropertyValue: real('totalPropertyValue').notNull(),
+  numberOfShares: integer('numberOfShares').notNull(),
+  rentalIncome: real('rentalIncome').notNull(),
+  expectedAnnualYield: real('expectedAnnualYield').notNull(),
+
+  propertyImage: blob('propertyImage').$type<any>().notNull(),
+  updatedAt: integer('updatedAt').notNull(),
 });

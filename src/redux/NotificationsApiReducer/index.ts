@@ -1,16 +1,18 @@
 import api from '@redux/store/api';
 import { NotificationItem } from '@utils/types';
 
+export type NotificationsResponse = {
+  items: NotificationItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  hasMore: boolean;
+};
+
 const NotificationApi = api.injectEndpoints({
   endpoints: builder => ({
     getMyNotifications: builder.query<
-      {
-        items: NotificationItem[];
-        totalCount: number;
-        page: number;
-        pageSize: number;
-        hasMore: boolean;
-      },
+      NotificationsResponse,
       { page: number; pageSize: number }
     >({
       query: ({ page = 1, pageSize = 10 }) => ({
@@ -19,35 +21,10 @@ const NotificationApi = api.injectEndpoints({
         params: { page, pageSize },
       }),
       providesTags: ['Notifications'],
-      serializeQueryArgs: ({ endpointName }) => endpointName,
-
-      merge: (currentCache, newData, { arg }) => {
-        if (arg.page === 1) {
-          currentCache.items = newData.items;
-        } else {
-          const existingIds = new Set(currentCache.items.map(i => i.id));
-          const filtered = newData.items.filter(i => !existingIds.has(i.id));
-          currentCache.items.push(...filtered);
-        }
-        currentCache.totalCount = newData.totalCount;
-        currentCache.page = newData.page;
-        currentCache.pageSize = newData.pageSize;
-        currentCache.hasMore = newData.hasMore;
-      },
-
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.page !== previousArg?.page;
-      },
     }),
 
     getMyUnreadNotifications: builder.query<
-      {
-        items: NotificationItem[];
-        totalCount: number;
-        page: number;
-        pageSize: number;
-        hasMore: boolean;
-      },
+      NotificationsResponse,
       { page: number; pageSize: number }
     >({
       query: ({ page = 1, pageSize = 10 }) => ({
@@ -56,30 +33,10 @@ const NotificationApi = api.injectEndpoints({
         params: { page, pageSize },
       }),
       providesTags: ['Notifications'],
-
-      serializeQueryArgs: ({ endpointName }) => endpointName,
-
-      merge: (currentCache, newData, { arg }) => {
-        if (arg.page === 1) {
-          currentCache.items = newData.items;
-        } else {
-          const existingIds = new Set(currentCache.items.map(i => i.id));
-          const filtered = newData.items.filter(i => !existingIds.has(i.id));
-          currentCache.items.push(...filtered);
-        }
-        currentCache.totalCount = newData.totalCount;
-        currentCache.page = newData.page;
-        currentCache.pageSize = newData.pageSize;
-        currentCache.hasMore = newData.hasMore;
-      },
-
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg?.page !== previousArg?.page;
-      },
     }),
 
     readNotification: builder.mutation<void, string>({
-      query: (notificationId: string) => ({
+      query: notificationId => ({
         url: `/notifications/${notificationId}/read`,
         method: 'POST',
       }),
@@ -93,6 +50,7 @@ const NotificationApi = api.injectEndpoints({
       }),
       invalidatesTags: ['Notifications'],
     }),
+
     sendFCMToken: builder.mutation<
       void,
       { deviceToken: string; platform: string }
@@ -100,15 +58,13 @@ const NotificationApi = api.injectEndpoints({
       query: ({ deviceToken, platform }) => ({
         url: '/notifications/device-token',
         method: 'POST',
-        body: {
-          deviceToken: deviceToken,
-          platform: platform,
-        },
+        body: { deviceToken, platform },
       }),
     }),
-    deleteNotification: builder.mutation({
+
+    deleteNotification: builder.mutation<void, string>({
       query: id => ({
-        url: `/api/notifications/{id}`,
+        url: `/notifications/${id}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['Notifications'],

@@ -1,9 +1,11 @@
 import { useCallback, useEffect } from 'react';
 import { Platform, PermissionsAndroid } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-import { useSendFCMTokenMutation } from '@redux/NotificationsApiReducer';
+import {
+  useSendFCMTokenMutation,
+  NotificationApi,
+} from '@redux/NotificationsApiReducer';
 import store, { useAppSelector } from '@redux/store';
-import handleNotification from '@utils/handleNotification';
 import { hasUnreadNotifications } from '@redux/AuthReducer';
 
 async function requestUserPermission() {
@@ -72,7 +74,14 @@ const useNotification = () => {
      */
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
       console.log('Foreground notification:', remoteMessage);
+
+      // 1. Mark as unread in your local state
       store.dispatch(hasUnreadNotifications(true));
+
+      // 2. Invalidate RTK Query tags to refetch data
+      // Replace 'Notifications' with the actual tag name defined in your API slice
+      store.dispatch(NotificationApi.util.invalidateTags(['Notifications']));
+      store.dispatch(NotificationApi.util.invalidateTags(['MyProperties']));
     });
 
     /**
@@ -82,7 +91,6 @@ const useNotification = () => {
       remoteMessage => {
         if (remoteMessage?.data) {
           console.log('Opened from background:', remoteMessage);
-          handleNotification(remoteMessage.data);
         }
       },
     );
@@ -95,7 +103,6 @@ const useNotification = () => {
       .then(remoteMessage => {
         if (remoteMessage?.data) {
           console.log('Opened from quit:', remoteMessage);
-          handleNotification(remoteMessage.data);
         }
       });
 

@@ -25,11 +25,12 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
   const { data, isLoading } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
-  const { data: balance } = useAccountBalance(String(address));
 
   useGetKYCStatusQuery(undefined, {
     skip: !userToken,
   });
+
+  const { data: balance } = useAccountBalance(String(address));
 
   if (isConnected) {
     return (

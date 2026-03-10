@@ -240,6 +240,7 @@ const propertyApi = api.injectEndpoints({
         'MyInvestedProperties',
         'Properties',
         'FeaturedProperties',
+        'Transactions',
       ],
     }),
 

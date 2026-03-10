@@ -15,7 +15,6 @@ interface PropertyDetailsType {
   demandScore: number | null;
   riskScore: number | null;
 
-  // User Specific (Nullable until invested)
   tokensOwned: number | null;
   userInvestedAmountEth: number | null;
   userInvestmentAmount: number | null;
@@ -61,7 +60,7 @@ export enum PropertyStatus {
   Draft = 0,
   Pending = 1,
   Approved = 2,
-  Active = 3, // Matches your 'status: 3'
+  Active = 3,
   Rejected = 4,
 }
 
@@ -71,27 +70,23 @@ interface MyPropertyDetailsType {
   description: string;
   location: string;
   imageUrl: string;
-  propertyType: 'Commercial' | 'Residential' | 'Land';
+  propertyType: 'Commercial' | 'Residential' | 'Land' | 'Industrial';
 
-  // Market Metrics
   annualYieldPercent: number;
   riskScore: number;
   demandScore: number;
   status: PropertyStatus | number;
   rejectionReason: string | null;
 
-  // Inventory & Pricing
   totalUnits: number;
   availableUnits: number;
   totalValue: number;
   pricePerUnit: number;
   pricePerUnitEth: number;
 
-  // User Specific (Nullable until invested)
   userInvestedAmountEth: number | null;
   userInvestmentAmount: number | null;
 
-  //documents
   documents: any;
 }
 
@@ -134,6 +129,43 @@ interface Transaction {
   ethUsdRateAtExecution: number;
   status: 'Pending' | 'Completed' | 'Failed';
   createdAt: string;
+  fromWalletAddress: string;
+  tokens?: number;
+}
+interface PropertyOfflineDetail {
+  propertyName: string;
+  description: string;
+  location: string;
+  propertyType: string;
+
+  documents: {
+    documentName: string;
+    file: any;
+  }[];
+
+  totalPropertyValue: number;
+  numberOfShares: number;
+  rentalIncome: number;
+  expectedAnnualYield: number;
+
+  propertyImage: any;
+
+  id?: string;
+  updatedAt: number;
+}
+
+enum OfflineTaskType {
+  CREATE_PROPERTY = 'CREATE_PROPERTY',
+  EDIT_PROPERTY = 'EDIT_PROPERTY',
+  RESUBMIT_PROPERTY = 'RESUBMIT_PROPERTY',
+  REQUEST_TOKEN = 'REQUEST_TOKEN',
+}
+
+interface OfflineTask {
+  id: string;
+  type: OfflineTaskType;
+  payload: any;
+  createdAt: number;
 }
 
 export {
@@ -143,19 +175,8 @@ export {
   PropertyPortfolioData,
   PropertyCardProps,
   NotificationItem,
+  PropertyOfflineDetail,
   Transaction,
+  OfflineTaskType,
+  OfflineTask,
 };
-
-export enum OfflineTaskType {
-  CREATE_PROPERTY = 'CREATE_PROPERTY',
-  EDIT_PROPERTY = 'EDIT_PROPERTY',
-  RESUBMIT_PROPERTY = 'RESUBMIT_PROPERTY',
-}
-
-
-export interface OfflineTask {
-  id: string;
-  type: OfflineTaskType;
-  payload: any;
-  createdAt: number;
-}

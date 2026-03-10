@@ -62,15 +62,6 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
     );
   }
 
-  const selectedValue =
-    selectedIndex !== null ? lineData[selectedIndex]?.value : null;
-
-  const chartRange = maxValue;
-  const normalizedPosition =
-    selectedValue !== null ? (selectedValue - minValue) / chartRange : 0;
-
-  const tooltipBelow = normalizedPosition > 0.5;
-
   return (
     <Pressable>
       <View style={dynamicStyles.container}>
@@ -155,7 +146,7 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
               autoAdjustPointerLabelPosition: true,
 
               pointerLabelComponent: (
-                items: Array<{ label: string; value: number }>
+                items: { label: string; value: number }[],
               ) => {
                 if (selectedIndex === null) return null;
 
@@ -165,8 +156,7 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
                 return (
                   <View
                     style={{
-                      marginTop: tooltipBelow ? '50%' : '-50%',
-                      top:0,
+                      top: 0,
                       backgroundColor: Colors.elevated,
                       borderRadius: 6,
                       paddingHorizontal: 9,

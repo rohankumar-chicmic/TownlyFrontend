@@ -1,14 +1,47 @@
 import { ThemeColors } from '@theme/constants';
-import { Dimensions, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
+    deleteContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: 90,
+      marginVertical: 6,
+    },
+
+    deleteButton: {
+      backgroundColor: '#FF3B30',
+      width: '100%',
+      height: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderRadius: 10,
+    },
+
+    deleteText: {
+      color: '#fff',
+      fontWeight: '600',
+      fontSize: 13,
+    },
+
+    content: {
+      flex: 1,
+      paddingLeft: 10,
+    },
     card: {
       marginVertical: 4,
-      paddingVertical: 8,
       borderBottomWidth: 1,
       borderBottomColor: Colors.border,
-      paddingBottom: 10,
+      padding: 10,
+      borderRadius: 5,
+    },
+    unreadBar: {
+      width: 4,
+      borderTopLeftRadius: 10,
+      borderBottomLeftRadius: 10,
+      backgroundColor: Colors.primary,
+      marginRight: 10,
     },
     header: {
       flexDirection: 'row',
@@ -82,20 +115,6 @@ const styles = (Colors: ThemeColors) =>
       fontSize: 10,
       color: Colors.textSecondary,
     },
-    // notificationCard: {
-    //   marginVertical: 5,
-    //   padding: 10,
-    //   borderWidth: 1,
-    //   backgroundColor: Colors.surface,
-    //   borderColor: Colors.border,
-    //   borderRadius: 4,
-    // },
-    // notificationHeader: {
-    //   flexDirection: 'row',
-    //   justifyContent: 'space-between',
-    //   alignItems: 'center',
-    //   marginBottom: 5,
-    // },
     container: {
       backgroundColor: Colors.background,
       padding: 20,
@@ -127,7 +146,6 @@ const styles = (Colors: ThemeColors) =>
       padding: 8,
       justifyContent: 'space-evenly',
       alignItems: 'flex-start',
-      width: Dimensions.get('window').width * 0.4,
       marginRight: 5,
     },
     dataPanel: {

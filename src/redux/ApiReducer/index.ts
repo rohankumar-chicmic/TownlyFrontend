@@ -54,7 +54,6 @@ const authApi = api.injectEndpoints({
         method: 'GET',
       }),
     }),
-
     getTransactions: builder.query({
       query: params => ({
         url: `/transactions/me`,

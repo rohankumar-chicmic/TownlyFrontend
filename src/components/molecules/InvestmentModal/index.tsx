@@ -138,7 +138,6 @@ export default function InvestPropertyModal({
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
             >
-              {/* Header */}
               <View style={dynamicStyles.header}>
                 <Text style={dynamicStyles.title}>Invest in Property</Text>
 

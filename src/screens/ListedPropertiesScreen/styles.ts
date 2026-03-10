@@ -35,7 +35,16 @@ const styles = (Colors: ThemeColors) =>
       paddingVertical: 4,
       borderRadius: 6,
     },
-
+    loadingContainer: {
+      width: '100%',
+      aspectRatio: 1,
+      justifyContent: 'center',
+      alignContent: 'center',
+    },
+    loadingText: {
+      textAlign: 'center',
+      color: Colors.textSecondary,
+    },
     tagText: {
       color: Colors.textSecondary,
       fontSize: 12,

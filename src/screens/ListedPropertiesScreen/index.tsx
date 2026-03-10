@@ -1,5 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, FlatList, Dimensions, ScrollView } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  Dimensions,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
@@ -91,8 +98,7 @@ const ListedProperiesScreen = () => {
             padding: 10,
             color: Colors.textMuted,
           }}
-        >
-        </Text>
+        ></Text>
       );
     }
 
@@ -122,64 +128,60 @@ const ListedProperiesScreen = () => {
       </View>
 
       {/* FILTERS */}
-      <ScrollView
-        horizontal
+      <View
         style={{
+          flexDirection: 'row',
           borderBottomColor: Colors.border,
           borderBottomWidth: 1,
-          padding: 15,
+          padding: 7,
           paddingTop: 0,
         }}
-        contentContainerStyle={{ paddingRight: 30 }}
       >
-        <FilterButton
-          label="All"
-          value=""
-          currentValue={status}
-          onPress={() => handleStatusChange('')}
-        />
-        <FilterButton
-          label="Pending"
-          value={1}
-          currentValue={status}
-          onPress={() => handleStatusChange(1)}
-        />
-        <FilterButton
-          label="Active"
-          value={2}
-          currentValue={status}
-          onPress={() => handleStatusChange(2)}
-        />
-        <FilterButton
-          label="Sold out"
-          value={3}
-          currentValue={status}
-          onPress={() => handleStatusChange(3)}
-        />
-        <FilterButton
-          label="Rejected"
-          value={4}
-          currentValue={status}
-          onPress={() => handleStatusChange(4)}
-        />
-        <FilterButton
-          label="Modification Required"
-          value={5}
-          currentValue={status}
-          onPress={() => handleStatusChange(5)}
-        />
-      </ScrollView>
+        <ScrollView horizontal>
+          <FilterButton
+            label="All"
+            value=""
+            currentValue={status}
+            onPress={() => handleStatusChange('')}
+          />
+          <FilterButton
+            label="Pending"
+            value={1}
+            currentValue={status}
+            onPress={() => handleStatusChange(1)}
+          />
+          <FilterButton
+            label="Active"
+            value={2}
+            currentValue={status}
+            onPress={() => handleStatusChange(2)}
+          />
+          <FilterButton
+            label="Sold out"
+            value={3}
+            currentValue={status}
+            onPress={() => handleStatusChange(3)}
+          />
+          <FilterButton
+            label="Rejected"
+            value={4}
+            currentValue={status}
+            onPress={() => handleStatusChange(4)}
+          />
+          <FilterButton
+            label="Modification Required"
+            value={5}
+            currentValue={status}
+            onPress={() => handleStatusChange(5)}
+          />
+        </ScrollView>
+      </View>
 
-      {/* LOADING FIRST PAGE */}
       {isLoading && params.page === 1 ? (
-        <Text
-          style={[
-            dynamicStyles.heroText,
-            { textAlign: 'center', width: '100%', height: '80%' },
-          ]}
-        >
-          Loading Properties...
-        </Text>
+        <View style={dynamicStyles.loadingContainer}>
+          <ActivityIndicator size="large" color={Colors.primary} />
+          <Text style={dynamicStyles.loadingText}>Loading Properties...</Text>
+        </View>
       ) : (
         <FlatList
           data={list}

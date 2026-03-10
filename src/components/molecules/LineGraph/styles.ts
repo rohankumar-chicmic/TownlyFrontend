@@ -39,11 +39,11 @@ const styles = (Colors: ThemeColors) =>
     tooltipWrapper: {
       justifyContent: 'center',
       alignItems: 'center',
-      width: 100, // Provides a consistent hit area for alignment
+      width: 100,
       marginBottom: 10,
     },
     tooltipBox: {
-      backgroundColor: '#121212', // Dark background like the photo
+      backgroundColor: '#121212',
       paddingHorizontal: 12,
       paddingVertical: 8,
       borderRadius: 8,
@@ -58,7 +58,7 @@ const styles = (Colors: ThemeColors) =>
       marginBottom: 2,
     },
     tooltipValue: {
-      color: Colors.primary, // The neon green/yellow
+      color: Colors.primary,
       fontWeight: 'bold',
       fontSize: 16,
     },

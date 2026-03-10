@@ -5,10 +5,12 @@ const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     backdrop: {
       flexGrow: 1,
-      backgroundColor: 'rgba(0,0,0,0.3)',
+      backgroundColor: 'rgba(0,0,0,0.2)',
     },
 
     sheet: {
+      borderColor: Colors.outline,
+      borderWidth: 1,
       backgroundColor: Colors.background,
       padding: 20,
       borderTopLeftRadius: 24,
