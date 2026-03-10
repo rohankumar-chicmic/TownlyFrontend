@@ -81,6 +81,8 @@ export default function UserOwnedProperty() {
 
   if (isLoading) return <PropertyDetailsSkeleton />;
 
+  console.log(data);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.elevated }}>
       <ScrollView
@@ -256,7 +258,6 @@ export default function UserOwnedProperty() {
                     overflow: 'hidden',
                   }}
                 >
-                  {/* Document Header */}
                   <TouchableOpacity
                     onPress={() => Linking.openURL(doc.documentUrl)}
                     style={{

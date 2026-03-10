@@ -62,6 +62,7 @@ export enum PropertyStatus {
   Approved = 2,
   Active = 3,
   Rejected = 4,
+  ModificationRequired = 5,
 }
 
 interface MyPropertyDetailsType {

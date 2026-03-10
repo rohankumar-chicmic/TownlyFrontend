@@ -69,7 +69,7 @@ export const usePortfolioScreenData = () => {
     error: myPropertiesError,
     isLoading: propertiesLoading,
   } = useGetMyPropertiesQuery(
-    { page: 1, pageSize: 4, search: '', status: '' },
+    { page: 1, pageSize: 5, search: '', status: '' },
     { skip: !userToken || skipFetch, refetchOnMountOrArgChange: true },
   );
 
@@ -98,6 +98,7 @@ export const usePortfolioScreenData = () => {
    * isLoading — true only while API calls are in-flight AND no local data yet
    * ==============================
    */
+
   const isLoading =
     !skipFetch &&
     (summaryLoading ||
@@ -113,6 +114,7 @@ export const usePortfolioScreenData = () => {
    * Focus Refetch
    * ==============================
    */
+
   useFocusEffect(
     useCallback(() => {
       dispatch(propertyApi.util.invalidateTags(['MyProperties']));
@@ -120,11 +122,6 @@ export const usePortfolioScreenData = () => {
     }, [dispatch]),
   );
 
-  /**
-   * ==============================
-   * Persist To Local DB
-   * ==============================
-   */
   useEffect(() => {
     if (investmentDetails && !investmentDetailsError)
       savePortfolioSummary(investmentDetails);

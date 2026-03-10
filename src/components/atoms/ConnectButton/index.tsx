@@ -1,4 +1,3 @@
-// components/ConnectButton.tsx
 import useTheme from '@hooks/useTheme';
 import { useAppKit, useAccount } from '@reown/appkit-react-native';
 import { View, Text, Pressable, ViewStyle, Dimensions } from 'react-native';
@@ -22,6 +21,7 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
   const userToken = useAppSelector(state => state.auth.userToken);
   console.log(userToken);
   const navigation = useAppNavigation();
+
   const { data, isLoading } = useGetBalanceQuery(undefined, {
     skip: !userToken,
   });
@@ -50,7 +50,7 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
             {isLoading && 'loading...'}
             {data?.available
               ? data?.available + ' ETH, '
-              : (balance?.availableBalance ?? '...') + ' ETH, '}
+              : (balance?.availableBalance || '...') + ' ETH, '}
             {address ?? ' '}
           </Text>
         </Pressable>

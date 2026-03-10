@@ -15,6 +15,13 @@
       "when": 1773142365699,
       "tag": "0001_misty_mariko_yashida",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1773152249506,
+      "tag": "0002_thin_apocalypse",
+      "breakpoints": true
     }
   ]
 }

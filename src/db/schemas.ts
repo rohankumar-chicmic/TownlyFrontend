@@ -153,3 +153,49 @@ export const offlinePropertyDrafts = sqliteTable('offlinePropertyDrafts', {
   propertyImage: blob('propertyImage').$type<any>().notNull(),
   updatedAt: integer('updatedAt').notNull(),
 });
+
+export const myProperties = sqliteTable('my_properties', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description'),
+  location: text('location').notNull(),
+  propertyType: text('propertyType').notNull(), // Matching your camelCase style
+  status: integer('status').default(1),
+
+  // Financials
+  annualYieldPercent: real('annualYieldPercent').notNull(),
+  totalValue: real('totalValue').notNull(),
+  pricePerUnit: real('pricePerUnit').notNull(),
+  pricePerUnitEth: real('pricePerUnitEth'),
+  rentalIncomeHistory: real('rentalIncomeHistory'),
+
+  totalUnits: integer('totalUnits').notNull(),
+  availableUnits: integer('availableUnits').notNull(),
+
+  riskScore: integer('riskScore'),
+  demandScore: integer('demandScore'),
+  imageUrl: text('imageUrl'),
+
+  canDelete: integer('canDelete', { mode: 'boolean' }).default(false),
+  canEditFullProperty: integer('canEditFullProperty', {
+    mode: 'boolean',
+  }).default(false),
+  canRequestUpdate: integer('canRequestUpdate', { mode: 'boolean' }).default(
+    false,
+  ),
+  canResubmit: integer('canResubmit', { mode: 'boolean' }).default(false),
+  hasPendingUpdateRequest: integer('hasPendingUpdateRequest', {
+    mode: 'boolean',
+  }).default(false),
+  rejectionReason: text('rejectionReason'),
+});
+
+export const propertyDocuments = sqliteTable('property_documents', {
+  id: integer('id').primaryKey({ autoIncrement: true }),
+  propertyId: text('propertyId')
+    .notNull()
+    .references(() => myProperties.id, { onDelete: 'cascade' }), // Corrected reference
+  title: text('title').notNull(),
+  fileName: text('fileName').notNull(),
+  documentUrl: text('documentUrl').notNull(),
+});

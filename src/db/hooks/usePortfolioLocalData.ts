@@ -29,6 +29,7 @@ export const usePortfolioData = () => {
   );
   const { data: txHistory } = useLiveQuery(db.select().from(transactions));
   const { data: myProperties } = useLiveQuery(db.select().from(properties));
+  console.log(myProperties);
   return {
     summary: summary?.[0] ?? null,
     holdings,
@@ -79,17 +80,21 @@ export const saveProperty = async (data: NewProperty) => {
 };
 
 export const saveProperties = async (data: NewProperty[]) => {
-  return await db
-    .insert(properties)
-    .values(data)
-    .onConflictDoUpdate({
-      target: properties.id,
-      set: {
-        availableUnits: sql`excluded.availableUnits`,
-        status: sql`excluded.status`,
-        pricePerUnitEth: sql`excluded.pricePerUnitEth`,
-      },
-    });
+  console.log(
+    'Saving properties:',
+    data.map(p => ({
+      id: p.id,
+      status: p.status,
+    })),
+  );
+
+  return await db.transaction(async tx => {
+    await tx.delete(properties);
+
+    const response = await tx.insert(properties).values(data);
+
+    return response;
+  });
 };
 
 export const saveUserInvestment = async (data: NewUserInvestment) => {

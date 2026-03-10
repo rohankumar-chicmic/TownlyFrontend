@@ -131,6 +131,7 @@ const Notifications = () => {
     resetAll();
   }, [hasUnread, resetAll]);
 
+  // Derive per-tab actions once — removes repeated isAllFilter branching in handlers
   const setCurrentPage = isAllFilter ? setPageAll : setPageUnread;
   const isResettingCurrent = isAllFilter ? isResettingAll : isResettingUnread;
   const refetchCurrent = isAllFilter ? refetchAll : refetchUnread;
@@ -141,7 +142,6 @@ const Notifications = () => {
   const currentPage = isAllFilter ? pageAll : pageUnread;
   const totalCurrent = isAllFilter ? totalAll : totalUnread;
   const hasMore = notificationsToRender.length < totalCurrent;
-
   const isRefreshing =
     isFetchingCurrent && currentPage === 1 && !isLoadingCurrent;
   const shouldShowFooter = isFetchingCurrent && currentPage > 1;
