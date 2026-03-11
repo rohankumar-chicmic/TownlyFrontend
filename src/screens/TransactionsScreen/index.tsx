@@ -10,6 +10,7 @@ import BackButton from '@components/atoms/BackButton';
 import FilterButton from '@components/atoms/FilterButton';
 import { useGetTransactionsQuery } from '@redux/ApiReducer';
 import TransactionRow from '@components/atoms/TransactionsRow';
+import EmptyState from '@components/molecules/EmptyState';
 const PAGE_SIZE = 20;
 
 const TransactionsScreen = () => {
@@ -117,6 +118,7 @@ const TransactionsScreen = () => {
             </Text>
           ) : null
         }
+        ListEmptyComponent={<EmptyState message='No transactions are available'/>}
         style={{ backgroundColor: Colors.background }}
       />
     </SafeAreaView>

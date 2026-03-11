@@ -159,10 +159,9 @@ export const myProperties = sqliteTable('my_properties', {
   name: text('name').notNull(),
   description: text('description'),
   location: text('location').notNull(),
-  propertyType: text('propertyType').notNull(), // Matching your camelCase style
+  propertyType: text('propertyType').notNull(),
   status: integer('status').default(1),
 
-  // Financials
   annualYieldPercent: real('annualYieldPercent').notNull(),
   totalValue: real('totalValue').notNull(),
   pricePerUnit: real('pricePerUnit').notNull(),

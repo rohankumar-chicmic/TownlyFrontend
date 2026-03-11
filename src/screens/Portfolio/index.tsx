@@ -1,4 +1,4 @@
-import { ScrollView } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
 import { useAppNavigation } from '@hooks/useNavigation';
@@ -16,11 +16,18 @@ import RecentTransactionsSection from '@components/molecules/RecentTransactionsS
 
 import { usePortfolioScreenData } from '@hooks/usePortfolioScreenData';
 import PortfolioSkeleton from '@components/molecules/SkeletonPortfolio';
+import { useNetInfo } from '@react-native-community/netinfo';
+import OfflineTasksQueue from '@components/molecules/OfflineTasksQueue';
+import { getIncompleteTasks } from 'src/db/hooks/useOfflineQueue';
+import { useFocusEffect } from '@react-navigation/native';
+import { OfflineTask } from '@utils/types';
+import { useCallback, useState } from 'react';
 
 export default function Portfolio() {
   const { dynamicStyles, Colors } = useStyles(styles);
   const navigation = useAppNavigation();
-
+  const { isConnected } = useNetInfo();
+  const [tasks, setTasks] = useState<OfflineTask[]>([]);
   const {
     userToken,
     address,
@@ -36,6 +43,24 @@ export default function Portfolio() {
     transactionsHasMore,
     isLoading,
   } = usePortfolioScreenData();
+
+  useFocusEffect(
+    useCallback(() => {
+      let isActive = true;
+
+      async function fetchTasks() {
+        const res = await getIncompleteTasks();
+        if (isActive) setTasks(res as OfflineTask[]);
+        console.log(res, 'Pending tasks');
+      }
+
+      fetchTasks();
+
+      return () => {
+        isActive = false;
+      };
+    }, []),
+  );
 
   if (isLoading) return <PortfolioSkeleton />;
 
@@ -61,6 +86,29 @@ export default function Portfolio() {
         onPress={() => navigation.navigate('CreateNft')}
         style={{ marginVertical: 5 }}
       />
+      {tasks && (
+        <View style={[dynamicStyles.containerStyle]}>
+          <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
+            Offline Tasks
+          </Text>
+          <Text style={[dynamicStyles.smallText]}>
+            These tasks will be performed connect is restored.
+          </Text>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              width: '100%',
+            }}
+          >
+            <OfflineTasksQueue
+              tasks={tasks}
+              onDiscard={taskId => console.log('Discard task', taskId)}
+              onRetry={taskId => console.log('Retry task', taskId)}
+            />
+          </View>
+        </View>
+      )}
 
       <InvestedPropertiesSection
         items={investedItems}

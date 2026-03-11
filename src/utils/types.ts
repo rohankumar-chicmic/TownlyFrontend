@@ -65,32 +65,46 @@ export enum PropertyStatus {
   ModificationRequired = 5,
 }
 
+export interface PropertyDocument {
+  id: number;
+  propertyId: string;
+  title: string;
+  fileName: string;
+  documentUrl: string;
+}
+
 interface MyPropertyDetailsType {
   id: string;
   name: string;
-  description: string;
+  description: string | null;
   location: string;
-  imageUrl: string;
+  imageUrl: string | null;
   propertyType: 'Commercial' | 'Residential' | 'Land' | 'Industrial';
 
-  annualYieldPercent: number;
-  riskScore: number;
-  demandScore: number;
-  status: PropertyStatus | number;
+  status: PropertyStatus | number | null;
   rejectionReason: string | null;
+  canDelete: boolean | null;
+  canEditFullProperty: boolean | null;
+  canRequestUpdate: boolean | null;
+  canResubmit: boolean | null;
+  hasPendingUpdateRequest: boolean | null;
+
+  annualYieldPercent: number;
+  totalValue: number;
+  pricePerUnit: number;
+  pricePerUnitEth: number | null;
+  rentalIncomeHistory: number | null;
 
   totalUnits: number;
   availableUnits: number;
-  totalValue: number;
-  pricePerUnit: number;
-  pricePerUnitEth: number;
+  riskScore: number | null;
+  demandScore: number | null;
 
-  userInvestedAmountEth: number | null;
-  userInvestmentAmount: number | null;
+  userInvestedAmountEth?: number | null;
+  userInvestmentAmount?: number | null;
 
-  documents: any;
+  documents: PropertyDocument[] | any;
 }
-
 interface PropertyCardProps {
   id: string;
   name: string;
@@ -101,7 +115,7 @@ interface PropertyCardProps {
   approvedValuation: number;
   availableUnits: number;
   totalUnits: number;
-  riskScore: number;
+  riskScore: number | null;
   pricePerUnitEth: number;
   userOwned: boolean | null;
   status: number | null;
@@ -160,12 +174,15 @@ enum OfflineTaskType {
   EDIT_PROPERTY = 'EDIT_PROPERTY',
   RESUBMIT_PROPERTY = 'RESUBMIT_PROPERTY',
   REQUEST_TOKEN = 'REQUEST_TOKEN',
+  DELETE_PROPERTY = 'DELETE_PROPERTY',
 }
 
 interface OfflineTask {
   id: string;
-  type: OfflineTaskType;
-  payload: any;
+  type: string;
+  status: string;
+  payload: string;
+  retries: number;
   createdAt: number;
 }
 

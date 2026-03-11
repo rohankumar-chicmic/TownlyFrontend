@@ -78,6 +78,7 @@ const Home = () => {
             width={10}
             borderColor={Colors.background}
             color={Colors.background}
+            strokeWidth={1}
           />
         </Button>
 

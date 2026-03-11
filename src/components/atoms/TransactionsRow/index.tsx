@@ -87,7 +87,7 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
         </Text>
 
         <AnimatedChevron style={[dynamicStyles.chevronIcon, chevronStyle]}>
-          ▾
+          <Text>▾</Text>
         </AnimatedChevron>
       </TouchableOpacity>
 

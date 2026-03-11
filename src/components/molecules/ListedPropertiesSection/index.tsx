@@ -7,6 +7,9 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import styles from './styles';
 import EmptyState from '@components/molecules/EmptyState';
+import { saveListedPropertiesDetails } from 'src/db/hooks/usePropertyDetails';
+import { useEffect } from 'react';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.75;
 
@@ -22,6 +25,18 @@ export default function ListedPropertiesSection({
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+  const {isConnected} = useNetInfo();
+
+  useEffect(() => {
+    const savePropertiesLocally = async () => {
+      const propertyIds = items.map(item => item.id);
+      await saveListedPropertiesDetails(propertyIds);
+    };
+
+    if (items.length && isConnected) {
+      savePropertiesLocally();
+    }
+  }, [items]);
 
   return (
     <View

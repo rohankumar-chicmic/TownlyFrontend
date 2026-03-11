@@ -29,7 +29,6 @@ export const usePortfolioData = () => {
   );
   const { data: txHistory } = useLiveQuery(db.select().from(transactions));
   const { data: myProperties } = useLiveQuery(db.select().from(properties));
-  console.log(myProperties);
   return {
     summary: summary?.[0] ?? null,
     holdings,
@@ -80,13 +79,6 @@ export const saveProperty = async (data: NewProperty) => {
 };
 
 export const saveProperties = async (data: NewProperty[]) => {
-  console.log(
-    'Saving properties:',
-    data.map(p => ({
-      id: p.id,
-      status: p.status,
-    })),
-  );
 
   return await db.transaction(async tx => {
     await tx.delete(properties);
