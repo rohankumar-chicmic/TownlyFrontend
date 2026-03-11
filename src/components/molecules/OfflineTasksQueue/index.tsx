@@ -9,7 +9,6 @@ import Animated, {
   LinearTransition,
 } from 'react-native-reanimated';
 import useStyles from '@hooks/useStyles';
-import useTheme from '@hooks/useTheme';
 import styles from './styles';
 
 interface OfflineTask {
@@ -33,7 +32,6 @@ export default function OfflineTasksQueue({
   onRetry,
 }: Readonly<OfflineTasksQueueProps>) {
   const { dynamicStyles } = useStyles(styles);
-  const { Colors } = useTheme();
 
   if (!tasks || tasks.length === 0) {
     return (
@@ -70,7 +68,7 @@ export default function OfflineTasksQueue({
     ];
     console.log(payloadData);
     if (payloadData.name)
-      overview.push({ label: 'Name', value: payloadData.name });
+      overview.push({ label: 'Name', value: payloadData.propertyName });
     if (payloadData.tokens)
       overview.push({ label: 'Tokens', value: `${payloadData.tokens}` });
 
@@ -108,25 +106,6 @@ export default function OfflineTasksQueue({
                 <Text style={dynamicStyles.detailValue}>{value}</Text>
               </View>
             ))}
-
-            <View style={dynamicStyles.actions}>
-              {onRetry && (
-                <TouchableOpacity
-                  onPress={() => onRetry(item.id)}
-                  style={dynamicStyles.actionBtn}
-                >
-                  <Text style={dynamicStyles.actionText}>Retry</Text>
-                </TouchableOpacity>
-              )}
-              {onDiscard && (
-                <TouchableOpacity
-                  onPress={() => onDiscard(item.id)}
-                  style={dynamicStyles.actionBtn}
-                >
-                  <Text style={dynamicStyles.actionText}>Discard</Text>
-                </TouchableOpacity>
-              )}
-            </View>
           </Animated.View>
         )}
       </Animated.View>

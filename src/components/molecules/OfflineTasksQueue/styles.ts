@@ -18,9 +18,10 @@ const styles = (Colors: ThemeColors) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       padding: 12,
+      width: '100%',
     },
     taskHeaderClosed: {
-      // Optional: subtle shadow or background when closed
+      backgroundColor: Colors.elevated,
     },
     taskLabel: {
       fontWeight: 'bold',
@@ -39,6 +40,7 @@ const styles = (Colors: ThemeColors) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginVertical: 2,
+      width: '100%',
     },
     detailLabel: {
       color: Colors.textSecondary,

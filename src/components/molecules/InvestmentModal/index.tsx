@@ -17,7 +17,8 @@ import { useInvestInPropertyMutation } from '@redux/PropertyApiReducer';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import Toast from 'react-native-toast-message';
 import { useAppToastConfig } from '@hooks/useAppToastConfig';
-
+import { useAppSelector } from '@redux/store';
+import { useGetBalanceQuery } from '@redux/ApiReducer';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -48,9 +49,17 @@ export default function InvestPropertyModal({
   const { dynamicStyles } = useStyles(styles);
   const toastConfig = useAppToastConfig();
 
-  const totalCost = Number(shares || 0) * pricePerShare;
-
   const [investInProperty] = useInvestInPropertyMutation();
+  const walletAddress = useAppSelector(
+    state => state.auth.userData?.walletAddress,
+  );
+  const { data: balanceData } = useGetBalanceQuery(walletAddress, {
+    skip: !walletAddress,
+  });
+
+  const availableBalance = balanceData?.availableBalance ?? 0;
+  const totalCost = Number(shares || 0) * pricePerShare;
+  const gasEstimate = 0.05;
 
   useEffect(() => {
     if (!visible) {
@@ -91,6 +100,16 @@ export default function InvestPropertyModal({
         type: 'error',
         text1: 'Minimum 1 share required',
         visibilityTime: 1000,
+      });
+      return;
+    }
+
+    if (totalCost + gasEstimate > availableBalance) {
+      Toast.show({
+        type: 'error',
+        text1: 'Insufficient Balance',
+        text2: `You need ${(totalCost + gasEstimate).toFixed(3)} ETH but only have ${availableBalance.toFixed(3)} ETH`,
+        visibilityTime: 2000,
       });
       return;
     }

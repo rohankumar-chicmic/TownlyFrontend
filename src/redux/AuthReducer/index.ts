@@ -7,14 +7,14 @@ interface InitialStateType {
   userData: any;
   theme: THEME;
   kycStatus: number;
-  unreadNotifications: boolean;
+  unreadNotificationsCount: number;
 }
 
 const initialState: InitialStateType = {
   userToken: undefined,
   userData: undefined,
   theme: THEME.DEVICE,
-  unreadNotifications: false,
+  unreadNotificationsCount: 0,
   kycStatus: 0,
 };
 
@@ -34,13 +34,33 @@ const authReducer = createSlice({
     setTheme(state, action: PayloadAction<THEME>) {
       state.theme = action.payload;
     },
-    hasUnreadNotifications(state, action) {
-      state.unreadNotifications = action.payload;
+    setUnreadNotifications(state, action: PayloadAction<number>) {
+      state.unreadNotificationsCount = action.payload;
+    },
+
+    incrementUnreadNotifications(state) {
+      state.unreadNotificationsCount += 1;
+    },
+
+    decrementUnreadNotifications(state) {
+      if (state.unreadNotificationsCount > 0) {
+        state.unreadNotificationsCount -= 1;
+      }
+    },
+
+    resetUnreadNotifications(state) {
+      state.unreadNotificationsCount = 0;
     },
   },
 });
-
-export const { loginUser, logoutUser, setTheme, hasUnreadNotifications } =
-  authReducer.actions;
+export const {
+  loginUser,
+  logoutUser,
+  setTheme,
+  setUnreadNotifications,
+  incrementUnreadNotifications,
+  decrementUnreadNotifications,
+  resetUnreadNotifications,
+} = authReducer.actions;
 
 export default authReducer.reducer;

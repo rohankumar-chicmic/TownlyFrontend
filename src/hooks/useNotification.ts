@@ -6,7 +6,7 @@ import {
   NotificationApi,
 } from '@redux/NotificationsApiReducer';
 import store, { useAppSelector } from '@redux/store';
-import { hasUnreadNotifications } from '@redux/AuthReducer';
+import { incrementUnreadNotifications } from '@redux/AuthReducer';
 
 async function requestUserPermission() {
   let enabled = false;
@@ -76,7 +76,7 @@ const useNotification = () => {
       console.log('Foreground notification:', remoteMessage);
 
       // 1. Mark as unread in your local state
-      store.dispatch(hasUnreadNotifications(true));
+      store.dispatch(incrementUnreadNotifications());
 
       // 2. Invalidate RTK Query tags to refetch data
       // Replace 'Notifications' with the actual tag name defined in your API slice

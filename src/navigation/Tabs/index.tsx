@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../types';
 import { Icons } from '@utils/icons';
@@ -12,18 +12,31 @@ import Marketplace from '@screens/Marketplace';
 import Portfolio from '@screens/Portfolio';
 import Notifications from '@screens/Notifications';
 import { View } from 'react-native';
-import { useAppSelector } from '@redux/store';
+import { useAppDispatch, useAppSelector } from '@redux/store';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useGetMyUnreadNotificationsQuery } from '@redux/NotificationsApiReducer';
+import { setUnreadNotifications } from '@redux/AuthReducer';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
 export default function Tabs() {
   const { Colors } = useTheme();
   const userToken = useAppSelector(state => state.auth.userToken);
+  const dispatch = useAppDispatch();
 
-  const unreadNotifcations = useAppSelector(
-    state => state.auth.unreadNotifications,
+  const { data: unreadData } = useGetMyUnreadNotificationsQuery(
+    { page: 1, pageSize: 1 },
+    { skip: !userToken, refetchOnMountOrArgChange: true },
   );
+  const unreadNotifcations = useAppSelector(
+    state => state.auth.unreadNotificationsCount,
+  );
+
+  useEffect(() => {
+    if (unreadData?.totalCount !== undefined) {
+      dispatch(setUnreadNotifications(Number(unreadData.totalCount)));
+    }
+  }, [unreadData, dispatch]);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: Colors.surface }}>
@@ -86,15 +99,16 @@ export default function Tabs() {
           options={{
             tabBarIcon: ({ color, size }) => (
               <View>
-                {userToken && unreadNotifcations && (
+                {userToken && unreadNotifcations > 0 && (
                   <View
                     style={{
+                      position: 'absolute',
+                      top: -3,
+                      right: -3,
                       height: 15,
                       width: 15,
                       backgroundColor: 'red',
-                      position: 'absolute',
                       zIndex: 100,
-                      right: 0,
                       borderRadius: 8,
                       borderColor: Colors.surface,
                       borderWidth: 3,

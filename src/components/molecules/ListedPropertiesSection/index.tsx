@@ -25,7 +25,7 @@ export default function ListedPropertiesSection({
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
-  const {isConnected} = useNetInfo();
+  const { isConnected } = useNetInfo();
 
   useEffect(() => {
     const savePropertiesLocally = async () => {

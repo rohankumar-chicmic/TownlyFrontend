@@ -6,7 +6,6 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
@@ -23,7 +22,11 @@ import {
 
 import { useAppDispatch, useAppSelector } from '@redux/store';
 import handleNotification from '@utils/handleNotification';
-import { hasUnreadNotifications } from '@redux/AuthReducer';
+import {
+  decrementUnreadNotifications,
+  setUnreadNotifications as setUnreadNotificationsState,
+  resetUnreadNotifications,
+} from '@redux/AuthReducer';
 import { NotificationItem } from '@utils/types';
 import Toast from 'react-native-toast-message';
 
@@ -40,7 +43,6 @@ const Notifications = () => {
     NotificationItem[]
   >([]);
   const userToken = useAppSelector(state => state.auth.userToken);
-  const hasUnread = useAppSelector(state => state.auth.unreadNotifications);
 
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [isPressed, setIsPressed] = useState(false);
@@ -83,7 +85,6 @@ const Notifications = () => {
   const totalUnread = unreadData?.totalCount ?? 0;
   const hasMore = currentData?.hasMore ?? false;
 
-  // Bump both pages back to 1 to force a fresh fetch — no refetch() calls needed
   const resetAll = useCallback(() => {
     setPageAll(1);
     setPageUnread(1);
@@ -91,9 +92,12 @@ const Notifications = () => {
 
   const handleFilterChange = (newFilter: 'all' | 'unread') => {
     setFilter(newFilter);
-    setCurrentPage(1);
-    if (newFilter === 'all') setAllNotifications([]);
-    else setUnreadNotifications([]);
+
+    if (newFilter === 'all') {
+      setPageAll(1);
+    } else {
+      setPageUnread(1);
+    }
   };
 
   const handleEndReached = () => {
@@ -106,7 +110,7 @@ const Notifications = () => {
       if (!userToken) return;
       setIsMarkingAllRead(true);
       await readAllNotifications().unwrap();
-      dispatch(hasUnreadNotifications(false));
+      dispatch(resetUnreadNotifications());
       resetAll();
     } catch (error) {
       console.log(error);
@@ -122,8 +126,8 @@ const Notifications = () => {
         referenceId: String(item.referenceId),
       });
       if (item.isRead) return;
-      if (totalUnread === 1) dispatch(hasUnreadNotifications(false));
-      await readSingleNotification(item.id);
+      dispatch(decrementUnreadNotifications());
+      await readSingleNotification(item.id).unwrap();
       resetAll();
     } catch (error) {
       console.log(error);
@@ -133,7 +137,13 @@ const Notifications = () => {
   const handleDelete = async (id: string) => {
     try {
       setIsMarkingAllRead(true);
+      const deleted = notifications.find(n => n.id === id);
+
       await deleteNotification(id).unwrap();
+
+      if (deleted && !deleted.isRead) {
+        dispatch(decrementUnreadNotifications());
+      }
       resetAll();
     } catch (error) {
       console.log('Delete failed:', error);
@@ -142,32 +152,39 @@ const Notifications = () => {
       setIsMarkingAllRead(false);
     }
   };
-  // Merge all notifications
   useEffect(() => {
     if (allData?.items) {
       if (pageAll === 1) {
         setAllNotifications(allData.items);
       } else {
-        setAllNotifications(prev => [...prev, ...allData.items]);
+        setAllNotifications(prev => {
+          const map = new Map(prev.map(i => [i.id, i]));
+          allData.items.forEach(i => map.set(i.id, i));
+          return Array.from(map.values());
+        });
       }
     }
   }, [allData, pageAll]);
 
-  // Merge unread notifications
   useEffect(() => {
     if (unreadData?.items) {
       if (pageUnread === 1) {
         setUnreadNotifications(unreadData.items);
       } else {
-        setUnreadNotifications(prev => [...prev, ...unreadData.items]);
+        setUnreadNotifications(prev => {
+          const map = new Map(prev.map(i => [i.id, i]));
+          unreadData.items.forEach(i => map.set(i.id, i));
+          return Array.from(map.values());
+        });
       }
     }
-  }, [unreadData, pageUnread]);
+    dispatch(setUnreadNotificationsState(unreadData?.totalCount ?? 0));
+  }, [unreadData, pageUnread, dispatch]);
 
-  const renderItem = ({ item }: { item: NotificationItem }) => (
+  const renderItem = ({ item: notification }: { item: NotificationItem }) => (
     <Notification
-      item={item}
-      onPress={() => handleSingleNotificationRead(item)}
+      item={notification}
+      onPress={() => handleSingleNotificationRead(notification)}
       onDelete={handleDelete}
     />
   );
@@ -264,11 +281,10 @@ const Notifications = () => {
         </View>
       )}
 
-      {/* LIST — outside padded block, uses flex: 1 via notificationsContainer */}
       {!isLoadingCurrent && !isMarkingAllRead && (
         <FlatList
           data={notifications}
-          keyExtractor={(item, index) => `${item.id}-${index}`}
+          keyExtractor={item => item.id}
           renderItem={renderItem}
           contentContainerStyle={{ paddingHorizontal: 10, paddingBottom: 10 }}
           style={dynamicStyles.notificationsContainer}

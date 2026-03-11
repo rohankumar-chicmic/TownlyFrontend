@@ -84,3 +84,35 @@ export default function App() {
     </SafeAreaProvider>
   );
 }
+
+// App.js or your navigator
+// import ScrollBoxAnimation from '@components/jagdeepSir/ScrollAnimation';
+// import { View, Dimensions } from 'react-native';
+// // import NewSphereGroup from '@components/jagdeepSir';
+// const W = Dimensions.get('window').width;
+// export default function App() {
+//   return (
+//     <View style={{ flex: 1, paddingTop: 50 }}>
+//       {/* <NewSphereGroup
+//         mindful={50}
+//         direction={'normal'}
+//         initDirection={'normal'}
+//         perform={50}
+//         fuel={50}
+//         restore={50}
+//         largestPercentage={50}
+//         onPressPerform={() => {}}
+//         onPressMindful={() => {}}
+//         onPressRestore={() => {}}
+//         onPressFuel={() => {}}
+//         opacity={1}
+//         height={W * 0.38}
+//         width={W * 0.38}
+//         fillDuration={4000}
+
+//       /> */}
+
+//       <ScrollBoxAnimation />
+//     </View>
+//   );
+// }

@@ -16,7 +16,6 @@ import RecentTransactionsSection from '@components/molecules/RecentTransactionsS
 
 import { usePortfolioScreenData } from '@hooks/usePortfolioScreenData';
 import PortfolioSkeleton from '@components/molecules/SkeletonPortfolio';
-import { useNetInfo } from '@react-native-community/netinfo';
 import OfflineTasksQueue from '@components/molecules/OfflineTasksQueue';
 import { getIncompleteTasks } from 'src/db/hooks/useOfflineQueue';
 import { useFocusEffect } from '@react-navigation/native';
@@ -26,7 +25,6 @@ import { useCallback, useState } from 'react';
 export default function Portfolio() {
   const { dynamicStyles, Colors } = useStyles(styles);
   const navigation = useAppNavigation();
-  const { isConnected } = useNetInfo();
   const [tasks, setTasks] = useState<OfflineTask[]>([]);
   const {
     userToken,
@@ -86,7 +84,7 @@ export default function Portfolio() {
         onPress={() => navigation.navigate('CreateNft')}
         style={{ marginVertical: 5 }}
       />
-      {tasks && (
+      {tasks.length > 0 && (
         <View style={[dynamicStyles.containerStyle]}>
           <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
             Offline Tasks
