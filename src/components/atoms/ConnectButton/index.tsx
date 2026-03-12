@@ -50,7 +50,7 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
             {isLoading && 'loading...'}
             {data?.available
               ? data?.available + ' ETH, '
-              : (balance?.availableBalance || '...') + ' ETH, '}
+              : (balance?.availableBalance ?? '...') + ' ETH, '}
             {address ?? ' '}
           </Text>
         </Pressable>

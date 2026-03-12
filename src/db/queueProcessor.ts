@@ -18,23 +18,27 @@ export const processQueue = async () => {
 
   try {
     const state = await NetInfo.fetch();
-
     if (!state.isConnected) return;
 
     const tasks = await getPendingTasks();
 
-    for (const task of tasks) {
-      try {
-        await updateTaskStatus(task.id, 'processing');
+    const CONCURRENCY = 4;
 
-        await processOfflineTask(task as OfflineTask);
+    for (let i = 0; i < tasks.length; i += CONCURRENCY) {
+      const batch = tasks.slice(i, i + CONCURRENCY);
 
-        await deleteTask(task.id);
-      } catch (err) {
-        console.error('Offline task failed:', err);
-
-        await incrementRetry(task.id);
-      }
+      await Promise.allSettled(
+        batch.map(async task => {
+          try {
+            await updateTaskStatus(task.id, 'processing');
+            await processOfflineTask(task as OfflineTask);
+            await deleteTask(task.id);
+          } catch (err) {
+            console.error('Offline task failed:', err);
+            await incrementRetry(task.id);
+          }
+        }),
+      );
     }
   } finally {
     isProcessingQueue = false;

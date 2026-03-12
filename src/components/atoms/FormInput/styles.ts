@@ -12,6 +12,7 @@ const styles = (Colors: ThemeColors) =>
     },
     input: {
       // marginBottom: 2,
+      textAlignVertical: 'center',
       borderRadius: 10,
       padding: 12,
       fontSize: 13,

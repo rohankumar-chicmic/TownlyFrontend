@@ -28,6 +28,7 @@ import PropertyDetailsSkeleton from '@components/molecules/PropertyDetailsSkelet
 import { usePropertyDetails } from 'src/db/hooks/usePropertyDetails';
 import { addOfflineTask } from 'src/db/hooks/useOfflineQueue';
 import { OfflineTaskType } from '@utils/types';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 export default function UserOwnedProperty() {
   const { Colors } = useTheme();
@@ -37,6 +38,7 @@ export default function UserOwnedProperty() {
   const navigation = useAppNavigation();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
+  const { isConnected } = useNetInfo();
 
   const { data, isLoading, isOffline } = usePropertyDetails(params?.id ?? '');
 

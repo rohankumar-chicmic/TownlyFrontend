@@ -179,7 +179,7 @@ enum OfflineTaskType {
 
 interface OfflineTask {
   id: string;
-  type: string;
+  type: OfflineTaskType;
   status: string;
   payload: string;
   retries: number;

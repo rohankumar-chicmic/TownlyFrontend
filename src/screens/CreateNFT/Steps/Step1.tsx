@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -19,6 +19,7 @@ import {
   pick,
   types,
 } from '@react-native-documents/picker';
+import Toast from 'react-native-toast-message';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -58,6 +59,11 @@ export default function Step1(props: Readonly<StepProps>) {
         shouldValidate: true,
       });
     } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        text2: 'error: ' + err,
+      });
       console.log(err);
     }
   };
@@ -127,6 +133,7 @@ export default function Step1(props: Readonly<StepProps>) {
       <Text
         style={{
           color: Colors.textSecondary,
+          marginHorizontal: 8,
           marginBottom: 10,
           paddingVertical: 5,
           fontSize: 12,
@@ -297,7 +304,7 @@ export default function Step1(props: Readonly<StepProps>) {
       <Button
         title="Continue"
         onPress={handleSubmit(handleContinue)}
-        style={{ alignSelf: 'flex-end', marginTop: 20 }}
+        style={{ alignSelf: 'flex-end', marginRight: 8 }}
         textStyle={{ marginHorizontal: 10 }}
       >
         <Icons.Arrow

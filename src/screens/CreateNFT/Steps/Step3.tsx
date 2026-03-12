@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -11,6 +11,8 @@ import {
   types,
 } from '@react-native-documents/picker';
 import { NFTFormData } from '../types';
+import Toast from 'react-native-toast-message';
+import FastImage from 'react-native-fast-image';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -59,6 +61,11 @@ export default function Step3({
         },
       }));
     } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Image Pick Failed',
+        text2: 'error occured: ' + err,
+      });
       console.log('Image pick cancelled or failed', err);
     }
   };
@@ -70,7 +77,7 @@ export default function Step3({
       <Text
         style={{
           color: Colors.textSecondary,
-          marginBottom: 10,
+          marginHorizontal: 8,
           paddingVertical: 5,
           fontSize: 12,
         }}
@@ -98,20 +105,25 @@ export default function Step3({
       </View>
 
       {pickedImage && (
-        <View style={{ marginBottom: 20 }}>
-          <Image
+        <View style={{ margin: 8, marginBottom: 20 }}>
+          <FastImage
             source={{ uri: pickedImage.uri }}
             style={{
               width: '100%',
               height: 200,
               borderRadius: 12,
-              resizeMode: 'cover',
             }}
           />
         </View>
       )}
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginHorizontal: 6,
+        }}
+      >
         <Button
           title="Back"
           onPress={() => setStep(prev => prev - 1)}

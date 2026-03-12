@@ -79,11 +79,28 @@ export const saveProperty = async (data: NewProperty) => {
 };
 
 export const saveProperties = async (data: NewProperty[]) => {
-
   return await db.transaction(async tx => {
     await tx.delete(properties);
 
-    const response = await tx.insert(properties).values(data);
+    const response = await tx
+      .insert(properties)
+      .values(data)
+      .onConflictDoUpdate({
+        target: properties.id,
+        set: {
+          name: sql`excluded.name`,
+          location: sql`excluded.location`,
+          imageUrl: sql`excluded.imageUrl`,
+          propertyType: sql`excluded.propertyType`,
+          status: sql`excluded.status`,
+          approvedValuation: sql`excluded.approvedValuation`,
+          totalUnits: sql`excluded.totalUnits`,
+          availableUnits: sql`excluded.availableUnits`,
+          pricePerUnitEth: sql`excluded.pricePerUnitEth`,
+          annualYieldPercent: sql`excluded.annualYieldPercent`,
+          riskScore: sql`excluded.riskScore`,
+        },
+      });
 
     return response;
   });

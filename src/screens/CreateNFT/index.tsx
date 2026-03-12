@@ -16,6 +16,7 @@ import { Icons } from '@utils/icons';
 import { NFTFormData, DocumentFile } from './types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useAppNavigation } from '@hooks/useNavigation';
+import Button from '@components/atoms/Button';
 
 const mapApiToFormData = (data: any): NFTFormData => {
   const imageFile: DocumentFile | null = data.imageUrl
@@ -210,26 +211,21 @@ export default function CreateNFTScreen() {
         animationType="fade"
         onRequestClose={cancelExit}
       >
-        <View style={dynamicStyles.modalOverlay}>
-          <View style={dynamicStyles.modalContainer}>
-            <Text style={dynamicStyles.modalTitle}>{exitTitle}</Text>
+        <View style={dynamicStyles.centerOverlay}>
+          <View style={dynamicStyles.centerModal}>
+            <Text style={dynamicStyles.centerTitle}>{exitTitle}</Text>
 
-            <Text style={dynamicStyles.modalText}>{exitMessage}</Text>
+            <Text style={dynamicStyles.centerText}>{exitMessage}</Text>
 
             <View style={dynamicStyles.modalButtonRow}>
-              <Pressable
+              <Button
+                title="Cancel"
+                variant="outline"
                 onPress={cancelExit}
-                style={dynamicStyles.cancelButton}
-              >
-                <Text style={dynamicStyles.cancelButtonText}>Cancel</Text>
-              </Pressable>
+                textStyle={{ color: Colors.primary }}
+              />
 
-              <Pressable
-                onPress={confirmExit}
-                style={dynamicStyles.confirmButton}
-              >
-                <Text style={dynamicStyles.confirmButtonText}>Discard</Text>
-              </Pressable>
+              <Button title="Discard" onPress={confirmExit} />
             </View>
           </View>
         </View>

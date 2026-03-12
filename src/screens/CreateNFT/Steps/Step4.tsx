@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { View, Text, Image, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, Pressable, ActivityIndicator } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -21,6 +21,7 @@ import InfoRow from '@components/atoms/InfoRow';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { addOfflineTask } from 'src/db/hooks/useOfflineQueue';
 import { OfflineTaskType } from '@utils/types';
+import FastImage from 'react-native-fast-image';
 
 interface StepProps {
   setStep: Dispatch<SetStateAction<number>>;
@@ -54,10 +55,22 @@ export default function Step4(props: Readonly<StepProps>) {
     }
 
     if (!isConnected) {
-      await addOfflineTask(OfflineTaskType.CREATE_PROPERTY, {
-        data: props.formData,
-        token: userToken,
-      });
+      if (!props.isEdit) {
+        await addOfflineTask(OfflineTaskType.CREATE_PROPERTY, {
+          data: props.formData,
+          token: userToken,
+        });
+      } else if (props.isActiveProperty) {
+        await addOfflineTask(OfflineTaskType.EDIT_PROPERTY, {
+          data: props.formData,
+          token: userToken,
+        });
+      } else {
+        await addOfflineTask(OfflineTaskType.RESUBMIT_PROPERTY, {
+          data: props.formData,
+          token: userToken,
+        });
+      }
 
       Toast.show({
         type: 'info',
@@ -92,14 +105,11 @@ export default function Step4(props: Readonly<StepProps>) {
 
         console.error(result);
       } else if (props.isEdit && props.propertyId) {
-        console.log('b ============', props.isEdit, props.propertyId);
         result = await resubmitProperty({
           propertyId: props.propertyId,
           data: props.formData,
         }).unwrap();
       } else {
-        console.log('c ============', props.isEdit, props.propertyId);
-
         result = await makeProperty({
           data: props.formData,
           token: userToken,
@@ -153,13 +163,12 @@ export default function Step4(props: Readonly<StepProps>) {
         ]}
       >
         {props.formData.propertyImage && (
-          <Image
+          <FastImage
             source={{ uri: props.formData.propertyImage.uri }}
             style={{
               width: '100%',
               height: 200,
               borderRadius: 12,
-              resizeMode: 'cover',
               borderBottomWidth: 1,
               borderColor: Colors.border,
             }}
@@ -294,7 +303,13 @@ export default function Step4(props: Readonly<StepProps>) {
         />
       </View>
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginHorizontal: 2,
+        }}
+      >
         <Button
           title="Back"
           onPress={() => props.setStep(prev => prev - 1)}

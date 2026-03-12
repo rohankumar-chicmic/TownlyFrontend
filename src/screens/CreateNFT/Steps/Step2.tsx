@@ -188,7 +188,13 @@ export default function Step2(props: Readonly<StepProps>) {
         )}
       />
 
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          padding: 6,
+        }}
+      >
         <Button
           title="Back"
           variant="outline"

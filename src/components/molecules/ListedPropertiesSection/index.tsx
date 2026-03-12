@@ -8,7 +8,7 @@ import { ROUTES } from 'src/navigation/constants';
 import styles from './styles';
 import EmptyState from '@components/molecules/EmptyState';
 import { saveListedPropertiesDetails } from 'src/db/hooks/usePropertyDetails';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNetInfo } from '@react-native-community/netinfo';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.75;
@@ -27,16 +27,32 @@ export default function ListedPropertiesSection({
   const navigation = useAppNavigation();
   const { isConnected } = useNetInfo();
 
-  useEffect(() => {
-    const savePropertiesLocally = async () => {
-      const propertyIds = items.map(item => item.id);
-      await saveListedPropertiesDetails(propertyIds);
-    };
+  // FIX 7 — previously the effect depended on items.length, so if the parent
+  // re-rendered with the same number of items (but possibly different IDs or
+  // updated data) the local save was skipped, leaving the DB stale.
+  // We now depend on the actual item IDs so any change in the list triggers a
+  // fresh save. We also track a ref to avoid firing on the very first render
+  // before items are populated, which was the second cause of double-saves:
+  // the effect fired once with an empty array, then again once items arrived,
+  // but because length went 0→N both runs were treated as valid triggers.
+  const savedIdsRef = useRef<string>('');
 
-    if (items.length && isConnected) {
-      savePropertiesLocally();
-    }
-  }, [items]);
+  useEffect(() => {
+    if (!items.length || !isConnected) return;
+
+    const currentIds = items
+      .map(i => i.id)
+      .sort()
+      .join(',');
+
+    // Skip if the exact same set of IDs was already saved in this session
+    if (currentIds === savedIdsRef.current) return;
+
+    savedIdsRef.current = currentIds;
+
+    const propertyIds = items.map(item => item.id);
+    saveListedPropertiesDetails(propertyIds);
+  }, [items, isConnected]);
 
   return (
     <View
@@ -60,7 +76,7 @@ export default function ListedPropertiesSection({
             size="sm"
             onPress={() => navigation.navigate(ROUTES.LISTED_PROPERTIES)}
             title="View All"
-          ></Button>
+          />
         ) : null}
       </View>
       <FlatList

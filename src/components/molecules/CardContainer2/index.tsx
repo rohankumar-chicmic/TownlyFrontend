@@ -26,7 +26,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         },
       ]}
     >
-      <View style={{ width: '40%' }}>
+      <View style={{ width: '40%', minHeight: 140 }}>
         <FastImage
           source={{
             uri: props.imageUrl,
@@ -35,6 +35,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
             borderBottomLeftRadius: 7,
             borderTopLeftRadius: 7,
             height: '100%',
+            width: '100%',
           }}
         ></FastImage>
       </View>
@@ -51,29 +52,38 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         </Text>
 
         <View style={dynamicStyles.column}>
-          <Text style={dynamicStyles.fields}>Final Risk Score</Text>
+          <Text style={dynamicStyles.fields} numberOfLines={1}>
+            Final Risk Score
+          </Text>
           <Text style={[dynamicStyles.values]}>
             {props.riskScore ? props.riskScore + '/10' : 'NA'}
           </Text>
         </View>
 
         <View style={dynamicStyles.column}>
-          <Text style={dynamicStyles.fields}>Estimated Yield</Text>
+          <Text style={dynamicStyles.fields} numberOfLines={1}>
+            Estimated Yield
+          </Text>
           <Text style={[dynamicStyles.values]}>
             {props.annualYieldPercent}
             {'%'}
           </Text>
         </View>
         <View style={dynamicStyles.column}>
-          <Text style={dynamicStyles.fields}>Availability</Text>
+          <Text style={dynamicStyles.fields} numberOfLines={1}>
+            Availability
+          </Text>
           <Text style={[dynamicStyles.values, { color: Colors.primary }]}>
             {props.availableUnits}
           </Text>
         </View>
         <View style={dynamicStyles.column}>
-          <Text style={dynamicStyles.fields}>Price/Share</Text>
+          <Text style={dynamicStyles.fields} numberOfLines={1}>
+            Price/Share
+          </Text>
           <Text style={[dynamicStyles.values]}>
-            {Number(props.pricePerUnitEth ?? 1.5).toFixed(2)} {'ETH'}
+            {Number(props.pricePerUnitEth ?? 1.5).toFixed(2)}
+            <Text style={[dynamicStyles.values, { fontSize: 10 }]}> ETH</Text>
           </Text>
         </View>
       </View>

@@ -57,7 +57,7 @@ const propertyApi = api.injectEndpoints({
           headers: { Authorization: `Bearer ${token}` },
         };
       },
-      invalidatesTags: ['MyProperties'],
+      invalidatesTags: ['MyProperties', 'Properties'],
     }),
 
     getMyProperties: builder.query<
@@ -161,6 +161,7 @@ const propertyApi = api.injectEndpoints({
 
     getMyPropertyDetails: builder.query<MyPropertyDetailsType, string>({
       query: id => ({ url: `/properties/me/${id}`, method: 'GET' }),
+      providesTags: ['MyProperties'],
     }),
 
     getRelatedProperties: builder.query({
@@ -241,6 +242,7 @@ const propertyApi = api.injectEndpoints({
         'Properties',
         'FeaturedProperties',
         'Transactions',
+        'InvestmentDetails',
       ],
     }),
 

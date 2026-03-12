@@ -109,7 +109,6 @@ export default function App() {
 //         height={W * 0.38}
 //         width={W * 0.38}
 //         fillDuration={4000}
-
 //       /> */}
 
 //       <ScrollBoxAnimation />

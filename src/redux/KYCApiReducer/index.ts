@@ -49,5 +49,4 @@ export const kycApi = createApi({
     }),
   }),
 });
-
 export const { useSubmitKYCMutation, useGetKYCStatusQuery } = kycApi;

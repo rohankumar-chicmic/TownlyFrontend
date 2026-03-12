@@ -193,7 +193,7 @@ export const propertyDocuments = sqliteTable('property_documents', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   propertyId: text('propertyId')
     .notNull()
-    .references(() => myProperties.id, { onDelete: 'cascade' }), // Corrected reference
+    .references(() => myProperties.id, { onDelete: 'cascade' }),
   title: text('title').notNull(),
   fileName: text('fileName').notNull(),
   documentUrl: text('documentUrl').notNull(),

@@ -336,6 +336,8 @@ export default function KYCVerificationScreen() {
                     <FormInput
                       label="Document Type"
                       required
+                      multiline={false}
+                      numberOfLines={1}
                       placeholder="e.g. Passport, License"
                       value={value}
                       onChangeText={text => {

@@ -86,11 +86,42 @@ export default function WalletScreen() {
   const [isTemporarilyDisabled, setIsTemporarilyDisabled] = useState(false);
   const { isConnected } = useNetInfo();
 
+  const validateAmount = (value: string): number | null => {
+    if (!value || value.trim() === '') {
+      setInputError('Amount is required');
+      return null;
+    }
+
+    const cleaned = value.replaceAll(',', '').trim();
+    const num = Number(cleaned);
+
+    if (Number.isNaN(num)) {
+      setInputError('Amount must be a valid number');
+      return null;
+    }
+
+    if (num < 1 || num > 999) {
+      setInputError('Amount must be between 1 and 999');
+      return null;
+    }
+
+    setInputError('');
+    return num;
+  };
+
   const handleRequestCurrency = async (rawAmount: string) => {
     try {
+      const validatedAmount = validateAmount(rawAmount);
+
+      if (validatedAmount === null) return;
+
+      const amountString = validatedAmount.toString();
+
+      setIsTemporarilyDisabled(true);
+
       if (!isConnected) {
         await addOfflineTask(OfflineTaskType.REQUEST_TOKEN, {
-          tokens: rawAmount.toString(),
+          tokens: amountString,
         });
 
         Toast.show({
@@ -99,44 +130,26 @@ export default function WalletScreen() {
           text2: 'Request will be sent when internet returns',
         });
 
-        return;
-      }
-      setIsTemporarilyDisabled(true);
-      if (!rawAmount) return;
-
-      const cleaned = rawAmount.replaceAll(',', '').trim();
-      const num = Number(cleaned);
-
-      if (Number.isNaN(num)) {
-        setInputError('Invalid number');
+        setAmount('');
         return;
       }
 
-      if (num < 1 || num > 999) {
-        setInputError('Amount must be between 1 and 999');
-        return;
-      }
+      await requestCurrency(amountString);
 
-      await requestCurrency(rawAmount.toString());
-
-      setInputError('');
       setAmount('');
 
       Toast.show({
-        type: 'info',
-        text1: 'Request succesful',
-        text2:
-          'Request of ' +
-          rawAmount +
-          ' dummy tokens has been succesfully sent to admin',
+        type: 'success',
+        text1: 'Request Successful',
+        text2: `Request of ${amountString} dummy tokens sent to admin`,
       });
-    } catch (e: any) {
+    } catch (e) {
       console.log(e);
 
       Toast.show({
         type: 'error',
-        text1: 'Request failed',
-        text2: 'Sorry, Your Request failed.',
+        text1: 'Request Failed',
+        text2: 'Sorry, your request could not be completed.',
       });
     } finally {
       setTimeout(() => {
@@ -159,14 +172,14 @@ export default function WalletScreen() {
   };
 
   useEffect(() => {
-    if (data) {
-      saveAccountBalance({
-        walletAddress: walletAddress,
-        totalGranted: data.totalGranted,
-        totalUsed: data.totalUsed,
-        available: data.available,
-      });
-    }
+    if (!data || !walletAddress) return;
+
+    saveAccountBalance({
+      walletAddress,
+      totalGranted: data.totalGranted,
+      totalUsed: data.totalUsed,
+      available: data.available,
+    });
   }, [data, walletAddress]);
 
   useFocusEffect(
@@ -276,7 +289,7 @@ export default function WalletScreen() {
               <FormInput
                 placeholder="Amount to request"
                 keyboardType="number-pad"
-                maxLength={3}
+                maxLength={4}
                 value={amount}
                 onChangeText={setAmount}
                 hintText="Min: 1 - Max: 999"

@@ -22,6 +22,7 @@ const authApi = api.injectEndpoints({
         url: '/portfolio/me/overview',
         method: 'GET',
       }),
+      providesTags: ['InvestmentDetails'],
     }),
 
     getBalance: builder.query<any, void>({
@@ -29,6 +30,7 @@ const authApi = api.injectEndpoints({
         url: '/tokens/balance',
         method: 'GET',
       }),
+      providesTags: ['InvestmentDetails'],
     }),
 
     requestCurrency: builder.mutation<void, string>({
@@ -46,6 +48,7 @@ const authApi = api.injectEndpoints({
         url: 'analytics/portfolio/me/line?hours=7',
         method: 'GET',
       }),
+      providesTags: ['InvestmentDetails'],
     }),
 
     getDonutGraphData: builder.query<any, void>({
@@ -53,6 +56,7 @@ const authApi = api.injectEndpoints({
         url: '/analytics/portfolio/me/allocation',
         method: 'GET',
       }),
+      providesTags: ['InvestmentDetails'],
     }),
     getTransactions: builder.query({
       query: params => ({

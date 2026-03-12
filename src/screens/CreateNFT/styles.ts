@@ -180,6 +180,167 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.background,
       fontWeight: '600',
     },
+    backdrop: {
+      flexGrow: 1,
+      backgroundColor: 'rgba(0,0,0,0.2)',
+    },
+
+    sheet: {
+      borderColor: Colors.outline,
+      borderWidth: 1,
+      backgroundColor: Colors.background,
+      padding: 20,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+    },
+
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
+    title: {
+      color: Colors.textPrimary,
+      fontSize: 20,
+      fontWeight: '700',
+    },
+
+    close: {
+      color: Colors.primary,
+      fontSize: 18,
+    },
+
+    required: {
+      color: Colors.primary,
+    },
+
+    hint: {
+      color: Colors.textPrimary,
+      marginTop: 6,
+      fontSize: 12,
+    },
+
+    card: {
+      backgroundColor: Colors.surface,
+      borderRadius: 16,
+      padding: 16,
+      marginTop: 20,
+    },
+
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginVertical: 4,
+    },
+
+    rowLabel: {
+      color: Colors.textSecondary,
+    },
+
+    rowValue: {
+      color: Colors.textPrimary,
+    },
+
+    bold: {
+      fontWeight: '700',
+    },
+
+    large: {
+      fontSize: 20,
+    },
+
+    divider: {
+      height: 1,
+      backgroundColor: Colors.border,
+      marginVertical: 12,
+    },
+
+    info: {
+      backgroundColor: Colors.surface,
+      borderRadius: 14,
+      padding: 14,
+      marginTop: 16,
+    },
+
+    infoText: {
+      color: '#4DA3FF',
+      fontWeight: '600',
+    },
+
+    infoSub: {
+      color: '#AAA',
+      fontSize: 12,
+      marginTop: 4,
+    },
+
+    footer: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginTop: 24,
+    },
+
+    cancel: {
+      flex: 1,
+      borderWidth: 1,
+      borderColor: '#333',
+      borderRadius: 14,
+      padding: 14,
+      alignItems: 'center',
+    },
+
+    cancelText: {
+      color: '#AAA',
+    },
+
+    primary: {
+      flex: 1,
+      backgroundColor: '#C7F000',
+      borderRadius: 14,
+      padding: 14,
+      alignItems: 'center',
+    },
+
+    primaryText: {
+      color: '#000',
+      fontWeight: '700',
+    },
+    centerOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+
+    centerModal: {
+      width: '85%',
+      backgroundColor: Colors.background,
+      borderRadius: 16,
+      padding: 20,
+      borderWidth: 1,
+      borderColor: Colors.outline,
+    },
+
+    centerTitle: {
+      fontSize: 18,
+      fontWeight: '600',
+      color: Colors.textPrimary,
+      marginBottom: 10,
+    },
+
+    centerText: {
+      fontSize: 14,
+      color: Colors.textSecondary,
+      marginBottom: 16,
+    },
+
+    propertyName: {
+      color: Colors.textSecondary,
+      fontWeight: '600',
+      fontSize: 18,
+      marginVertical: 12,
+      marginTop: 3,
+    },
   });
 
 export default styles;

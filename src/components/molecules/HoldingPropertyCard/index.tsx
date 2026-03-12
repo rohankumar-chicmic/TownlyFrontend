@@ -55,7 +55,6 @@ const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id: data.propertyId });
   }, 250);
 
-  console.log(data.currentValueEth);
   return (
     <Pressable style={[dynamicStyles.card]} onPress={handlePressed}>
       <View style={dynamicStyles.headerRow}>

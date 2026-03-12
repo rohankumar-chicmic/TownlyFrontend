@@ -12,6 +12,7 @@ const styles = (Colors: ThemeColors) =>
     },
     heading: {
       fontSize: 20,
+      marginHorizontal: 8,
       fontWeight: 'bold',
       color: Colors.textPrimary,
     },

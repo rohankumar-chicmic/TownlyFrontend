@@ -1,12 +1,11 @@
 import { StyleSheet } from 'react-native';
-
 import { ThemeColors } from '@theme/constants';
 
 const styles = (Colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       borderWidth: 1,
-      aspectRatio: 5 / 3,
+      height: 200,
       borderColor: Colors.border,
       flexDirection: 'row',
       borderRadius: 10,
@@ -17,29 +16,33 @@ const styles = (Colors: ThemeColors) =>
       shadowRadius: 8,
       elevation: 5,
     },
+
     detailsContainer: {
       padding: 10,
       flex: 1,
       justifyContent: 'space-between',
     },
+
     title: {
       fontSize: 23,
       padding: 2,
       fontWeight: '400',
       color: Colors.textPrimary,
     },
+
     location: {
       fontSize: 15,
       padding: 5,
       color: Colors.textPrimary,
       alignItems: 'center',
     },
+
     smallText: {
       fontSize: 12,
       padding: 5,
-
       color: Colors.textSecondary,
     },
+
     column: {
       padding: 5,
       paddingVertical: 2,
@@ -47,13 +50,18 @@ const styles = (Colors: ThemeColors) =>
       justifyContent: 'space-between',
       alignItems: 'baseline',
     },
+
     fields: {
-      fontSize: 15,
+      fontSize: 14,
       color: Colors.textSecondary,
+      width: '60%',
     },
+
     values: {
       fontSize: 15,
+      textAlign: 'right',
       fontWeight: '400',
+      width: '40%',
       color: Colors.textPrimary,
     },
   });

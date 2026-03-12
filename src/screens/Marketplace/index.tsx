@@ -147,7 +147,7 @@ const Marketplace = () => {
           )
         }
         ListEmptyComponent={isLoading ? null : <ListEmptyComponent />}
-        contentContainerStyle={{ gap: 10, padding: 10 }}
+        contentContainerStyle={{ gap: 10, paddingVertical: 15 }}
         showsVerticalScrollIndicator={false}
         onEndReached={handleEndReached}
         onEndReachedThreshold={0.5}

@@ -10,15 +10,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
-
-interface OfflineTask {
-  id: string;
-  type: string;
-  status: string;
-  payload: string; // JSON string
-  retries: number;
-  createdAt: number;
-}
+import { OfflineTask } from '@utils/types';
 
 interface OfflineTasksQueueProps {
   tasks: OfflineTask[];
@@ -66,9 +58,8 @@ export default function OfflineTasksQueue({
       { label: 'Retries', value: item.retries.toString() },
       { label: 'Created', value: new Date(item.createdAt).toLocaleString() },
     ];
-    console.log(payloadData);
-    if (payloadData.name)
-      overview.push({ label: 'Name', value: payloadData.propertyName });
+    if (payloadData.data?.propertyName)
+      overview.push({ label: 'Name', value: payloadData.data?.propertyName });
     if (payloadData.tokens)
       overview.push({ label: 'Tokens', value: `${payloadData.tokens}` });
 

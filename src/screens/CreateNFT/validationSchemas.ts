@@ -91,8 +91,8 @@ export const step2Schema = yup.object({
     .transform(customParseNumber)
     .typeError('Expected annual yield must be a number')
     .required('Expected annual yield is required')
-    .min(0, 'Expected annual yield must be at least 0%')
-    .max(100, 'Expected annual yield must be at most 100%'),
+    .min(1, 'Expected annual yield must be at least 1%')
+    .max(50, 'Expected annual yield must be at most 50%'),
 });
 
 export const step3Schema = yup.object({

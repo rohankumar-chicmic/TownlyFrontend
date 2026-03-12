@@ -19,6 +19,7 @@ import Toast from 'react-native-toast-message';
 import { useAppToastConfig } from '@hooks/useAppToastConfig';
 import { useAppSelector } from '@redux/store';
 import { useGetBalanceQuery } from '@redux/ApiReducer';
+import { useNetInfo } from '@react-native-community/netinfo';
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -48,16 +49,16 @@ export default function InvestPropertyModal({
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const toastConfig = useAppToastConfig();
-
+  const { isConnected } = useNetInfo();
   const [investInProperty] = useInvestInPropertyMutation();
-  const walletAddress = useAppSelector(
-    state => state.auth.userData?.walletAddress,
-  );
-  const { data: balanceData } = useGetBalanceQuery(walletAddress, {
-    skip: !walletAddress,
+  const userToken = useAppSelector(state => state.auth.userToken);
+  const { data: balanceData } = useGetBalanceQuery(undefined, {
+    skip: !userToken,
   });
 
-  const availableBalance = balanceData?.availableBalance ?? 0;
+  console.log(balanceData);
+
+  const availableBalance = balanceData?.available ?? 0;
   const totalCost = Number(shares || 0) * pricePerShare;
   const gasEstimate = 0.05;
 
@@ -128,11 +129,11 @@ export default function InvestPropertyModal({
 
       handleSubmit();
       setShowConfirmModal(false);
-    } catch (error) {
+    } catch (error: any) {
       Toast.show({
         type: 'error',
         text1: 'Investment Failed',
-        text2: 'Something went wrong' + error,
+        text2: 'Something went wrong' + isConnected ? error : '',
         visibilityTime: 1500,
       });
     } finally {

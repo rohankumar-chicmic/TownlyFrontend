@@ -7,19 +7,24 @@ import { eq } from 'drizzle-orm';
  * Live hook for the current user's balance.
  * Returns the OBJECT directly (or undefined), not an array.
  */
-export function useAccountBalance(walletAddress: string) {
-  const result = useLiveQuery(
-    db
+import { useMemo } from 'react';
+
+export function useAccountBalance(walletAddress?: string) {
+  const query = useMemo(() => {
+    if (!walletAddress) return null;
+
+    return db
       .select()
       .from(accountBalances)
       .where(eq(accountBalances.walletAddress, walletAddress))
-      .limit(1),
-  );
+      .limit(1);
+  }, [walletAddress]);
 
-  // useLiveQuery returns { data, error, updated }, we extract the first row
+  const result = useLiveQuery(query);
+
   return {
     ...result,
-    data: result.data?.[0] ?? null, // Now you can use data.totalGranted safely
+    data: result?.data?.[0] ?? null,
   };
 }
 

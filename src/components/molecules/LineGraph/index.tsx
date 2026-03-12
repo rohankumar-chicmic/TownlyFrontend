@@ -73,9 +73,9 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
 
         <View
           style={{
-            padding: 10,
+            paddingVertical: 10,
             alignItems: 'center',
-            overflow: 'visible',
+            overflow: 'hidden',
           }}
         >
           <LineChart
@@ -129,7 +129,6 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
               persistPointer: selectedIndex !== null,
               activatePointersOnLongPress: false,
               hidePointer1: selectedIndex === null,
-
               pointerStripHeight:
                 selectedIndex === null
                   ? 0
@@ -144,7 +143,6 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
               pointerLabelWidth: 100,
               pointerLabelHeight: 48,
               autoAdjustPointerLabelPosition: true,
-
               pointerLabelComponent: (
                 items: { label: string; value: number }[],
               ) => {
@@ -168,6 +166,8 @@ export default function LineGraph({ data }: Readonly<LineGraphProps>) {
                       shadowOpacity: 0.35,
                       shadowRadius: 5,
                       elevation: 5,
+                      justifyContent: 'center',
+                      zIndex: 999,
                     }}
                   >
                     <Text
