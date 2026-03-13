@@ -11,6 +11,7 @@ import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import CardContainer from '@components/molecules/CardContainer2';
 import CardContainerSkeleton from '@components/molecules/CardContainerSkeleton';
+import useImages from '@hooks/useImages';
 
 import { Icons } from '@utils/icons';
 import {
@@ -38,6 +39,9 @@ export default function PropertyDetails() {
   const params = route.params;
   const [showModal, setShowModal] = useState(false);
   const [invested, setInvested] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const Images = useImages();
+
   const { data, refetch } = useGetPropertyDetailsQuery(
     params?.item?.id || params?.id,
   );
@@ -45,6 +49,8 @@ export default function PropertyDetails() {
     params?.item?.id || params?.id,
   );
 
+  const imageSource =
+    !data?.imageUrl || imageError ? Images.FALLBACK : { uri: data?.imageUrl };
   const userToken = useAppSelector(state => state.auth.userToken);
   const kycStatus = useAppSelector(state => state.kyc.status);
   const navigation = useAppNavigation();
@@ -104,8 +110,11 @@ export default function PropertyDetails() {
       >
         <View style={dynamicStyles.heroImage}>
           <FastImage
-            source={{ uri: property?.imageUrl }}
-            style={{ width: '100%', height: '100%' }}
+            source={imageSource}
+            defaultSource={Images.FALLBACK}
+            onError={() => setImageError(true)}
+            resizeMode={FastImage.resizeMode.cover}
+            style={{ height: '100%', width: '100%' }}
           />
         </View>
         {!isConnected && (

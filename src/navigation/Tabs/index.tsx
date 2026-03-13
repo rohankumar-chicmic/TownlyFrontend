@@ -16,6 +16,7 @@ import { useAppDispatch, useAppSelector } from '@redux/store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useGetMyUnreadNotificationsQuery } from '@redux/NotificationsApiReducer';
 import { setUnreadNotifications } from '@redux/AuthReducer';
+import { useNetInfo } from '@react-native-community/netinfo';
 
 const Tab = createBottomTabNavigator<RootStackParamList>();
 
@@ -31,7 +32,7 @@ export default function Tabs() {
   const unreadNotifcations = useAppSelector(
     state => state.auth.unreadNotificationsCount,
   );
-
+  const { isConnected } = useNetInfo();
   useEffect(() => {
     if (unreadData?.totalCount !== undefined) {
       dispatch(setUnreadNotifications(Number(unreadData.totalCount)));
@@ -99,7 +100,7 @@ export default function Tabs() {
           options={{
             tabBarIcon: ({ color, size }) => (
               <View>
-                {userToken && unreadNotifcations > 0 && (
+                {userToken  && unreadNotifcations > 0 && (
                   <View
                     style={{
                       position: 'absolute',

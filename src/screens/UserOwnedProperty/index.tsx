@@ -16,6 +16,7 @@ import BackButton from '@components/atoms/BackButton';
 import Button from '@components/atoms/Button';
 import Badge from '@components/atoms/Badge';
 
+import useImages from '@hooks/useImages';
 import { Icons } from '@utils/icons';
 import { useDeletePropertyMutation } from '@redux/PropertyApiReducer';
 import { useAppNavigation } from '@hooks/useNavigation';
@@ -39,8 +40,12 @@ export default function UserOwnedProperty() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleted, setIsDeleted] = useState(false);
   const { isConnected } = useNetInfo();
+  const [imageError, setImageError] = useState(false);
+  const Images = useImages();
 
   const { data, isLoading, isOffline } = usePropertyDetails(params?.id ?? '');
+  const imageSource =
+    !data?.imageUrl || imageError ? Images.FALLBACK : { uri: data?.imageUrl };
 
   const [deleteProperty, { isLoading: isDeleting }] =
     useDeletePropertyMutation();
@@ -116,8 +121,14 @@ export default function UserOwnedProperty() {
 
         <View style={dynamicStyles.heroImage}>
           <FastImage
-            source={{ uri: data?.imageUrl }}
-            style={{ height: '100%', width: '100%' }}
+            source={imageSource}
+            defaultSource={Images.FALLBACK}
+            onError={() => setImageError(true)}
+            resizeMode={FastImage.resizeMode.cover}
+            style={{
+              height: '100%',
+              width: '100%',
+            }}
           />
         </View>
         {isOffline && (

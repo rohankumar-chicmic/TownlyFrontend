@@ -67,6 +67,8 @@ const InfoRow = ({
 };
 
 export default function WalletScreen() {
+  const { isConnected } = useNetInfo();
+
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const [amount, setAmount] = useState('');
@@ -75,7 +77,7 @@ export default function WalletScreen() {
   );
   const userToken = useAppSelector(state => state.auth.userToken);
   const { data, refetch } = useGetBalanceQuery(undefined, {
-    skip: !userToken,
+    skip: !userToken || !isConnected,
   });
   const [showDisconnectModal, setShowDisconnectModal] = useState(false);
   const { disconnect } = useAppKit();
@@ -84,7 +86,6 @@ export default function WalletScreen() {
   const [requestCurrency] = useRequestCurrencyMutation();
   const { data: balance } = useAccountBalance(walletAddress);
   const [isTemporarilyDisabled, setIsTemporarilyDisabled] = useState(false);
-  const { isConnected } = useNetInfo();
 
   const validateAmount = (value: string): number | null => {
     if (!value || value.trim() === '') {

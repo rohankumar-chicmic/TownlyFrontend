@@ -47,16 +47,10 @@ const HoldingPropertyCard = (data: Readonly<PropertyPortfolioData>) => {
   const success = data?.totalReturnEth > 0;
   const negative = data?.totalReturnEth < 0;
 
-  const handlePressed = debounce(() => {
-    if (data.onClick) {
-      data.onClick();
-      return;
-    }
-    navigation.push(ROUTES.PROPERTY_DETAILS, { id: data.propertyId });
-  }, 250);
+  
 
   return (
-    <Pressable style={[dynamicStyles.card]} onPress={handlePressed}>
+    <Pressable style={[dynamicStyles.card]} onPress={data?.onClick}>
       <View style={dynamicStyles.headerRow}>
         <Image
           source={{ uri: data?.propertyImageUrl }}

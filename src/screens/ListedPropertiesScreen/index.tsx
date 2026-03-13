@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
+import { throttle } from '@utils/utility';
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
@@ -23,6 +23,7 @@ import { debounce, sanitizeSearch } from '@utils/utility';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
+import { PropertyCardProps } from '@utils/types';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.9;
 const PAGE_SIZE = 10;
@@ -80,6 +81,14 @@ const ListedProperiesScreen = () => {
       setParams(prev => ({ ...prev, page: prev.page + 1 }));
     }
   };
+
+  const handleClicked = throttle((item: PropertyCardProps) => {
+    console.log(item.status);
+    return navigation.navigate(ROUTES.OWNED_PROPERTY, {
+      id: item.id,
+      status: item.status ?? undefined,
+    });
+  }, 300);
 
   const footer = useMemo(() => {
     if (isFetching && params.page > 1) {
@@ -188,17 +197,7 @@ const ListedProperiesScreen = () => {
           keyExtractor={item => item.id.toString()}
           renderItem={({ item }) => (
             <View style={{ width: CARD_WIDTH }}>
-              <CardContainer2
-                {...item}
-                userOwned
-                onClick={() => {
-                  console.log(item.status);
-                  return navigation.navigate(ROUTES.OWNED_PROPERTY, {
-                    id: item.id,
-                    status: item.status ?? undefined,
-                  });
-                }}
-              />
+              <CardContainer2 {...item} userOwned onClick={() => handleClicked(item)} />
             </View>
           )}
           contentContainerStyle={{

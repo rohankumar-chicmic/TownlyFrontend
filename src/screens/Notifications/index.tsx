@@ -344,6 +344,15 @@ const Notifications = () => {
           onEndReachedThreshold={0.5}
           refreshing={refreshing}
           onRefresh={handleRefresh}
+          ItemSeparatorComponent={() => (
+            <View
+              style={{
+                width: '100%',
+                backgroundColor: Colors.border,
+                height: 1,
+              }}
+            ></View>
+          )}
           ListEmptyComponent={
             <View style={dynamicStyles.emptyContainer}>
               <Text style={dynamicStyles.heroText}>

@@ -262,11 +262,13 @@ export default function InvestPropertyModal({
                 onPress={() => setShowConfirmModal(false)}
                 title="Cancel"
                 variant="outline"
+                disabled={loading}
                 textStyle={{ color: Colors.primary }}
               ></Button>
 
               <Button
                 onPress={handleConfirmInvestment}
+                disabled={loading}
                 title={loading ? 'Submitting' : 'Confirm'}
               ></Button>
             </View>

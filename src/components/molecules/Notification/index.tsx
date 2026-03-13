@@ -65,7 +65,7 @@ const Notification = ({ item, onPress, onDelete }: NotificationProps) => {
               numberOfLines={1}
               style={[
                 dynamicStyles.title,
-                { fontWeight: item.isRead ? '500' : '700' },
+                { fontWeight: item.isRead ? '300' : '700' },
               ]}
             >
               {item.title}

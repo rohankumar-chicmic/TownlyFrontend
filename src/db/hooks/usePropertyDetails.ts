@@ -115,11 +115,6 @@ export const saveListedPropertiesDetails = async (propertyIds: string[]) => {
       if (!property) continue;
 
       await db.transaction(async tx => {
-        // FIX 6 — previously only propertyDocuments were deleted before the
-        // upsert, but documents have no onConflictDoUpdate guard. On a second
-        // save run the insert would add duplicate rows. Now we delete documents
-        // first (FK constraint order), then delete the property row, then do a
-        // clean insert for both — no stale data, no duplicates.
         await tx
           .delete(propertyDocuments)
           .where(eq(propertyDocuments.propertyId, id))
@@ -157,7 +152,7 @@ export const saveListedPropertiesDetails = async (propertyIds: string[]) => {
 
         if (property.documents?.length > 0) {
           await tx.insert(propertyDocuments).values(
-            property.documents.map(doc => ({
+            property.documents.map((doc: any) => ({
               propertyId: property.id,
               title: doc.title,
               fileName: doc.fileName,

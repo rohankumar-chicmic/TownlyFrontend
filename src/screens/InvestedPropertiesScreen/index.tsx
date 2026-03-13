@@ -19,15 +19,18 @@ import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
 import FilterButton from '@components/atoms/FilterButton';
 
 import { useGetMyInvestedPropertiesQuery } from '@redux/PropertyApiReducer';
-import { debounce, sanitizeSearch } from '@utils/utility';
+import { debounce, sanitizeSearch, throttle } from '@utils/utility';
 import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
+import { InvestmentCardType } from '@utils/types';
+import { ROUTES } from 'src/navigation/constants';
+import { useAppNavigation } from '@hooks/useNavigation';
 
 const PAGE_SIZE = 10;
 
 const InvestedPropertiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-
+  const navigation = useAppNavigation();
   // ================= STATE =================
   const [filter, setFilter] = useState('');
   const [text, setText] = useState('');
@@ -68,6 +71,12 @@ const InvestedPropertiesScreen = () => {
 
     debouncedSearch(val);
   };
+
+  const handleClicked = throttle((item: InvestmentCardType) => {
+    navigation.navigate(ROUTES.PROPERTY_DETAILS, {
+      id: item.propertyId,
+    });
+  }, 300);
 
   // ================= FILTER =================
   const handleFilterChange = (newVal: string) => {
@@ -182,7 +191,12 @@ const InvestedPropertiesScreen = () => {
         <FlatList
           data={list}
           keyExtractor={(item, index) => `${item.investmentId}-${index}`}
-          renderItem={({ item }) => <HoldingPropertyCard {...item} />}
+          renderItem={({ item }) => (
+            <HoldingPropertyCard
+              {...item}
+              onClick={() => handleClicked(item)}
+            />
+          )}
           contentContainerStyle={{ gap: 10, padding: 10 }}
           showsVerticalScrollIndicator={false}
           onEndReached={handleEndReached}

@@ -31,8 +31,6 @@ const styles = (Colors: ThemeColors) =>
     },
     card: {
       marginVertical: 4,
-      borderBottomWidth: 1,
-      borderBottomColor: Colors.border,
       padding: 10,
       borderRadius: 5,
     },

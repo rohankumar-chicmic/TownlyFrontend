@@ -7,6 +7,8 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import styles from './styles';
 import EmptyState from '@components/molecules/EmptyState';
+import { throttle } from '@utils/utility';
+import { InvestmentCardType } from '@utils/types';
 
 interface Props {
   items: any[];
@@ -20,6 +22,12 @@ export default function InvestedPropertiesSection({
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+
+  const handleClicked = throttle((item: InvestmentCardType) => {
+    navigation.navigate(ROUTES.PROPERTY_DETAILS, {
+      id: item.propertyId,
+    });
+  }, 300);
 
   return (
     <View
@@ -52,7 +60,10 @@ export default function InvestedPropertiesSection({
         keyExtractor={item => item.propertyId.toString()}
         renderItem={({ item }) => (
           <View style={{ width: Dimensions.get('screen').width * 0.7 }}>
-            <HoldingPropertyCard {...item} />
+            <HoldingPropertyCard
+              {...item}
+              onClick={() => handleClicked(item)}
+            />
           </View>
         )}
         ListEmptyComponent={<EmptyState message="No Investments Made yet" />}

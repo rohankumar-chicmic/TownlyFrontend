@@ -18,7 +18,7 @@ export const processQueue = async () => {
 
   try {
     const state = await NetInfo.fetch();
-    if (!state.isConnected) return;
+    if (!state.isInternetReachable) return;
 
     const tasks = await getPendingTasks();
 

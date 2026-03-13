@@ -13,7 +13,7 @@ interface Props {
 
 const RightAction = ({ dragX, onDelete, styles }: Props) => {
   const animatedStyle = useAnimatedStyle(() => {
-    const translateX = interpolate(dragX.value, [-100, 0], [0, 100]);
+    const translateX = interpolate(dragX.value, [-90, 0], [0, 90]);
 
     return {
       transform: [{ translateX }],

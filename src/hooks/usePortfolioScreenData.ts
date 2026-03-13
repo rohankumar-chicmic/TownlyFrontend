@@ -32,13 +32,13 @@ export const usePortfolioScreenData = () => {
   const dispatch = useAppDispatch();
   const { isConnected } = useNetInfo();
 
-  const skipFetch = !isConnected || isConnected === null;
-
   const userToken = useAppSelector(state => state.auth.userToken);
   const address = useAppSelector(state => state.auth.userData?.walletAddress);
   const kycStatus = useAppSelector(state => state.kyc.status);
 
   const dbData = usePortfolioData();
+
+  const skipFetch = !isConnected || isConnected === null;
 
   const {
     data: investmentDetails,
@@ -70,7 +70,10 @@ export const usePortfolioScreenData = () => {
     isLoading: propertiesLoading,
   } = useGetMyPropertiesQuery(
     { page: 1, pageSize: 5, search: '', status: '' },
-    { skip: !userToken || skipFetch, refetchOnMountOrArgChange: true },
+    {
+      skip: !userToken || skipFetch,
+      refetchOnMountOrArgChange: true,
+    },
   );
 
   const {
@@ -79,7 +82,10 @@ export const usePortfolioScreenData = () => {
     isLoading: investedLoading,
   } = useGetMyInvestedPropertiesQuery(
     { page: 1, pageSize: 3, search: '', propertyType: '' },
-    { skip: !userToken || skipFetch, refetchOnMountOrArgChange: true },
+    {
+      skip: !userToken || skipFetch,
+      refetchOnMountOrArgChange: true,
+    },
   );
 
   const {
@@ -88,14 +94,18 @@ export const usePortfolioScreenData = () => {
     isLoading: transactionsLoading,
   } = useGetTransactionsQuery(
     { page: 1, pageSize: 4 },
-    { skip: !userToken || skipFetch },
+    {
+      skip: !userToken || skipFetch,
+    },
   );
 
-  useGetKYCStatusQuery(undefined, { skip: !userToken || skipFetch });
+  useGetKYCStatusQuery(undefined, {
+    skip: !userToken || skipFetch,
+  });
 
   /**
    * ==============================
-   * isLoading — true only while API calls are in-flight AND no local data yet
+   * Loading State
    * ==============================
    */
 
@@ -111,7 +121,7 @@ export const usePortfolioScreenData = () => {
 
   /**
    * ==============================
-   * Focus Refetch
+   * Refetch when screen focused
    * ==============================
    */
 
@@ -121,6 +131,12 @@ export const usePortfolioScreenData = () => {
       dispatch(propertyApi.util.invalidateTags(['MyInvestedProperties']));
     }, [dispatch]),
   );
+
+  /**
+   * ==============================
+   * Save API data to SQLite
+   * ==============================
+   */
 
   useEffect(() => {
     if (investmentDetails && !investmentDetailsError)
@@ -152,9 +168,11 @@ export const usePortfolioScreenData = () => {
 
   /**
    * ==============================
-   * Derived Data — API if available, fallback to local DB
+   * Derived Data
+   * API first → fallback to SQLite
    * ==============================
    */
+
   const summaryData = useMemo(
     () => investmentDetails ?? dbData.summary,
     [investmentDetails, dbData.summary],
@@ -184,6 +202,12 @@ export const usePortfolioScreenData = () => {
     () => transactionsResult?.items ?? dbData.txHistory,
     [transactionsResult, dbData.txHistory],
   );
+
+  /**
+   * ==============================
+   * Return
+   * ==============================
+   */
 
   return {
     userToken,

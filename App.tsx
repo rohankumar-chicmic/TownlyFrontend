@@ -46,6 +46,7 @@ interface ExtendedTextInput extends TextInput {
     allowFontScaling: boolean;
   };
 }
+
 export default function App() {
   (Text as unknown as ExtendedText).defaultProps = { allowFontScaling: false };
   (TextInput as unknown as ExtendedTextInput).defaultProps = {

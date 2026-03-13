@@ -10,6 +10,8 @@ import EmptyState from '@components/molecules/EmptyState';
 import { saveListedPropertiesDetails } from 'src/db/hooks/usePropertyDetails';
 import { useEffect, useRef } from 'react';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { throttle } from '@utils/utility';
+import { PropertyCardProps } from '@utils/types';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.75;
 
@@ -36,6 +38,14 @@ export default function ListedPropertiesSection({
   // the effect fired once with an empty array, then again once items arrived,
   // but because length went 0→N both runs were treated as valid triggers.
   const savedIdsRef = useRef<string>('');
+
+  const handleClicked = throttle((item: PropertyCardProps) => {
+    console.log(item.status);
+    return navigation.navigate(ROUTES.OWNED_PROPERTY, {
+      id: item.id,
+      status: item.status ?? undefined,
+    });
+  }, 300);
 
   useEffect(() => {
     if (!items.length || !isConnected) return;
@@ -88,16 +98,7 @@ export default function ListedPropertiesSection({
         style={{ width: '100%', padding: 8 }}
         renderItem={({ item }) => (
           <View style={{ width: CARD_WIDTH }}>
-            <CardContainer2
-              {...item}
-              userOwned
-              onClick={() =>
-                navigation.navigate(ROUTES.OWNED_PROPERTY, {
-                  id: item.id,
-                  status: item.status,
-                })
-              }
-            />
+            <CardContainer2 {...item} userOwned onClick={() => handleClicked(item)} />
           </View>
         )}
       />

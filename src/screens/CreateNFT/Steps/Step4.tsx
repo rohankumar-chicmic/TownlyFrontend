@@ -62,11 +62,14 @@ export default function Step4(props: Readonly<StepProps>) {
         });
       } else if (props.isActiveProperty) {
         await addOfflineTask(OfflineTaskType.EDIT_PROPERTY, {
+          propertyId: props.propertyId,
           data: props.formData,
           token: userToken,
         });
       } else {
+
         await addOfflineTask(OfflineTaskType.RESUBMIT_PROPERTY, {
+          propertyId: props.propertyId,
           data: props.formData,
           token: userToken,
         });
@@ -87,23 +90,10 @@ export default function Step4(props: Readonly<StepProps>) {
       let result;
 
       if (props.isEdit && props.isActiveProperty && props.propertyId) {
-        const formData = new FormData();
-
-        formData.append('Description', props.formData.description ?? '');
-
-        if (props.formData.propertyImage?.uri) {
-          formData.append('Image', {
-            uri: props.formData.propertyImage.uri,
-            name: props.formData.propertyImage.name ?? 'image.jpg',
-            type: props.formData.propertyImage.type ?? 'image/jpeg',
-          } as any);
-        }
         result = await editProperty({
           propertyId: props.propertyId,
-          body: formData,
+          data: props.formData,
         }).unwrap();
-
-        console.error(result);
       } else if (props.isEdit && props.propertyId) {
         result = await resubmitProperty({
           propertyId: props.propertyId,

@@ -25,8 +25,10 @@ import { useCallback, useState } from 'react';
 export default function Portfolio() {
   const { dynamicStyles, Colors } = useStyles(styles);
   const navigation = useAppNavigation();
-  const [tasks, setTasks] = useState<OfflineTask[]>([]);
+  
   const res = useGetIncompleteTasks();
+  const tasks = res.data as OfflineTask[] | undefined;
+
   const {
     userToken,
     address,
@@ -43,22 +45,6 @@ export default function Portfolio() {
     isLoading,
   } = usePortfolioScreenData();
 
-  useFocusEffect(
-    useCallback(() => {
-      let isActive = true;
-
-      async function fetchTasks() {
-        if (isActive) setTasks(res.data as OfflineTask[]);
-        console.log(res, 'Pending tasks');
-      }
-
-      fetchTasks();
-
-      return () => {
-        isActive = false;
-      };
-    }, [res]),
-  );
 
   if (isLoading) return <PortfolioSkeleton />;
 
@@ -84,6 +70,22 @@ export default function Portfolio() {
         onPress={() => navigation.navigate('CreateNft')}
         style={{ marginVertical: 5 }}
       />
+
+      <InvestedPropertiesSection
+        items={investedItems}
+        showViewAll={investedHasMore}
+      />
+
+      <ListedPropertiesSection
+        items={listedItems}
+        showViewAll={listedHasMore}
+      />
+
+      <RecentTransactionsSection
+        transactions={transactions?.slice(0, 5)}
+        hasMore={transactionsHasMore}
+      />
+
       {tasks && tasks.length > 0 && (
         <View style={[dynamicStyles.containerStyle]}>
           <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
@@ -107,21 +109,6 @@ export default function Portfolio() {
           </View>
         </View>
       )}
-
-      <InvestedPropertiesSection
-        items={investedItems}
-        showViewAll={investedHasMore}
-      />
-
-      <ListedPropertiesSection
-        items={listedItems}
-        showViewAll={listedHasMore}
-      />
-
-      <RecentTransactionsSection
-        transactions={transactions?.slice(0, 5)}
-        hasMore={transactionsHasMore}
-      />
     </ScrollView>
   );
 }

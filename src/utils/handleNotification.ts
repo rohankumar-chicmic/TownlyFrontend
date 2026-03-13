@@ -3,6 +3,7 @@ import { NotificationType } from './constants';
 import { ROUTES } from '../navigation/constants';
 
 const handleNotification = (data: { type: number; referenceId?: string }) => {
+  console.log(data, '===============================');
   switch (data.type) {
     case NotificationType.KycApproved:
       navigate(ROUTES.PORTFOLIO);
@@ -13,31 +14,43 @@ const handleNotification = (data: { type: number; referenceId?: string }) => {
       break;
 
     case NotificationType.PropertyApproved:
-      navigate(ROUTES.PORTFOLIO);
+      if (data.referenceId) {
+        navigate(ROUTES.OWNED_PROPERTY, { id: data.referenceId });
+      } else {
+        navigate(ROUTES.PORTFOLIO);
+      }
       break;
 
     case NotificationType.PropertyRejected:
-      navigate(ROUTES.NOTIFICATIONS);
+      if (data.referenceId) {
+        navigate(ROUTES.OWNED_PROPERTY, { id: data.referenceId });
+      } else {
+        navigate(ROUTES.PORTFOLIO);
+      }
       break;
 
     case NotificationType.PropertyUpdateRejected:
-      navigate(ROUTES.NOTIFICATIONS);
+      if (data.referenceId) {
+        navigate(ROUTES.OWNED_PROPERTY, { id: data.referenceId });
+      } else {
+        navigate(ROUTES.PORTFOLIO);
+      }
       break;
 
     case NotificationType.PropertySoldOut:
       if (data.referenceId) {
-        navigate(ROUTES.PROPERTY_DETAILS, { id: data.referenceId });
+        navigate(ROUTES.OWNED_PROPERTY, { id: data.referenceId });
       } else {
         navigate(ROUTES.PORTFOLIO);
       }
       break;
 
     case NotificationType.InvestmentSuccess:
-      navigate(ROUTES.PORTFOLIO);
+      navigate(ROUTES.TRANSACTIONS);
       break;
 
     case NotificationType.InvestmentReceived:
-      navigate(ROUTES.PORTFOLIO);
+      navigate(ROUTES.TRANSACTIONS);
       break;
 
     case NotificationType.TokenRequestApproved:
@@ -45,12 +58,12 @@ const handleNotification = (data: { type: number; referenceId?: string }) => {
       break;
 
     case NotificationType.TokenRequestRejected:
-      navigate(ROUTES.NOTIFICATIONS);
+      navigate(ROUTES.WALLET);
       break;
 
     case NotificationType.ModificationRequired:
       if (data.referenceId) {
-        navigate(ROUTES.PROPERTY_DETAILS, { id: data.referenceId });
+        navigate(ROUTES.OWNED_PROPERTY, { id: data.referenceId });
       } else {
         navigate(ROUTES.NOTIFICATIONS);
       }

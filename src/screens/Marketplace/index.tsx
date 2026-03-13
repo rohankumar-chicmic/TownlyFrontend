@@ -21,20 +21,25 @@ const Marketplace = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+  const { isConnected } = useNetInfo();
 
   const [filter, setFilter] = useState('');
   const [text, setText] = useState('');
   const [params, setParams] = useState({ search: '', page: 1 });
 
-  const { data, isFetching, isLoading } = useSearchPropertiesQuery({
-    search: params.search,
-    page: params.page,
-    pageSize: 9,
-    propertyType: filter,
-  });
+  const { data, isFetching, isLoading } = useSearchPropertiesQuery(
+    {
+      search: params.search,
+      page: params.page,
+      pageSize: 9,
+      propertyType: filter,
+    },
+    {
+      skip: !isConnected,
+    },
+  );
 
   const { data: localData } = useFeaturedProperties();
-  const { isConnected } = useNetInfo();
 
   const debouncedSearch = useMemo(
     () =>

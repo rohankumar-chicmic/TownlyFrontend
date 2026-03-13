@@ -76,21 +76,19 @@ export async function processOfflineTask(task: OfflineTask) {
 
     case OfflineTaskType.EDIT_PROPERTY: {
       const data = payload;
-      console.log(data, '0000000000000000=-=-=-=-=- edit ');
       await store.dispatch(
         propertyApi.endpoints.editProperty.initiate({
-          propertyId: payload.data?.propertyId,
-          body: payload.data,
+          propertyId: payload.propertyId,
+          data: payload.data,
         }),
       );
       break;
     }
 
     case OfflineTaskType.RESUBMIT_PROPERTY: {
-      console.log(payload, '0000000000000000=-=-=-=-=- resubmit');
       await store.dispatch(
         propertyApi.endpoints.resubmitProperty.initiate({
-          propertyId: payload.data?.propertyId,
+          propertyId: payload.propertyId,
           data: payload.data,
         }),
       );
@@ -116,7 +114,7 @@ export async function processOfflineTask(task: OfflineTask) {
 export default function useOfflineQueue() {
   useEffect(() => {
     const unsubscribe = NetInfo.addEventListener(state => {
-      if (state.isConnected) {
+      if (state.isInternetReachable) {
         processQueue();
       }
     });

@@ -7,12 +7,20 @@ import useTheme from '@hooks/useTheme';
 import { PropertyCardProps } from '@utils/types';
 import FastImage from 'react-native-fast-image';
 
+
 import Badge from '@components/atoms/Badge';
+import useImages from '@hooks/useImages';
 
 export default function CardContainer2(props: Readonly<PropertyCardProps>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
+
   const [isPressed, setIsPressed] = useState(false);
+  const [imageError, setImageError] = useState(false);
+  const Images = useImages();
+
+  const imageSource =
+    !props.imageUrl || imageError ? Images.FALLBACK : { uri: props.imageUrl };
 
   return (
     <Pressable
@@ -28,16 +36,17 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
     >
       <View style={{ width: '40%', minHeight: 140 }}>
         <FastImage
-          source={{
-            uri: props.imageUrl,
-          }}
+          source={imageSource}
+          defaultSource={Images.FALLBACK}
+          onError={() => setImageError(true)}
+          resizeMode={FastImage.resizeMode.cover}
           style={{
             borderBottomLeftRadius: 7,
             borderTopLeftRadius: 7,
             height: '100%',
             width: '100%',
           }}
-        ></FastImage>
+        />
       </View>
 
       {props.userOwned && props.status && <Badge status={props.status} />}
@@ -46,6 +55,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
         <Text numberOfLines={1} style={dynamicStyles.title}>
           {props.name}
         </Text>
+
         <Text style={dynamicStyles.location} numberOfLines={1}>
           <Icons.Location width={10} height={10} borderColor={Colors.primary} />{' '}
           {props.location}
@@ -55,7 +65,7 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
           <Text style={dynamicStyles.fields} numberOfLines={1}>
             Final Risk Score
           </Text>
-          <Text style={[dynamicStyles.values]}>
+          <Text style={dynamicStyles.values}>
             {props.riskScore ? props.riskScore + '/10' : 'NA'}
           </Text>
         </View>
@@ -64,11 +74,9 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
           <Text style={dynamicStyles.fields} numberOfLines={1}>
             Estimated Yield
           </Text>
-          <Text style={[dynamicStyles.values]}>
-            {props.annualYieldPercent}
-            {'%'}
-          </Text>
+          <Text style={dynamicStyles.values}>{props.annualYieldPercent}%</Text>
         </View>
+
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields} numberOfLines={1}>
             Availability
@@ -77,11 +85,12 @@ export default function CardContainer2(props: Readonly<PropertyCardProps>) {
             {props.availableUnits}
           </Text>
         </View>
+
         <View style={dynamicStyles.column}>
           <Text style={dynamicStyles.fields} numberOfLines={1}>
             Price/Share
           </Text>
-          <Text style={[dynamicStyles.values]}>
+          <Text style={dynamicStyles.values}>
             {Number(props.pricePerUnitEth ?? 1.5).toFixed(2)}
             <Text style={[dynamicStyles.values, { fontSize: 10 }]}> ETH</Text>
           </Text>

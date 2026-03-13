@@ -171,12 +171,29 @@ const propertyApi = api.injectEndpoints({
       }),
     }),
 
-    editProperty: builder.mutation<any, any>({
-      query: ({ body, propertyId }) => ({
-        url: `/properties/${propertyId}/update-request`,
-        method: 'POST',
-        body,
-      }),
+    editProperty: builder.mutation<
+      any,
+      { propertyId: string; data: NFTFormData }
+    >({
+      query: ({ propertyId, data }) => {
+        const formData = new FormData();
+
+        formData.append('Description', data.description ?? '');
+
+        if (data.propertyImage?.uri) {
+          formData.append('Image', {
+            uri: data.propertyImage.uri,
+            name: data.propertyImage.name ?? 'image.jpg',
+            type: data.propertyImage.type ?? 'image/jpeg',
+          } as any);
+        }
+
+        return {
+          url: `/properties/${propertyId}/update-request`,
+          method: 'POST',
+          body: formData,
+        };
+      },
 
       invalidatesTags: ['MyProperties'],
     }),
