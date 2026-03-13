@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { View, Text, Keyboard } from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -26,6 +26,7 @@ interface StepProps {
   formData: NFTFormData;
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
   isActiveProperty?: boolean;
+  setIsDirty?: Dispatch<SetStateAction<boolean>>;
 }
 
 const propertyTypeOptions = [
@@ -38,51 +39,17 @@ const propertyTypeOptions = [
 export default function Step1(props: Readonly<StepProps>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
+
   const [pickedFile, setPickedFile] = useState<DocumentPickerResponse | null>(
     null,
   );
-
-  const handlePickFile = async () => {
-    try {
-      const [pickResult] = await pick({ type: [types.pdf, types.docx] });
-
-      const file = {
-        name: pickResult.name,
-        uri: pickResult.uri,
-        type: pickResult.type,
-        size: pickResult.size,
-      };
-
-      setPickedFile(pickResult);
-
-      setValue('documents.0.file', file as DocumentFile, {
-        shouldValidate: true,
-      });
-    } catch (err) {
-      Toast.show({
-        type: 'error',
-        text1: 'Something went wrong',
-        text2: 'error: ' + err,
-      });
-      console.log(err);
-    }
-  };
-
-  const handleContinue = (data: Step1FormData) => {
-    props.setFormData(prev => ({
-      ...prev,
-      ...data,
-      documents: data.documents,
-    }));
-
-    props.setStep(prev => prev + 1);
-  };
 
   const {
     control,
     handleSubmit,
     setValue,
     reset,
+    watch,
     formState: { errors },
   } = useForm<Step1FormData>({
     resolver: yupResolver(step1Schema),
@@ -101,6 +68,54 @@ export default function Step1(props: Readonly<StepProps>) {
     },
   });
 
+  /**
+   * DOCUMENT PICKER
+   */
+  const handlePickFile = async () => {
+    try {
+      const [pickResult] = await pick({ type: [types.pdf, types.docx] });
+
+      const file = {
+        name: pickResult.name,
+        uri: pickResult.uri,
+        type: pickResult.type,
+        size: pickResult.size,
+      };
+
+      setPickedFile(pickResult);
+
+      setValue('documents.0.file', file as DocumentFile, {
+        shouldValidate: true,
+      });
+
+      props.setIsDirty?.(true);
+    } catch (err) {
+      Toast.show({
+        type: 'error',
+        text1: 'Something went wrong',
+        text2: '' + err,
+      });
+
+      console.log(err);
+    }
+  };
+
+  /**
+   * CONTINUE STEP
+   */
+  const handleContinue = (data: Step1FormData) => {
+    props.setFormData(prev => ({
+      ...prev,
+      ...data,
+      documents: data.documents,
+    }));
+
+    props.setStep(prev => prev + 1);
+  };
+
+  /**
+   * LOAD EXISTING DATA (EDIT MODE)
+   */
   useEffect(() => {
     let existingDocuments = [{ documentName: '', file: null }];
 
@@ -130,6 +145,7 @@ export default function Step1(props: Readonly<StepProps>) {
   return (
     <View style={dynamicStyles.containerSurface}>
       <Text style={[dynamicStyles.heading]}>Property Details</Text>
+
       <Text
         style={{
           color: Colors.textSecondary,
@@ -142,6 +158,7 @@ export default function Step1(props: Readonly<StepProps>) {
         Let&apos;s start with the basic information about your property
       </Text>
 
+      {/* PROPERTY NAME */}
       <Controller
         control={control}
         name="propertyName"
@@ -151,14 +168,18 @@ export default function Step1(props: Readonly<StepProps>) {
             required
             readOnly={props.isActiveProperty}
             placeholder="e.g., Sunset Villa, Downtown Loft"
-            hintText={(value.length ?? '0') + '/100 characters'}
+            hintText={`${value.length}/100 characters`}
             value={value}
-            onChangeText={onChange}
+            onChangeText={text => {
+              onChange(text);
+              props.setIsDirty?.(true);
+            }}
             error={errors.propertyName?.message}
           />
         )}
       />
 
+      {/* DESCRIPTION */}
       <Controller
         control={control}
         name="description"
@@ -166,24 +187,22 @@ export default function Step1(props: Readonly<StepProps>) {
           <FormInput
             label="Property Description"
             required
-            maxLength={500}
             multiline
-            hintText={(value.length ?? '0') + '/500 characters'}
+            maxLength={500}
             placeholder="Describe the Property"
             value={value}
-            onChangeText={onChange}
+            onChangeText={text => {
+              onChange(text);
+              props.setIsDirty?.(true);
+            }}
+            hintText={`${value?.length ?? 0}/500 characters`}
             error={errors.description?.message}
           />
         )}
       />
 
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
+      {/* LOCATION + TYPE */}
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
         <View style={{ flex: 1 }}>
           <Controller
             control={control}
@@ -195,17 +214,22 @@ export default function Step1(props: Readonly<StepProps>) {
                 readOnly={props.isActiveProperty}
                 placeholder="e.g., Miami, Florida"
                 value={value}
-                onChangeText={onChange}
+                hintText={`${value.length}/100 characters`}
+                onChangeText={text => {
+                  onChange(text);
+                  props.setIsDirty?.(true);
+                }}
                 error={errors.location?.message}
               />
             )}
           />
         </View>
+
         <View style={{ flex: 1 }}>
-          <Text style={[dynamicStyles.label]}>
-            Property Type
-            <Text style={{ color: Colors.primary }}> *</Text>
+          <Text style={dynamicStyles.label}>
+            Property Type <Text style={{ color: Colors.primary }}> *</Text>
           </Text>
+
           <Controller
             control={control}
             name="propertyType"
@@ -216,20 +240,18 @@ export default function Step1(props: Readonly<StepProps>) {
                   labelField="label"
                   valueField="value"
                   placeholder="Select Type"
+                  dropdownPosition="bottom"
                   value={value}
                   disable={props.isActiveProperty}
-                  onChange={item => onChange(item.value)}
+                  onFocus={() => Keyboard.dismiss()}
+                  onChange={item => {
+                    onChange(item.value);
+                    props.setIsDirty?.(true);
+                  }}
                   style={[dynamicStyles.input, { height: 30 }]}
                   activeColor={Colors.elevated}
                   placeholderStyle={dynamicStyles.dropdownPlaceholder}
-                  selectedTextStyle={[
-                    dynamicStyles.dropdownSelectedText,
-                    {
-                      color: props.isActiveProperty
-                        ? Colors.textMuted
-                        : Colors.textPrimary,
-                    },
-                  ]}
+                  selectedTextStyle={dynamicStyles.dropdownSelectedText}
                   containerStyle={dynamicStyles.dropdownContainer}
                   itemTextStyle={dynamicStyles.dropdownItemText}
                 />
@@ -249,11 +271,9 @@ export default function Step1(props: Readonly<StepProps>) {
           />
         </View>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-        }}
-      >
+
+      {/* DOCUMENT */}
+      <View style={{ flexDirection: 'row' }}>
         <View style={{ flex: 1 }}>
           <Controller
             control={control}
@@ -264,17 +284,24 @@ export default function Step1(props: Readonly<StepProps>) {
                 required
                 placeholder={'e.g., Property Deed'}
                 readOnly={props.isActiveProperty}
+                hintText={`${value.length}/50 characters`}
                 value={value}
-                onChangeText={onChange}
+                maxLength={30}
+                onChangeText={text => {
+                  onChange(text);
+                  props.setIsDirty?.(true);
+                }}
                 error={errors.documents?.[0]?.documentName?.message}
               />
             )}
           />
         </View>
+
         <View style={{ flex: 1, marginTop: 6 }}>
           <Text style={dynamicStyles.label}>
             Upload Document <Text style={{ color: Colors.primary }}> *</Text>
           </Text>
+
           <Button
             disabled={props.isActiveProperty}
             style={[dynamicStyles.input, { marginTop: 2 }]}
@@ -289,6 +316,7 @@ export default function Step1(props: Readonly<StepProps>) {
               {pickedFile ? pickedFile?.name : 'Select Document'}
             </Text>
           </Button>
+
           <Text
             style={{
               color: Colors.error,
@@ -301,17 +329,15 @@ export default function Step1(props: Readonly<StepProps>) {
           </Text>
         </View>
       </View>
+
+      {/* CONTINUE */}
       <Button
         title="Continue"
         onPress={handleSubmit(handleContinue)}
-        style={{ alignSelf: 'flex-end', marginRight: 8 }}
+        style={{ alignSelf: 'flex-end', margin: 8 }}
         textStyle={{ marginHorizontal: 10 }}
       >
-        <Icons.Arrow
-          height={15}
-          width={15}
-          color={Colors.background}
-        ></Icons.Arrow>
+        <Icons.Arrow height={15} width={15} color={Colors.background} />
       </Button>
     </View>
   );

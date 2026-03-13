@@ -57,8 +57,9 @@ export default function PropertyDetails() {
   const relatedProperties = useGetRelatedPropertiesQuery(
     params?.item?.id || params?.id,
   );
-  const throttledHandleCardPressed = throttle(item =>
-    navigation.push(ROUTES.PROPERTY_DETAILS, { item: item }),
+  const throttledHandleCardPressed = throttle(
+    item => navigation.push(ROUTES.PROPERTY_DETAILS, { item: item }),
+    500,
   );
 
   const modalOnClose = () => {

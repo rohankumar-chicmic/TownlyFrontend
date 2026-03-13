@@ -54,7 +54,7 @@ const Marketplace = () => {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id });
   };
 
-  const throttledHandlePressed = throttle(handlePressed, 250);
+  const throttledHandlePressed = throttle(handlePressed, 500);
 
   const handleTextChange = (val: string) => {
     setText(val);

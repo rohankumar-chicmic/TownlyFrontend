@@ -24,12 +24,14 @@ export const appKit = createAppKit({
   adapters: [wagmiAdapter],
   storage,
   siwx,
+  features: {
+    socials: false,
+  },
   metadata: {
     name: APP_NAME,
     description: 'Townly decentralized application',
     url: APP_URL,
     icons: [`${APP_URL}/icon.png`],
-
     redirect: {
       native: `${APP_SCHEME}://`,
       universal: UNIVERSAL_LINK,

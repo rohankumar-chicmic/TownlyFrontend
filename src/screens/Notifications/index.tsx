@@ -6,6 +6,7 @@ import {
   Pressable,
   ActivityIndicator,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
@@ -301,18 +302,14 @@ const Notifications = () => {
             onPress={handleMarkAllAsRead}
             disabled={isMarkingAllRead}
           >
-            {isMarkingAllRead ? (
-              <ActivityIndicator size="small" color={Colors.primary} />
-            ) : (
-              <Text
-                style={[
-                  dynamicStyles.tagText,
-                  { color: isPressed ? Colors.primary : Colors.textSecondary },
-                ]}
-              >
-                Mark all read
-              </Text>
-            )}
+            <Text
+              style={[
+                dynamicStyles.tagText,
+                { color: isPressed ? Colors.primary : Colors.textSecondary },
+              ]}
+            >
+              {'Mark all read'}
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -355,10 +352,21 @@ const Notifications = () => {
           )}
           ListEmptyComponent={
             <View style={dynamicStyles.emptyContainer}>
-              <Text style={dynamicStyles.heroText}>
+              <Ionicons
+                name="notifications-off-outline"
+                size={100}
+                color={Colors.textMuted}
+                style={{ marginBottom: 12 }}
+              />
+
+              <Text style={dynamicStyles.emptyTitle}>
+                {isAllFilter ? 'No Notifications Yet' : 'All Caught Up'}
+              </Text>
+
+              <Text style={dynamicStyles.emptyDescription}>
                 {isAllFilter
-                  ? 'No notifications yet'
-                  : 'No unread notifications'}
+                  ? 'You will see updates about your activity here.'
+                  : 'You have no unread notifications.'}
               </Text>
             </View>
           }

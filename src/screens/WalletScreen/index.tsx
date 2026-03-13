@@ -30,7 +30,7 @@ import {
   saveAccountBalance,
   useAccountBalance,
 } from 'src/db/hooks/useWalletScreenData';
-import { addOfflineTask } from 'src/db/hooks/useOfflineQueue';
+import { addOfflineTask } from 'src/db/functions/common';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { OfflineTaskType } from '@utils/types';
 
@@ -290,7 +290,7 @@ export default function WalletScreen() {
               <FormInput
                 placeholder="Amount to request"
                 keyboardType="number-pad"
-                maxLength={4}
+                maxLength={3}
                 value={amount}
                 onChangeText={setAmount}
                 hintText="Min: 1 - Max: 999"

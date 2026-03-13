@@ -8,6 +8,7 @@ export const IMAGES = {
 export const DARK_IMAGES = {
   MONEY: require('@assets/images/money.png'),
   FALLBACK: require('@assets/images/fallback.webp'),
+  IMAGE: require('@assets/Image.png'),
 };
 
 // preload images

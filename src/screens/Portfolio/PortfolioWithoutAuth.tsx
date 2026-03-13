@@ -38,7 +38,7 @@ export default function PortfolioWithoutAuth() {
       </Text>
 
       <Button
-        title="Login / Connect Wallet"
+        title="Connect Wallet"
         onPress={open}
         style={{ marginTop: 20, width: '70%' }}
       />

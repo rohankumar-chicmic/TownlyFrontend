@@ -1,13 +1,13 @@
 import NetInfo from '@react-native-community/netinfo';
 import {
   getPendingTasks,
-  processOfflineTask,
   deleteTask,
   incrementRetry,
   updateTaskStatus,
-} from '../db/hooks/useOfflineQueue';
+} from '../db/functions/common';
 
 import { OfflineTask } from '@utils/types';
+import { processOfflineTask } from './functions/processOfflineTask';
 
 let isProcessingQueue = false;
 

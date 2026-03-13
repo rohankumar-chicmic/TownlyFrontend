@@ -160,7 +160,6 @@ export default function KYCStatusModal({
 
   return (
     <Modal animationType="slide" transparent visible={visible}>
-      {/* Backdrop */}
       <Pressable
         style={dynamicStyles.backdrop}
         onPress={() => {

@@ -42,23 +42,41 @@ const styles = (Colors: ThemeColors) =>
       fontWeight: '400',
     },
     notificationsContainer: {
-      height: '80%',
       marginHorizontal: 20,
+      height: '80%',
       marginBottom: 10,
       borderWidth: 1,
       backgroundColor: Colors.surface,
       borderColor: Colors.border,
       borderRadius: 4,
     },
-    emptyContainer: {
-      padding: 40,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     loadingContainer: {
       height: '80%',
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    emptyContainer: {
+      width: '100%',
+      top: '20%',
+      aspectRatio: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 60,
+    },
+
+    emptyTitle: {
+      fontSize: 16,
+      fontWeight: '600',
+      marginBottom: 6,
+      color: Colors.textMuted,
+    },
+
+    emptyDescription: {
+      fontSize: 13,
+      textAlign: 'center',
+      opacity: 0.7,
+      maxWidth: 240,
+      color: Colors.textMuted,
     },
   });
 

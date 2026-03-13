@@ -25,14 +25,16 @@ export default function Tabs() {
   const userToken = useAppSelector(state => state.auth.userToken);
   const dispatch = useAppDispatch();
 
-  const { data: unreadData } = useGetMyUnreadNotificationsQuery(
-    { page: 1, pageSize: 1 },
-    { skip: !userToken, refetchOnMountOrArgChange: true },
-  );
   const unreadNotifcations = useAppSelector(
     state => state.auth.unreadNotificationsCount,
   );
   const { isConnected } = useNetInfo();
+
+  const { data: unreadData } = useGetMyUnreadNotificationsQuery(
+    { page: 1, pageSize: 1 },
+    { skip: !userToken || !isConnected, refetchOnMountOrArgChange: true },
+  );
+
   useEffect(() => {
     if (unreadData?.totalCount !== undefined) {
       dispatch(setUnreadNotifications(Number(unreadData.totalCount)));
@@ -100,7 +102,7 @@ export default function Tabs() {
           options={{
             tabBarIcon: ({ color, size }) => (
               <View>
-                {userToken  && unreadNotifcations > 0 && (
+                {userToken && unreadNotifcations > 0 && (
                   <View
                     style={{
                       position: 'absolute',

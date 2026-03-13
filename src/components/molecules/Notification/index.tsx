@@ -21,14 +21,20 @@ const Notification = ({ item, onPress, onDelete }: NotificationProps) => {
   const { dynamicStyles } = useStyles(styles);
 
   const formatTime = (createdAt: string) => {
-    const date = new Date(createdAt);
+    const normalized = createdAt.includes('Z')
+      ? createdAt
+      : createdAt.split('.')[0] + 'Z';
+
+    const date = new Date(normalized);
     const now = new Date();
+
     const diff = now.getTime() - date.getTime();
 
     const mins = Math.floor(diff / 60000);
-    const hours = Math.floor(mins / 60);
-    const days = Math.floor(hours / 24);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
 
+    if (mins < 1) return 'now';
     if (mins < 60) return `${mins}m`;
     if (hours < 24) return `${hours}h`;
     if (days < 7) return `${days}d`;

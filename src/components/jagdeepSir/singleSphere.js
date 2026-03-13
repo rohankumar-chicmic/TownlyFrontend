@@ -1,3 +1,4 @@
+import { DARK_IMAGES } from '@utils/images';
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import Animated, {
@@ -213,9 +214,9 @@ const SingleSphere = ({
             ]}
           >
             <LoopImage
-              images={SPHERE_ASSETS.waveImages}
+              images={[DARK_IMAGES.IMAGE]}
               style={{ width, transform: [{ scale: 1.2 }] }}
-              frame={frame}
+              frame={0}
               color={color}
             />
           </Animated.View>

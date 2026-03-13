@@ -64,7 +64,7 @@ const styles = (Colors: ThemeColors) =>
 
     /* ---------- Disabled ---------- */
     disabled: {
-      opacity: 0.5,
+      opacity: 0.7,
     },
   });
 

@@ -178,7 +178,7 @@ export default function InvestPropertyModal({
                 placeholder="0"
                 placeholderTextColor={Colors.textMuted}
                 style={dynamicStyles.input}
-                cursorColor={Colors.outline}
+                cursorColor={Colors.primary}
               />
               <Text style={dynamicStyles.hint}>
                 Min: 1 • Max: {MAX_LIMIT} shares

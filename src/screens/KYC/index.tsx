@@ -27,7 +27,6 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import Toast from 'react-native-toast-message';
 
-// ─── Reusable wrapper that mirrors the FormInput shell ───────────────────────
 interface FieldWrapperProps {
   label: string;
   required?: boolean;
@@ -51,11 +50,7 @@ function FieldWrapper({
       <Text style={dynamicStyles.label}>
         {label} {required && <Text style={{ color: Colors.primary }}>*</Text>}
       </Text>
-
-      {/* Caller renders the interactive element (button / image strip) here */}
       {children}
-
-      {/* Error / hint line – identical to FormInput */}
       <Text
         style={{
           color: error ? Colors.error : Colors.textSecondary,

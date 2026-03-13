@@ -88,7 +88,7 @@ const ListedProperiesScreen = () => {
       id: item.id,
       status: item.status ?? undefined,
     });
-  }, 300);
+  }, 500);
 
   const footer = useMemo(() => {
     if (isFetching && params.page > 1) {

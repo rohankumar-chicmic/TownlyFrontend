@@ -45,7 +45,7 @@ export default function ListedPropertiesSection({
       id: item.id,
       status: item.status ?? undefined,
     });
-  }, 300);
+  }, 500);
 
   useEffect(() => {
     if (!items.length || !isConnected) return;

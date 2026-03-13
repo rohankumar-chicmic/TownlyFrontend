@@ -3,7 +3,7 @@ import { useAppKit, useAccount } from '@reown/appkit-react-native';
 import { View, Text, Pressable, ViewStyle, Dimensions } from 'react-native';
 import Button from '../Button';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useGetBalanceQuery } from '@redux/ApiReducer';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
@@ -24,9 +24,8 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
   const userToken = useAppSelector(state => state.auth.userToken);
   console.log(userToken);
   const navigation = useAppNavigation();
-
   const { data, isLoading } = useGetBalanceQuery(undefined, {
-    skip: !userToken,
+    skip: !userToken || !isConnected,
   });
 
   useGetKYCStatusQuery(undefined, {
@@ -35,11 +34,15 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
 
   const { data: balance } = useAccountBalance(String(address));
 
-  React.useEffect(() => {
-    if (data?.available && address) {
-      saveAccountBalance(data.available);
+  useEffect(() => {
+    if (data?.available !== undefined && data?.available !== null && address) {
+      try {
+        saveAccountBalance(data.available);
+      } catch (err) {
+        console.error('❌ DB Write Failed:', err);
+      }
     }
-  }, [data, address]);
+  }, [data?.available, address]);
 
   const displayBalance = data?.available ?? balance?.availableBalance ?? null;
 

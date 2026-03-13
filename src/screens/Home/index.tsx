@@ -36,7 +36,6 @@ const Home = () => {
     undefined,
     { skip: skipFetch },
   );
-
   useEffect(() => {
     if (data && !error) {
       saveFeaturedProperties(data);
@@ -145,7 +144,7 @@ const Home = () => {
     navigation.push(ROUTES.PROPERTY_DETAILS, { item });
   };
 
-  const throttledHandlePressed = throttle(handlePressed, 300);
+  const throttledHandlePressed = throttle(handlePressed, 500);
 
   const showSkeleton = isLoading && !localData?.length;
 
@@ -174,7 +173,11 @@ const Home = () => {
       }
       ListEmptyComponent={<ListEmptyComponent />}
       refreshing={isLoading}
-      onRefresh={refetch}
+      onRefresh={() => {
+        if (isConnected) {
+          refetch();
+        }
+      }}
       showsVerticalScrollIndicator={false}
     />
   );

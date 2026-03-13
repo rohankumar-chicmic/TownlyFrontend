@@ -28,12 +28,13 @@ export default function FormInput(props: Readonly<FormInputType>) {
   return (
     <View style={{ padding: 5, paddingBottom: 0 }}>
       <Text style={[dynamicStyles.label, props.labelStyle]}>
-        {props.label}{' '}
+        {props.label}
         {props.required && <Text style={{ color: Colors.primary }}>*</Text>}
       </Text>
       <TextInput
         placeholder={props.placeholder}
         maxLength={100}
+        textAlignVertical="top"
         placeholderTextColor={Colors.textMuted}
         style={[
           dynamicStyles.input,

@@ -34,6 +34,8 @@ export const saveAccountBalance = async (data: {
   available: number;
   walletAddress: string;
 }) => {
+  if (!data.walletAddress) return;
+
   try {
     await db
       .insert(accountBalances)
@@ -47,9 +49,9 @@ export const saveAccountBalance = async (data: {
       .onConflictDoUpdate({
         target: accountBalances.walletAddress,
         set: {
-          totalGranted: data.totalGranted,
-          totalUsed: data.totalUsed,
-          availableBalance: data.available,
+          totalGranted: data.totalGranted ?? 0,
+          totalUsed: data.totalUsed ?? 0,
+          availableBalance: data.available ?? 0,
           syncedAt: new Date().toISOString(),
         },
       });

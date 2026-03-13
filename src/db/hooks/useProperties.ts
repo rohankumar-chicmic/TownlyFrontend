@@ -1,6 +1,19 @@
 import { db } from '../client';
-import { featuredProperties } from '../schemas';
 import { useLiveQuery } from 'drizzle-orm/expo-sqlite';
+import {
+  portfolioSummary,
+  properties,
+  userInvestments,
+  portfolioValueHistory,
+  portfolioAllocation,
+  transactions,
+  accountBalances,
+  offlineTasks,
+  offlinePropertyDrafts,
+  myProperties,
+  propertyDocuments,
+  featuredProperties,
+} from '../schemas';
 
 export function useFeaturedProperties() {
   return useLiveQuery(db.select().from(featuredProperties));
@@ -40,3 +53,19 @@ export const saveFeaturedProperties = async (
     console.error(' Database Error:', err);
   }
 };
+
+export async function clearLocalDataExceptFeatured() {
+  await db.transaction(async tx => {
+    await tx.delete(portfolioSummary);
+    await tx.delete(properties);
+    await tx.delete(userInvestments);
+    await tx.delete(portfolioValueHistory);
+    await tx.delete(portfolioAllocation);
+    await tx.delete(transactions);
+    await tx.delete(accountBalances);
+    await tx.delete(offlineTasks);
+    await tx.delete(offlinePropertyDrafts);
+    await tx.delete(propertyDocuments);
+    await tx.delete(myProperties);
+  });
+}

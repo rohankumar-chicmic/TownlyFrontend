@@ -76,7 +76,7 @@ const InvestedPropertiesScreen = () => {
     navigation.navigate(ROUTES.PROPERTY_DETAILS, {
       id: item.propertyId,
     });
-  }, 300);
+  }, 500);
 
   // ================= FILTER =================
   const handleFilterChange = (newVal: string) => {

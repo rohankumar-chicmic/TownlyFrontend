@@ -46,6 +46,10 @@ interface ExtendedTextInput extends TextInput {
     allowFontScaling: boolean;
   };
 }
+function AppInitializer() {
+  useOfflineQueue();
+  return null;
+}
 
 export default function App() {
   (Text as unknown as ExtendedText).defaultProps = { allowFontScaling: false };
@@ -55,64 +59,110 @@ export default function App() {
 
   useEffect(() => {
     (async () => {
-      preloadImages();
       await preloadFonts();
-      await migrate(db, migrations);
+      preloadImages();
+      migrate(db, migrations);
       SplashScreen.hideAsync();
     })();
   }, []);
 
-  useOfflineQueue();
-
   return (
     <SafeAreaProvider>
       <KeyboardProvider>
-        <AppKitProvider instance={appKit}>
-          <WagmiProvider config={wagmiAdapter.wagmiConfig}>
-            <QueryClientProvider client={queryClient}>
-              <Provider store={store}>
-                <PersistGate persistor={persistor}>
+        <Provider store={store}>
+          <AppKitProvider instance={appKit}>
+            <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+              <QueryClientProvider client={queryClient}>
+                <PersistGate loading={null} persistor={persistor}>
                   <GestureHandlerRootView style={{ flex: 1 }}>
+                    <AppInitializer />
                     <RootNavigator />
                     <AppKit />
                   </GestureHandlerRootView>
                 </PersistGate>
-              </Provider>
-            </QueryClientProvider>
-          </WagmiProvider>
-        </AppKitProvider>
+              </QueryClientProvider>
+            </WagmiProvider>
+          </AppKitProvider>
+        </Provider>
       </KeyboardProvider>
     </SafeAreaProvider>
   );
 }
 
-// App.js or your navigator
+// ==========================
 // import ScrollBoxAnimation from '@components/jagdeepSir/ScrollAnimation';
-// import { View, Dimensions } from 'react-native';
-// // import NewSphereGroup from '@components/jagdeepSir';
+// import { View, Dimensions, TouchableOpacity } from 'react-native';
+// import Overlapping from '@components/jagdeepSir/Overlapping';
+// import NonOverlapping from '@components/jagdeepSir/NonOverlapping';
+// import Animated, {
+//   useSharedValue,
+//   useAnimatedScrollHandler,
+// } from 'react-native-reanimated';
+
 // const W = Dimensions.get('window').width;
+// // Must match ORIG_BOX math inside NewSphereGroup
+// const COLUMN_GAP = 8;
+// const OUTER_H_PAD = 30;
+// const ORIG_BOX = (W - OUTER_H_PAD * 2 - COLUMN_GAP) / 2.5;
+// const V_PAD_TOP = 14;
+// const ROW_GAP = 8;
+// const V_PAD_BOTTOM = 36;
+// const SPHERE_GROUP_HEIGHT = V_PAD_TOP + ORIG_BOX * 2 + ROW_GAP + V_PAD_BOTTOM;
+
 // export default function App() {
+//   const scrollY = useSharedValue(0);
+//   const scrollHandler = useAnimatedScrollHandler(event => {
+//     scrollY.value = event.contentOffset.y;
+//   });
+
 //   return (
 //     <View style={{ flex: 1, paddingTop: 50 }}>
-//       {/* <NewSphereGroup
-//         mindful={50}
-//         direction={'normal'}
-//         initDirection={'normal'}
-//         perform={50}
-//         fuel={50}
-//         restore={50}
-//         largestPercentage={50}
-//         onPressPerform={() => {}}
-//         onPressMindful={() => {}}
-//         onPressRestore={() => {}}
-//         onPressFuel={() => {}}
-//         opacity={1}
-//         height={W * 0.38}
-//         width={W * 0.38}
-//         fillDuration={4000}
-//       /> */}
-
-//       <ScrollBoxAnimation />
+//       <View style={{ height: SPHERE_GROUP_HEIGHT }}>
+//         <TouchableOpacity></TouchableOpacity>
+//         <Overlapping
+//           mindful={50}
+//           direction={'normal'}
+//           initDirection={'normal'}
+//           perform={50}
+//           fuel={50}
+//           scrollY={scrollY}
+//           restore={50}
+//           largestPercentage={50}
+//           onPressPerform={() => {}}
+//           onPressMindful={() => {}}
+//           onPressRestore={() => {}}
+//           onPressFuel={() => {}}
+//           opacity={1}
+//           height={W * 0.38}
+//           width={W * 0.38}
+//           fillDuration={4000}
+//         />
+//         <NonOverlapping
+//           mindful={50}
+//           direction={'normal'}
+//           initDirection={'normal'}
+//           perform={50}
+//           fuel={50}
+//           scrollY={scrollY}
+//           restore={50}
+//           largestPercentage={50}
+//           onPressPerform={() => {}}
+//           onPressMindful={() => {}}
+//           onPressRestore={() => {}}
+//           onPressFuel={() => {}}
+//           opacity={1}
+//           height={W * 0.38}
+//           width={W * 0.38}
+//           fillDuration={4000}
+//         />
+//       </View>
+//       <Animated.ScrollView
+//         onScroll={scrollHandler}
+//         scrollEventThrottle={16}
+//         style={{ flex: 1 }}
+//       >
+//         <View style={{ height: 1000 }} />
+//       </Animated.ScrollView>
 //     </View>
 //   );
 // }

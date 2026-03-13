@@ -178,6 +178,7 @@ export default function Step2(props: Readonly<StepProps>) {
           <FormInput
             label="Expected Annual Yield (%)"
             required
+            maxLength={2}
             placeholder="0"
             readOnly={props.isActiveProperty}
             keyboardType="number-pad"

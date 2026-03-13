@@ -18,14 +18,12 @@ import { usePortfolioScreenData } from '@hooks/usePortfolioScreenData';
 import PortfolioSkeleton from '@components/molecules/SkeletonPortfolio';
 import OfflineTasksQueue from '@components/molecules/OfflineTasksQueue';
 import { useGetIncompleteTasks } from 'src/db/hooks/useOfflineQueue';
-import { useFocusEffect } from '@react-navigation/native';
 import { OfflineTask } from '@utils/types';
-import { useCallback, useState } from 'react';
 
 export default function Portfolio() {
   const { dynamicStyles, Colors } = useStyles(styles);
   const navigation = useAppNavigation();
-  
+
   const res = useGetIncompleteTasks();
   const tasks = res.data as OfflineTask[] | undefined;
 
@@ -44,7 +42,6 @@ export default function Portfolio() {
     transactionsHasMore,
     isLoading,
   } = usePortfolioScreenData();
-
 
   if (isLoading) return <PortfolioSkeleton />;
 

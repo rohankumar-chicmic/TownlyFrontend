@@ -5,6 +5,8 @@ import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import Button from '@components/atoms/Button';
 import styles from './styles';
+import Toast from 'react-native-toast-message';
+import { useAppToastConfig } from '@hooks/useAppToastConfig';
 
 interface Props {
   visible: boolean;
@@ -21,6 +23,7 @@ export default function DeletePropertyModal({
 }: Readonly<Props>) {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
+  const toastConfig = useAppToastConfig();
 
   return (
     <Modal animationType="slide" transparent visible={visible}>
@@ -67,6 +70,7 @@ export default function DeletePropertyModal({
           />
         </View>
       </SafeAreaView>
+      <Toast config={toastConfig} />
     </Modal>
   );
 }

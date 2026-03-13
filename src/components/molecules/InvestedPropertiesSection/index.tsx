@@ -27,7 +27,7 @@ export default function InvestedPropertiesSection({
     navigation.navigate(ROUTES.PROPERTY_DETAILS, {
       id: item.propertyId,
     });
-  }, 300);
+  }, 500);
 
   return (
     <View

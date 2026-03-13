@@ -19,7 +19,7 @@ import { ROUTES } from 'src/navigation/constants';
 import { debounce } from '@utils/utility';
 import InfoRow from '@components/atoms/InfoRow';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { addOfflineTask } from 'src/db/hooks/useOfflineQueue';
+import { addOfflineTask } from 'src/db/functions/common';
 import { OfflineTaskType } from '@utils/types';
 import FastImage from 'react-native-fast-image';
 
@@ -67,7 +67,6 @@ export default function Step4(props: Readonly<StepProps>) {
           token: userToken,
         });
       } else {
-
         await addOfflineTask(OfflineTaskType.RESUBMIT_PROPERTY, {
           propertyId: props.propertyId,
           data: props.formData,

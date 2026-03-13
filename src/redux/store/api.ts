@@ -7,7 +7,7 @@ import {
   FetchBaseQueryError,
 } from '@reduxjs/toolkit/query/react';
 import { logoutAndDisconnect } from './logoutAndDisconnect';
-
+import { persistor } from './index';
 interface LocalRootState {
   auth: {
     userToken: string | null;
@@ -39,7 +39,6 @@ const baseQueryWithInterceptor: BaseQueryFn<
 
     if (status === 401) {
       console.error('Unauthorized access');
-      // 2. Use api.dispatch (local) instead of store.dispatch (global)
       api.dispatch(logoutAndDisconnect());
     } else {
       console.error(

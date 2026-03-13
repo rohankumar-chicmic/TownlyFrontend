@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, Modal, BackHandler } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { View, Text, Modal } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import Step1 from './Steps/Step1';
@@ -8,7 +8,6 @@ import Step3 from './Steps/Step3';
 import Step4 from './Steps/Step4';
 import StepIndicator from './Steps/StepIndicator';
 import { useAppRoute } from '@hooks/useAppRoute';
-
 import styles from './styles';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import BackButton from '@components/atoms/BackButton';
@@ -17,7 +16,7 @@ import { NFTFormData, DocumentFile } from './types';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { useAppNavigation } from '@hooks/useNavigation';
 import Button from '@components/atoms/Button';
-import { useFocusEffect } from '@react-navigation/native';
+import useConfirmExit from '@hooks/useConfirmExit';
 
 const mapApiToFormData = (data: any): NFTFormData => {
   const imageFile: DocumentFile | null = data.imageUrl
@@ -36,58 +35,56 @@ const mapApiToFormData = (data: any): NFTFormData => {
     documents: data.documents ?? [],
     totalPropertyValue: data.totalValue ?? 0,
     numberOfShares: data.totalUnits ?? 0,
-    rentalIncome: data.rentalIncomeHistory,
+    rentalIncome: data.rentalIncomeHistory ?? 0,
     pricePerUnit: data.pricePerUnit ?? 0,
     expectedAnnualYield: data.annualYieldPercent ?? 0,
     propertyImage: imageFile,
   };
 };
 
-const defaultFormData: NFTFormData = {
-  propertyName: '',
-  description: '',
-  location: '',
-  propertyType: '',
-  documents: [],
-  totalPropertyValue: 0,
-  numberOfShares: 0,
-  rentalIncome: 0,
-  pricePerUnit: 0,
-  expectedAnnualYield: 0,
-  propertyImage: null,
-};
-
-const isFormDirty = (current: NFTFormData): boolean => {
-  return (
-    !!current.propertyName ||
-    !!current.description ||
-    !!current.location ||
-    !!current.propertyType ||
-    (current.documents?.length ?? 0) > 0 ||
-    !!current.propertyImage ||
-    current.totalPropertyValue !== 0 ||
-    current.numberOfShares !== 0 ||
-    !!current.rentalIncome ||
-    current.pricePerUnit !== 0 ||
-    current.expectedAnnualYield !== 0
-  );
-};
-
 export default function CreateNFTScreen() {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const [step, setStep] = useState(0);
-  const [showExitModal, setShowExitModal] = useState(false);
   const navigation = useAppNavigation();
-
   const route = useAppRoute();
+
+  const [step, setStep] = useState(0);
+  const [isDirty, setIsDirty] = useState(false);
   const isEdit = route.params?.isEdit;
   const isActiveProperty = route.params?.isActiveProperty;
   const initialValues = route.params?.initialValues;
 
-  const [formData, setFormData] = useState<NFTFormData>(
-    isEdit && initialValues ? initialValues : defaultFormData,
-  );
+  const defaultFormData: NFTFormData = {
+    propertyName: '',
+    description: '',
+    location: '',
+    propertyType: '',
+    documents: [],
+    totalPropertyValue: 0,
+    numberOfShares: 0,
+    rentalIncome: 0,
+    pricePerUnit: 0,
+    expectedAnnualYield: 0,
+    propertyImage: null,
+  };
+
+  const initialFormData = useMemo(() => {
+    if (isEdit && initialValues) {
+      return mapApiToFormData(initialValues);
+    }
+    return defaultFormData;
+  }, [isEdit, initialValues]);
+
+  const [formData, setFormData] = useState<NFTFormData>(initialFormData);
+
+  useEffect(() => {
+    if (isEdit && initialValues) {
+      setFormData(mapApiToFormData(initialValues));
+    }
+  }, [isEdit, initialValues]);
+
+  const { showExitModal, confirmExit, cancelExit, setShowExitModal } =
+    useConfirmExit({ hasChanges: isDirty });
 
   const screenTitle = isEdit ? 'Update Property' : 'Create Property';
 
@@ -101,61 +98,20 @@ export default function CreateNFTScreen() {
     ? 'If you leave now, your changes will not be saved.'
     : 'If you leave now, all the information you entered will be permanently lost.';
 
-  const isDirty = isFormDirty(formData);
-
-  // Show discard modal or navigate back, depending on dirty state
-  const maybeShowExitModal = useCallback(() => {
-    if (isDirty) {
-      setShowExitModal(true);
-    } else {
-      navigation.goBack();
-    }
-  }, [isDirty, navigation]);
-
-  // Hardware back button — on step > 0 it does nothing (step's own Back button
-  // handles that); on step 0 it shows the discard modal if dirty.
-  useFocusEffect(
-    useCallback(() => {
-      const onHardwareBack = () => {
-        if (step > 0) {
-          // Let the in-step Back button handle it; suppress default behaviour
-          // so the user isn't accidentally popped out of the screen mid-flow.
-          setStep(prev => prev - 1);
-        } else {
-          maybeShowExitModal();
-        }
-        return true; // always intercept
-      };
-
-      const subscription = BackHandler.addEventListener(
-        'hardwareBackPress',
-        onHardwareBack,
-      );
-      return () => subscription.remove();
-    }, [step, maybeShowExitModal]),
-  );
-
-  // Top-level BackButton — always triggers discard-check (never step-back)
   const handleGoBack = () => {
-    maybeShowExitModal();
-  };
-
-  const confirmExit = () => {
-    setShowExitModal(false);
-    navigation.goBack();
-  };
-
-  const cancelExit = () => {
-    setShowExitModal(false);
-  };
-
-  useEffect(() => {
-    if (isEdit && initialValues) {
-      const mappedData = mapApiToFormData(initialValues);
-      setFormData(mappedData);
+    if (step > 0) {
+      setStep(prev => prev - 1);
+      return;
     }
-  }, [isEdit, initialValues]);
 
+    if (!isDirty) {
+      navigation.goBack();
+      return;
+    }
+
+    setShowExitModal(true);
+  };
+  console.log(isDirty);
   return (
     <SafeAreaView style={dynamicStyles.safeArea}>
       <KeyboardAwareScrollView
@@ -170,6 +126,7 @@ export default function CreateNFTScreen() {
             <View style={dynamicStyles.backButtonWrapper}>
               <BackButton onPress={handleGoBack} />
             </View>
+
             <Text style={dynamicStyles.headerTitle}>{screenTitle}</Text>
           </View>
 
@@ -222,10 +179,12 @@ export default function CreateNFTScreen() {
             <Step1
               setStep={setStep}
               formData={formData}
+              setIsDirty={setIsDirty}
               setFormData={setFormData}
               isActiveProperty={isActiveProperty}
             />
           )}
+
           {step === 1 && (
             <Step2
               setStep={setStep}
@@ -234,6 +193,7 @@ export default function CreateNFTScreen() {
               isActiveProperty={isActiveProperty}
             />
           )}
+
           {step === 2 && (
             <Step3
               setStep={setStep}
@@ -242,6 +202,7 @@ export default function CreateNFTScreen() {
               isActiveProperty={isActiveProperty}
             />
           )}
+
           {step === 3 && (
             <Step4
               setStep={setStep}
@@ -254,6 +215,7 @@ export default function CreateNFTScreen() {
         </View>
       </KeyboardAwareScrollView>
 
+      {/* Exit Confirmation Modal */}
       <Modal
         visible={showExitModal}
         transparent
@@ -268,13 +230,13 @@ export default function CreateNFTScreen() {
 
             <View style={dynamicStyles.modalButtonRow}>
               <Button
-                title="Cancel"
+                title="No"
                 variant="outline"
                 onPress={cancelExit}
                 textStyle={{ color: Colors.primary }}
               />
 
-              <Button title="Discard" onPress={confirmExit} />
+              <Button title="Yes" onPress={confirmExit} />
             </View>
           </View>
         </View>

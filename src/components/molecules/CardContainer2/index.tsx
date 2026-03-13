@@ -7,7 +7,6 @@ import useTheme from '@hooks/useTheme';
 import { PropertyCardProps } from '@utils/types';
 import FastImage from 'react-native-fast-image';
 
-
 import Badge from '@components/atoms/Badge';
 import useImages from '@hooks/useImages';
 

@@ -27,9 +27,8 @@ import EditButton from '@components/atoms/EditButton';
 import FastImage from 'react-native-fast-image';
 import PropertyDetailsSkeleton from '@components/molecules/PropertyDetailsSkeleton';
 import { usePropertyDetails } from 'src/db/hooks/usePropertyDetails';
-import { addOfflineTask } from 'src/db/hooks/useOfflineQueue';
+import { addOfflineTask } from 'src/db/functions/common';
 import { OfflineTaskType } from '@utils/types';
-import { useNetInfo } from '@react-native-community/netinfo';
 
 export default function UserOwnedProperty() {
   const { Colors } = useTheme();
@@ -38,8 +37,6 @@ export default function UserOwnedProperty() {
   const params = route.params;
   const navigation = useAppNavigation();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [isDeleted, setIsDeleted] = useState(false);
-  const { isConnected } = useNetInfo();
   const [imageError, setImageError] = useState(false);
   const Images = useImages();
 
