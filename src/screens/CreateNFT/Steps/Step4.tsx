@@ -35,7 +35,7 @@ interface StepProps {
   propertyId?: string;
   isEdit?: boolean;
   isActiveProperty?: boolean;
-  onLoadingChange?: (isLoading: boolean) => void;
+  onLoadingChange?: (isLoading: boolean, completed?: boolean) => void;
 }
 
 export default function Step4(props: Readonly<StepProps>) {
@@ -68,7 +68,7 @@ export default function Step4(props: Readonly<StepProps>) {
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       () => {
-        if (isLoading) return true; // consumed — back blocked
+        if (isLoading) return true;
         return false;
       },
     );
@@ -115,7 +115,7 @@ export default function Step4(props: Readonly<StepProps>) {
         text2: 'Property will be submitted when internet is available',
       });
 
-      navigation.navigate(ROUTES.TABS);
+      props.onLoadingChange?.(false, true);
 
       return;
     }
@@ -140,11 +140,11 @@ export default function Step4(props: Readonly<StepProps>) {
         }).unwrap();
       }
 
-      await new Promise(res => setTimeout(res, 5000));
       console.log('Property submitted successfully!', result);
 
-      navigation.navigate(ROUTES.TABS);
-
+      setTimeout(() => {
+        props.onLoadingChange?.(false, true);
+      }, 0);
       Toast.show({
         type: 'success',
         text1: 'Success!',

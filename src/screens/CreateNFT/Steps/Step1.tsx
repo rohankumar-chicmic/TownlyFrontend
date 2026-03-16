@@ -26,7 +26,7 @@ interface StepProps {
   formData: NFTFormData;
   setFormData: Dispatch<SetStateAction<NFTFormData>>;
   isActiveProperty?: boolean;
-  setIsDirty?: Dispatch<SetStateAction<boolean>>;
+  setIsDirty: Dispatch<SetStateAction<boolean>>;
 }
 
 const propertyTypeOptions = [
@@ -109,7 +109,7 @@ export default function Step1(props: Readonly<StepProps>) {
       ...data,
       documents: data.documents,
     }));
-
+    props.setIsDirty(true);
     props.setStep(prev => prev + 1);
   };
 
@@ -143,7 +143,6 @@ export default function Step1(props: Readonly<StepProps>) {
   }, [props.formData, reset]);
 
   return (
-    
     <View style={dynamicStyles.containerSurface}>
       <Text style={[dynamicStyles.heading]}>Property Details</Text>
 

@@ -80,7 +80,7 @@ export default function CreateNFTScreen() {
   }, [isEdit, initialValues]);
 
   const [formData, setFormData] = useState<NFTFormData>(initialFormData);
-
+  const submissionCompletedRef = useRef(false);
   useEffect(() => {
     if (isEdit && initialValues) {
       setFormData(mapApiToFormData(initialValues));
@@ -106,13 +106,15 @@ export default function CreateNFTScreen() {
     // Block back navigation entirely while Step4 is submitting
     if (isSubmittingRef.current) return;
 
-    if (step > 0) {
-      setStep(prev => prev - 1);
+    if (submissionCompletedRef.current) {
+      navigation.goBack();
       return;
     }
 
     if (!isDirty) {
-      navigation.goBack();
+      setTimeout(() => {
+        navigation.goBack();
+      }, 100);
       return;
     }
 
@@ -217,8 +219,14 @@ export default function CreateNFTScreen() {
               isEdit={isEdit}
               isActiveProperty={isActiveProperty}
               propertyId={route.params?.initialValues?.id}
-              onLoadingChange={loading => {
+              onLoadingChange={(loading, completed) => {
                 isSubmittingRef.current = loading;
+
+                if (completed) {
+                  submissionCompletedRef.current = true;
+                  setIsDirty(false);
+                  setTimeout(() => navigation.goBack(), 100);
+                }
               }}
             />
           )}
