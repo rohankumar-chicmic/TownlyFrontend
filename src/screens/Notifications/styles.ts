@@ -51,7 +51,8 @@ const styles = (Colors: ThemeColors) =>
       borderRadius: 4,
     },
     loadingContainer: {
-      height: '80%',
+      width: '100%',
+      aspectRatio: 1,
       justifyContent: 'center',
       alignItems: 'center',
     },

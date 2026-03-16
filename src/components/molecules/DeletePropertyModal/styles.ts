@@ -9,12 +9,10 @@ const styles = (Colors: ThemeColors) =>
     },
 
     sheet: {
-      backgroundColor: Colors.background,
+      backgroundColor: Colors.border,
       padding: 20,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
-      borderTopWidth: 1,
-      borderColor: Colors.outline,
     },
 
     header: {

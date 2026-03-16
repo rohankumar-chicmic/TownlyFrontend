@@ -3,7 +3,7 @@ import 'react-native-get-random-values';
 import { Buffer } from 'buffer';
 
 import { useEffect } from 'react';
-import { Text, TextInput, TextStyle } from 'react-native';
+import { ActivityIndicator, Text, TextInput, TextStyle } from 'react-native';
 
 import { preloadFonts } from '@utils/constants';
 import { preloadImages } from '@utils/images';
@@ -21,14 +21,14 @@ import { PersistGate } from 'redux-persist/integration/react';
 import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { initialWindowMetrics, SafeAreaProvider } from 'react-native-safe-area-context';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { appKit, wagmiAdapter } from './src/AppkitConfig'; // Your configured AppKit instance
 import { AppKitProvider, AppKit } from '@reown/appkit-react-native';
 import { WagmiProvider } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import useOfflineQueue from 'src/db/hooks/useOfflineQueue';
-
+import { View } from 'react-native';
 globalThis.Buffer = Buffer;
 
 const queryClient = new QueryClient();
@@ -51,6 +51,14 @@ function AppInitializer() {
   return null;
 }
 
+function Loading() {
+  return (
+    <View>
+      <ActivityIndicator size={'large'} />
+    </View>
+  );
+}
+
 export default function App() {
   (Text as unknown as ExtendedText).defaultProps = { allowFontScaling: false };
   (TextInput as unknown as ExtendedTextInput).defaultProps = {
@@ -62,29 +70,29 @@ export default function App() {
       await preloadFonts();
       preloadImages();
       migrate(db, migrations);
-      SplashScreen.hideAsync();
+      await SplashScreen.hideAsync();
     })();
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <KeyboardProvider>
-        <Provider store={store}>
-          <AppKitProvider instance={appKit}>
-            <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+    <SafeAreaProvider  initialMetrics={initialWindowMetrics}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <KeyboardProvider>
+          <Provider store={store}>
+            <PersistGate loading={<Loading />} persistor={persistor}>
               <QueryClientProvider client={queryClient}>
-                <PersistGate loading={null} persistor={persistor}>
-                  <GestureHandlerRootView style={{ flex: 1 }}>
-                    <AppInitializer />
+                <WagmiProvider config={wagmiAdapter.wagmiConfig}>
+                  <AppKitProvider instance={appKit}>
                     <RootNavigator />
                     <AppKit />
-                  </GestureHandlerRootView>
-                </PersistGate>
+                    <AppInitializer/>
+                  </AppKitProvider>
+                </WagmiProvider>
               </QueryClientProvider>
-            </WagmiProvider>
-          </AppKitProvider>
-        </Provider>
-      </KeyboardProvider>
+            </PersistGate>
+          </Provider>
+        </KeyboardProvider>
+      </GestureHandlerRootView>
     </SafeAreaProvider>
   );
 }

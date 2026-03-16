@@ -7,6 +7,7 @@ import {
   TextInput,
   Keyboard,
   ScrollView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styles from './styles';
@@ -14,12 +15,13 @@ import useStyles from '@hooks/useStyles';
 import Button from '@components/atoms/Button';
 import useTheme from '@hooks/useTheme';
 import { useInvestInPropertyMutation } from '@redux/PropertyApiReducer';
-import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
+import { KeyboardAvoidingView } from 'react-native-keyboard-controller'; // ← from keyboard-controller, not RN
 import Toast from 'react-native-toast-message';
 import { useAppToastConfig } from '@hooks/useAppToastConfig';
 import { useAppSelector } from '@redux/store';
 import { useGetBalanceQuery } from '@redux/ApiReducer';
 import { useNetInfo } from '@react-native-community/netinfo';
+
 interface Props {
   visible: boolean;
   onClose: () => void;
@@ -56,8 +58,6 @@ export default function InvestPropertyModal({
     skip: !userToken,
   });
 
-  console.log(balanceData);
-
   const availableBalance = balanceData?.available ?? 0;
   const totalCost = Number(shares || 0) * pricePerShare;
   const gasEstimate = 0.05;
@@ -86,7 +86,6 @@ export default function InvestPropertyModal({
         text2: 'Cannot buy more than maximum shares',
         visibilityTime: 1000,
       });
-
       setShares(MAX_LIMIT.toString());
     } else {
       setShares(cleanValue);
@@ -95,6 +94,7 @@ export default function InvestPropertyModal({
 
   const handleProceedToConfirm = () => {
     const sharesNum = Number(shares);
+    Keyboard.dismiss();
 
     if (sharesNum < MIN_LIMIT) {
       Toast.show({
@@ -133,7 +133,9 @@ export default function InvestPropertyModal({
       Toast.show({
         type: 'error',
         text1: 'Investment Failed',
-        text2: 'Something went wrong' + isConnected ? error : '',
+        text2: isConnected
+          ? `Something went wrong: ${error?.message ?? ''}`
+          : 'No internet connection',
         visibilityTime: 1500,
       });
     } finally {
@@ -143,34 +145,32 @@ export default function InvestPropertyModal({
 
   return (
     <>
-      {/* Bottom Sheet Investment Modal */}
       <Modal animationType="slide" transparent visible={visible}>
-        <Pressable
-          style={dynamicStyles.backdrop}
-          onPress={() => {
-            Keyboard.dismiss();
-          }}
-        />
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <Pressable style={{ flex: 1 }} onPress={() => Keyboard.dismiss()} />
 
-        <SafeAreaView style={dynamicStyles.sheet}>
-          <KeyboardAwareScrollView>
+          <SafeAreaView style={dynamicStyles.sheet}>
             <ScrollView
               keyboardShouldPersistTaps="handled"
               showsVerticalScrollIndicator={false}
             >
               <View style={dynamicStyles.header}>
                 <Text style={dynamicStyles.title}>Invest in Property</Text>
-
                 <Pressable onPress={onClose} hitSlop={8}>
                   <Text style={dynamicStyles.close}>✕</Text>
                 </Pressable>
               </View>
+
               <Text style={dynamicStyles.propertyName}>{name}</Text>
-              {/* Input */}
+
               <Text style={dynamicStyles.label}>
                 Number of Shares to Buy{' '}
                 <Text style={dynamicStyles.required}>*</Text>
               </Text>
+
               <TextInput
                 value={shares}
                 onChangeText={handleSharesChange}
@@ -180,16 +180,15 @@ export default function InvestPropertyModal({
                 style={dynamicStyles.input}
                 cursorColor={Colors.primary}
               />
+
               <Text style={dynamicStyles.hint}>
                 Min: 1 • Max: {MAX_LIMIT} shares
               </Text>
-              {/* Summary */}
+
               <View style={dynamicStyles.card}>
                 <Row label="Shares" value={shares || 0} />
                 <Row label="Price per Share" value={`${pricePerShare} ETH`} />
-
                 <View style={dynamicStyles.divider} />
-
                 <Row
                   label="Total Cost"
                   value={`${totalCost.toFixed(3)} ETH`}
@@ -197,17 +196,16 @@ export default function InvestPropertyModal({
                   large
                 />
               </View>
-              {/* Info */}
+
               <View style={dynamicStyles.info}>
                 <Text style={dynamicStyles.infoText}>
                   Transaction Fee: ~0.05 ETH
                 </Text>
-
                 <Text style={dynamicStyles.infoSub}>
                   You will receive an Investment NFT representing your share.
                 </Text>
               </View>
-              {/* Footer */}
+
               <View style={dynamicStyles.footer}>
                 <Button
                   title="Cancel"
@@ -215,20 +213,18 @@ export default function InvestPropertyModal({
                   onPress={onClose}
                   textStyle={{ color: Colors.primary }}
                 />
-
                 <Button
                   title={`Invest ${totalCost.toFixed(3)} ETH`}
                   onPress={handleProceedToConfirm}
                 />
               </View>
             </ScrollView>
-          </KeyboardAwareScrollView>
-        </SafeAreaView>
+          </SafeAreaView>
+        </KeyboardAvoidingView>
 
         <Toast config={toastConfig} />
       </Modal>
 
-      {/* Center Confirmation Modal */}
       <Modal
         visible={showConfirmModal}
         transparent
@@ -238,7 +234,6 @@ export default function InvestPropertyModal({
         <View style={dynamicStyles.centerOverlay}>
           <View style={dynamicStyles.centerModal}>
             <Text style={dynamicStyles.centerTitle}>Confirm Investment</Text>
-
             <Text style={dynamicStyles.centerText}>
               Please confirm your investment details.
             </Text>
@@ -246,9 +241,7 @@ export default function InvestPropertyModal({
             <View style={dynamicStyles.card}>
               <Row label="Shares" value={shares} />
               <Row label="Price per Share" value={`${pricePerShare} ETH`} />
-
               <View style={dynamicStyles.divider} />
-
               <Row
                 label="Total Cost"
                 value={`${totalCost.toFixed(3)} ETH`}
@@ -264,13 +257,12 @@ export default function InvestPropertyModal({
                 variant="outline"
                 disabled={loading}
                 textStyle={{ color: Colors.primary }}
-              ></Button>
-
+              />
               <Button
                 onPress={handleConfirmInvestment}
                 disabled={loading}
                 title={loading ? 'Submitting' : 'Confirm'}
-              ></Button>
+              />
             </View>
           </View>
         </View>
@@ -296,7 +288,6 @@ function Row({
   return (
     <View style={dynamicStyles.row}>
       <Text style={dynamicStyles.rowLabel}>{label}</Text>
-
       <Text
         style={[
           dynamicStyles.rowValue,

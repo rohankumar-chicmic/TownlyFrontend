@@ -61,7 +61,7 @@ const styles = (Colors: ThemeColors) =>
     },
 
     sheet: {
-      backgroundColor: Colors.background,
+      backgroundColor: Colors.border,
       padding: 20,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
@@ -69,7 +69,6 @@ const styles = (Colors: ThemeColors) =>
 
     header: {
       alignItems: 'center',
-      margin: 10,
       height: 100,
     },
 

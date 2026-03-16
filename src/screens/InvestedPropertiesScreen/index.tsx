@@ -12,7 +12,6 @@ import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 
-//unused comment import InvestedPropertyCard from '@components/molecules/InvestedPropertyCard';
 import SearchInput from '@components/molecules/SearchInput';
 import BackButton from '@components/atoms/BackButton';
 import HoldingPropertyCard from '@components/molecules/HoldingPropertyCard';
@@ -24,6 +23,7 @@ import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 import { InvestmentCardType } from '@utils/types';
 import { ROUTES } from 'src/navigation/constants';
 import { useAppNavigation } from '@hooks/useNavigation';
+import { useInfiniteList } from '@hooks/useInfiniteList';
 
 const PAGE_SIZE = 10;
 
@@ -31,23 +31,27 @@ const InvestedPropertiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+
   // ================= STATE =================
   const [filter, setFilter] = useState('');
   const [text, setText] = useState('');
-  const [params, setParams] = useState({
-    search: '',
-    page: 1,
-  });
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   // ================= QUERY =================
   const { data, isFetching, isLoading } = useGetMyInvestedPropertiesQuery({
-    search: params.search,
-    page: params.page,
+    search,
+    page,
     pageSize: PAGE_SIZE,
     propertyType: filter,
   });
 
-  const list = data?.items ?? [];
+  const {
+    allItems: list,
+    handleEndReached,
+    isResetting,
+  } = useInfiniteList(data, isFetching, setPage, [search, filter]);
+
   const hasMore = data?.hasMore ?? false;
 
   // ================= DEBOUNCED SEARCH =================
@@ -55,47 +59,35 @@ const InvestedPropertiesScreen = () => {
     () =>
       debounce((value: string) => {
         const clean = sanitizeSearch(value);
-        setParams({ search: clean, page: 1 });
+        setSearch(clean);
       }, 300),
     [],
   );
 
   const handleTextChange = (val: string) => {
     setText(val);
-
     const hasIllegalChars = /[^a-zA-Z0-9\s,-]/.test(val);
     if (hasIllegalChars) {
-      setParams({ search: '___INVALID_SEARCH___', page: 1 });
+      setSearch('___INVALID_SEARCH___');
       return;
     }
-
     debouncedSearch(val);
   };
 
+  // ================= NAVIGATION =================
   const handleClicked = throttle((item: InvestmentCardType) => {
-    navigation.navigate(ROUTES.PROPERTY_DETAILS, {
-      id: item.propertyId,
-    });
+    navigation.navigate(ROUTES.PROPERTY_DETAILS, { id: item.propertyId });
   }, 500);
 
   // ================= FILTER =================
   const handleFilterChange = (newVal: string) => {
     setFilter(newVal);
-    setParams(prev => ({ ...prev, page: 1 }));
   };
 
-  // ================= PAGINATION =================
-  const handleEndReached = () => {
-    if (!isFetching && hasMore) {
-      setParams(prev => ({ ...prev, page: prev.page + 1 }));
-    }
-  };
-
-  // ================= RENDER =================
-
+  // ================= FOOTER =================
   let footerComponent = null;
 
-  if (isFetching && params.page > 1) {
+  if (isFetching && page > 1) {
     footerComponent = (
       <ActivityIndicator
         size="small"
@@ -111,10 +103,21 @@ const InvestedPropertiesScreen = () => {
           marginVertical: 15,
           color: Colors.textSecondary,
         }}
-      ></Text>
+      >
+        No more properties
+      </Text>
     );
   }
+  const LoadingComponent = () => {
+    return (
+      <View style={dynamicStyles.loadingContainer}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+        <Text style={dynamicStyles.loadingText}>Loading portfolio...</Text>
+      </View>
+    );
+  };
 
+  // ================= RENDER =================
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* HEADER */}
@@ -128,7 +131,7 @@ const InvestedPropertiesScreen = () => {
             { alignSelf: 'center', textAlign: 'center', width: '100%' },
           ]}
         >
-          Your invested Properties
+          Your Invested Properties
         </Text>
       </View>
 
@@ -182,30 +185,27 @@ const InvestedPropertiesScreen = () => {
       </View>
 
       {/* LOADING (FIRST PAGE) */}
-      {isLoading && params.page === 1 ? (
-        <View style={dynamicStyles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
-          <Text style={dynamicStyles.loadingText}>Loading portfolio...</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={list}
-          keyExtractor={(item, index) => `${item.investmentId}-${index}`}
-          renderItem={({ item }) => (
-            <HoldingPropertyCard
-              {...item}
-              onClick={() => handleClicked(item)}
-            />
-          )}
-          contentContainerStyle={{ gap: 10, padding: 10 }}
-          showsVerticalScrollIndicator={false}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.5}
-          style={{ backgroundColor: Colors.background }}
-          ListFooterComponent={footerComponent}
-          ListEmptyComponent={ListEmptyComponent}
-        />
-      )}
+
+      <FlatList
+        data={list}
+        keyExtractor={(item, index) => `${item.investmentId}-${index}`}
+        renderItem={({ item }) => (
+          <HoldingPropertyCard {...item} onClick={() => handleClicked(item)} />
+        )}
+        contentContainerStyle={{ gap: 10, padding: 10 }}
+        showsVerticalScrollIndicator={false}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        style={{ backgroundColor: Colors.background }}
+        ListFooterComponent={footerComponent}
+        ListEmptyComponent={
+          isFetching || isLoading || isResetting ? (
+            <LoadingComponent/>
+          ) : (
+            <ListEmptyComponent />
+          )
+        }
+      />
     </SafeAreaView>
   );
 };

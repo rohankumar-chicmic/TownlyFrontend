@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import TransactionsRow from '@components/atoms/TransactionsRow';
 import Button from '@components/atoms/Button';
@@ -6,7 +7,6 @@ import useTheme from '@hooks/useTheme';
 import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import styles from './styles';
-import React from 'react';
 
 interface Props {
   transactions?: any[];
@@ -20,6 +20,12 @@ export default function RecentTransactionsSection({
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const handleToggle = (id: string) => {
+    setOpenId(prev => (prev === id ? null : id));
+  };
 
   return (
     <View
@@ -72,8 +78,8 @@ export default function RecentTransactionsSection({
 
       <View style={{ gap: 5, alignItems: 'center' }}>
         {transactions && transactions.length > 0 ? (
-          (transactions ?? []).map((item: any) => (
-            <TransactionsRow item={item} key={item.transactionId} />
+          transactions.map((item: any) => (
+            <TransactionsRow key={item.transactionId} item={item} />
           ))
         ) : (
           <Text style={{ color: Colors.textMuted, marginVertical: 20 }}>

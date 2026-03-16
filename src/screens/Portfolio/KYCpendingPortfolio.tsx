@@ -6,12 +6,45 @@ import styles from './styles';
 import { useAppNavigation } from '@hooks/useNavigation';
 import useStyles from '@hooks/useStyles';
 import KYCStatusModal from '@components/molecules/KYCModal';
+import { useGetKYCStatusQuery } from '@redux/KYCApiReducer';
+import { KYC_STATUS } from '@redux/KYCReducer';
+import { useAppSelector } from '@redux/store';
+import Toast from 'react-native-toast-message';
 
 export default function KYCpendingPortfolio() {
   const { Colors } = useTheme();
   const { dynamicStyles } = useStyles(styles);
   const navigation = useAppNavigation();
   const [modalOpened, setModalOpened] = useState(false);
+  const userToken = useAppSelector(state => state.auth.userToken);
+  const { data, refetch } = useGetKYCStatusQuery(undefined, {
+    skip: !userToken,
+  });
+  const [checking, setChecking] = useState(false);
+
+  const handleCheckKyc = async () => {
+    try {
+      setChecking(true);
+
+      const result = await refetch();
+      const kycStatus = result?.data?.status;
+
+      if (kycStatus !== KYC_STATUS.APPROVED) {
+        setModalOpened(true);
+      }
+    }catch(e){
+      Toast.show({
+        type: 'error', 
+        text1: 'Something went wrong',
+        text2 : '' + e,
+      })
+      console.log(e)
+    }
+  
+    finally {
+      setChecking(false);
+    }
+  };
 
   return (
     <View
@@ -41,8 +74,9 @@ export default function KYCpendingPortfolio() {
       </Text>
 
       <Button
-        title="Check KYC"
-        onPress={() => setModalOpened(true)}
+        title={checking ? 'Checking...' : 'Check KYC'}
+        disabled={checking}
+        onPress={handleCheckKyc}
         style={{ marginTop: 20, width: '70%' }}
       />
       <KYCStatusModal

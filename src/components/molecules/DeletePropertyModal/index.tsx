@@ -1,12 +1,12 @@
 import React from 'react';
 import { Modal, View, Text, Pressable, Keyboard } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
 import Button from '@components/atoms/Button';
 import styles from './styles';
 import Toast from 'react-native-toast-message';
 import { useAppToastConfig } from '@hooks/useAppToastConfig';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 interface Props {
   visible: boolean;
@@ -27,49 +27,71 @@ export default function DeletePropertyModal({
 
   return (
     <Modal animationType="slide" transparent visible={visible}>
-      <Pressable
-        style={dynamicStyles.backdrop}
-        onPress={() => {
-          Keyboard.dismiss();
-          onClose();
-        }}
-      />
-      <SafeAreaView style={dynamicStyles.sheet}>
-        <View style={dynamicStyles.header}>
-          <Text style={dynamicStyles.title}>Delete Property</Text>
-          <Pressable onPress={onClose} style={{ height: 25, width: 25 }}>
-            <Text style={dynamicStyles.close}>✕</Text>
-          </Pressable>
-        </View>
-
-        <Text
-          style={{
-            color: Colors.textSecondary,
-            fontSize: 14,
-            marginTop: 10,
-            marginBottom: 24,
-            lineHeight: 20,
+      <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+        <Pressable
+          style={[dynamicStyles.backdrop]}
+          onPress={() => {
+            Keyboard.dismiss();
+            onClose();
           }}
-        >
-          Are you sure you want to delete this property? This action cannot be
-          undone and all associated data will be permanently removed.
-        </Text>
+        />
 
-        <View style={dynamicStyles.footer}>
-          <Button
-            title="Cancel"
-            onPress={onClose}
-            variant="outline"
-            textStyle={{ color: Colors.primary }}
-          />
-          <Button
-            title={isLoading ? 'Deleting...' : 'Delete'}
-            onPress={onConfirm}
-            disabled={isLoading}
-            style={{ backgroundColor: Colors.warning }}
-          />
-        </View>
-      </SafeAreaView>
+        <SafeAreaView
+          style={[
+            dynamicStyles.sheet,
+            {
+              backgroundColor: Colors.surface,
+              borderTopLeftRadius: 24,
+              borderTopRightRadius: 24,
+              borderWidth: 1,
+              borderColor: Colors.border,
+              padding: 20,
+            },
+          ]}
+        >
+          <View style={dynamicStyles.header}>
+            <Text style={dynamicStyles.title}>Delete Property</Text>
+
+            <Pressable
+              onPress={onClose}
+              style={{ height: 25, width: 25 }}
+              hitSlop={15}
+            >
+              <Text style={dynamicStyles.close}>✕</Text>
+            </Pressable>
+          </View>
+
+          <Text
+            style={{
+              color: Colors.textSecondary,
+              fontSize: 14,
+              marginTop: 10,
+              marginBottom: 24,
+              lineHeight: 20,
+            }}
+          >
+            Are you sure you want to delete this property? This action cannot be
+            undone and all associated data will be permanently removed.
+          </Text>
+
+          <View style={dynamicStyles.footer}>
+            <Button
+              title="Cancel"
+              onPress={onClose}
+              variant="outline"
+              textStyle={{ color: Colors.primary }}
+            />
+
+            <Button
+              title={isLoading ? 'Deleting...' : 'Delete'}
+              onPress={onConfirm}
+              disabled={isLoading}
+              style={{ backgroundColor: Colors.warning }}
+            />
+          </View>
+        </SafeAreaView>
+      </View>
+
       <Toast config={toastConfig} />
     </Modal>
   );

@@ -14,6 +14,8 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import { useFeaturedProperties } from 'src/db/hooks/useProperties';
 import { useNetInfo } from '@react-native-community/netinfo';
+import { useInfiniteList } from '@hooks/useInfiniteList';
+
 const SKELETON_COUNT = 6;
 const SKELETONS = new Array(SKELETON_COUNT).fill(null);
 
@@ -25,18 +27,19 @@ const Marketplace = () => {
 
   const [filter, setFilter] = useState('');
   const [text, setText] = useState('');
-  const [params, setParams] = useState({ search: '', page: 1 });
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   const { data, isFetching, isLoading } = useSearchPropertiesQuery(
-    {
-      search: params.search,
-      page: params.page,
-      pageSize: 9,
-      propertyType: filter,
-    },
-    {
-      skip: !isConnected,
-    },
+    { search, page, pageSize: 9, propertyType: filter },
+    { skip: !isConnected },
+  );
+
+  const { allItems, handleEndReached, isResetting } = useInfiniteList(
+    data,
+    isFetching,
+    setPage,
+    [search, filter],
   );
 
   const { data: localData } = useFeaturedProperties();
@@ -45,22 +48,20 @@ const Marketplace = () => {
     () =>
       debounce((value: string) => {
         const clean = sanitizeSearch(value);
-        setParams({ search: clean, page: 1 });
+        setSearch(clean);
       }, 200),
     [],
   );
 
-  const handlePressed = (id: string) => {
+  const throttledHandlePressed = throttle((id: string) => {
     navigation.push(ROUTES.PROPERTY_DETAILS, { id });
-  };
-
-  const throttledHandlePressed = throttle(handlePressed, 500);
+  }, 500);
 
   const handleTextChange = (val: string) => {
     setText(val);
     const hasIllegalChars = /[^a-zA-Z0-9\s,-]/.test(val);
     if (hasIllegalChars) {
-      setParams({ search: '___INVALID_SEARCH___', page: 1 });
+      setSearch('___INVALID_SEARCH___');
       return;
     }
     debouncedSearch(val);
@@ -68,24 +69,15 @@ const Marketplace = () => {
 
   const handleFilterChange = (newVal: string) => {
     setFilter(newVal);
-    setParams(prev => ({ ...prev, page: 1 }));
-  };
-
-  const handleEndReached = () => {
-    if (!isFetching && data?.hasMore) {
-      setParams(prev => ({ ...prev, page: prev.page + 1 }));
-    }
   };
 
   const showSkeleton = isLoading;
 
   const listData = useMemo(() => {
     if (!isConnected) return localData;
-
     if (showSkeleton) return SKELETONS;
-
-    return data?.items ?? [];
-  }, [isConnected, showSkeleton, data?.items, localData]);
+    return allItems;
+  }, [isConnected, showSkeleton, allItems, localData]);
 
   return (
     <View style={dynamicStyles.container}>
@@ -102,7 +94,11 @@ const Marketplace = () => {
           paddingTop: 0,
         }}
       >
-        <ScrollView horizontal style={{ overflow: 'visible' }}>
+        <ScrollView
+          horizontal
+          style={{ overflow: 'visible' }}
+          showsHorizontalScrollIndicator={false}
+        >
           <FilterButton
             label="All"
             value=""
@@ -151,7 +147,9 @@ const Marketplace = () => {
             />
           )
         }
-        ListEmptyComponent={isLoading ? null : <ListEmptyComponent />}
+        ListEmptyComponent={
+          isLoading || isFetching || isResetting ? null : <ListEmptyComponent />
+        }
         contentContainerStyle={{ gap: 10, paddingVertical: 15 }}
         showsVerticalScrollIndicator={false}
         onEndReached={handleEndReached}

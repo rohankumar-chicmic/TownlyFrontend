@@ -8,10 +8,16 @@ export default function EmptyState({ message }: { message: string }) {
       style={{
         padding: 20,
         alignItems: 'center',
-        width: Dimensions.get('window').width * 0.8,
+        width: '100%',
+        aspectRatio: 1,
+        justifyContent: 'center',
       }}
     >
-      <Text style={{ color: Colors.textMuted, fontSize: 14 }}>{message}</Text>
+      <Text
+        style={{ color: Colors.textMuted, fontSize: 14, textAlign: 'center' }}
+      >
+        {message}
+      </Text>
     </View>
   );
 }

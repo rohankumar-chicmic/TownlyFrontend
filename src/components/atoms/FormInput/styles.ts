@@ -11,10 +11,10 @@ const styles = (Colors: ThemeColors) =>
       color: Colors.textPrimary,
     },
     input: {
-      // marginBottom: 2,
-      textAlignVertical: 'center',
+      textAlignVertical: 'top',
       borderRadius: 10,
       padding: 12,
+      maxHeight: 120,
       fontSize: 13,
       borderWidth: 1,
       width: '100%',

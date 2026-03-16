@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Animated, {
   FadeIn,
@@ -6,21 +6,17 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
-  LinearTransition,
 } from 'react-native-reanimated';
 
 import styles from './styles';
 import useStyles from '@hooks/useStyles';
 import { Transaction } from '@utils/types';
 
-const AnimatedChevron = Animated.createAnimatedComponent(Text);
-
-const TransactionRow = ({ item }: { item: Transaction }) => {
+const TransactionRow = memo(({ item }: { item: Transaction }) => {
   const isIncome = item?.type === 2;
   const { dynamicStyles } = useStyles(styles);
 
   const [isOpen, setIsOpen] = useState(false);
-
   const rotation = useSharedValue(0);
 
   const toggle = () => {
@@ -44,17 +40,12 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
       label: 'Time',
       value: item.createdAt.toString().split('T')[1]?.slice(0, 5) ?? '—',
     },
-    {
-      label: 'From',
-      value: item.fromWalletAddress ?? 'Not Available',
-    },
+    { label: 'From', value: item.fromWalletAddress ?? 'Not Available' },
   ];
 
   return (
-    <Animated.View
-      layout={LinearTransition.springify()}
-      style={dynamicStyles.wrapper}
-    >
+    // Plain View — no LinearTransition, no layout animation on the wrapper
+    <View style={dynamicStyles.wrapper}>
       <TouchableOpacity
         style={[dynamicStyles.row, !isOpen && dynamicStyles.rowClosed]}
         onPress={toggle}
@@ -64,7 +55,6 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
           <Text style={dynamicStyles.propertyTitle} numberOfLines={1}>
             {item.propertyName}
           </Text>
-
           {!!item.tokens && (
             <Text style={dynamicStyles.tokenText}>{item.tokens} tokens</Text>
           )}
@@ -86,16 +76,15 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
           {item.createdAt.toString().split('T')[0]}
         </Text>
 
-        <AnimatedChevron style={[dynamicStyles.chevronIcon, chevronStyle]}>
+        <Animated.Text style={[dynamicStyles.chevronIcon, chevronStyle]}>
           <Text>▾</Text>
-        </AnimatedChevron>
+        </Animated.Text>
       </TouchableOpacity>
 
       {isOpen && (
         <Animated.View
-          entering={FadeIn.duration(160)}
-          exiting={FadeOut.duration(120)}
-          layout={LinearTransition.springify()}
+          entering={FadeIn.duration(120)}
+          exiting={FadeOut.duration(80)}
           style={dynamicStyles.detailsContainer}
         >
           {details.map(({ label, value }) => (
@@ -106,8 +95,8 @@ const TransactionRow = ({ item }: { item: Transaction }) => {
           ))}
         </Animated.View>
       )}
-    </Animated.View>
+    </View>
   );
-};
+});
 
 export default TransactionRow;

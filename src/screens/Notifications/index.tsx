@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -38,6 +38,17 @@ const Notifications = () => {
   const { Colors } = useTheme();
   const dispatch = useAppDispatch();
 
+  const openSwipeableRef = useRef<any>(null);
+  const userToken = useAppSelector(state => state.auth.userToken);
+
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [isPressed, setIsPressed] = useState(false);
+  const [isMarkingAllRead, setIsMarkingAllRead] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const [pageAll, setPageAll] = useState(1);
+  const [pageUnread, setPageUnread] = useState(1);
+
   const [allNotifications, setAllNotifications] = useState<NotificationItem[]>(
     [],
   );
@@ -45,20 +56,13 @@ const Notifications = () => {
     NotificationItem[]
   >([]);
 
-  const userToken = useAppSelector(state => state.auth.userToken);
-  const [filter, setFilter] = useState<'all' | 'unread'>('all');
-  const [isPressed, setIsPressed] = useState(false);
-  const [isMarkingAllRead, setIsMarkingAllRead] = useState(false);
-  const [pageAll, setPageAll] = useState(1);
-  const [pageUnread, setPageUnread] = useState(1);
-  const [refreshing, setRefreshing] = useState(false);
-
   const isAllFilter = filter === 'all';
 
   const [readSingleNotification] = useReadNotificationMutation();
   const [readAllNotifications] = useReadAllNotificationMutation();
   const [deleteNotification] = useDeleteNotificationMutation();
 
+  // ================= QUERIES =================
   const {
     data: allData,
     isFetching: isFetchingAll,
@@ -66,7 +70,7 @@ const Notifications = () => {
     refetch: refetchAll,
   } = useGetMyNotificationsQuery(
     { page: pageAll, pageSize: PAGE_SIZE },
-    { skip: !userToken, refetchOnMountOrArgChange: true },
+    { skip: !userToken },
   );
 
   const {
@@ -76,56 +80,51 @@ const Notifications = () => {
     refetch: refetchUnread,
   } = useGetMyUnreadNotificationsQuery(
     { page: pageUnread, pageSize: PAGE_SIZE },
-    { skip: !userToken, refetchOnMountOrArgChange: true },
+    { skip: !userToken },
   );
 
-  const isAllFilter_check = filter === 'all';
-  const isFetchingCurrent = isAllFilter_check
-    ? isFetchingAll
-    : isFetchingUnread;
-  const isLoadingCurrent = isAllFilter_check ? isLoadingAll : isLoadingUnread;
-  const currentData = isAllFilter_check ? allData : unreadData;
-  const notifications = isAllFilter_check
-    ? allNotifications
-    : unreadNotifications;
-  const totalUnread = unreadData?.totalCount ?? 0;
-  const hasMore = currentData?.hasMore ?? false;
-
-  // Append all-notifications pages
+  // ================= ACCUMULATE PAGES =================
   useEffect(() => {
     if (!allData?.items) return;
-    if (pageAll === 1) {
-      setAllNotifications(allData.items);
-    } else {
-      setAllNotifications(prev => {
-        const map = new Map(prev.map(i => [i.id, i]));
-        allData.items.forEach(i => map.set(i.id, i));
-        return Array.from(map.values());
-      });
-    }
-  }, [allData]);
+    setAllNotifications(prev => {
+      if (pageAll === 1) return allData.items;
+      const map = new Map(prev.map(i => [i.id, i]));
+      allData.items.forEach(i => map.set(i.id, i));
+      return Array.from(map.values());
+    });
+  }, [allData?.items, pageAll]);
 
-  // Append unread-notifications pages
   useEffect(() => {
     if (!unreadData?.items) return;
-    if (pageUnread === 1) {
-      setUnreadNotifications(unreadData.items);
-    } else {
-      setUnreadNotifications(prev => {
-        const map = new Map(prev.map(i => [i.id, i]));
-        unreadData.items.forEach(i => map.set(i.id, i));
-        return Array.from(map.values());
-      });
-    }
-    dispatch(setUnreadNotificationsState(unreadData?.totalCount ?? 0));
-  }, [unreadData]);
+    setUnreadNotifications(prev => {
+      if (pageUnread === 1) return unreadData.items;
+      const map = new Map(prev.map(i => [i.id, i]));
+      unreadData.items.forEach(i => map.set(i.id, i));
+      return Array.from(map.values());
+    });
+  }, [unreadData?.items, pageUnread]);
 
+  // ================= SYNC UNREAD COUNT =================
+  useEffect(() => {
+    if (unreadData?.totalCount !== undefined) {
+      dispatch(setUnreadNotificationsState(unreadData.totalCount));
+    }
+  }, [unreadData?.totalCount]);
+
+  // ================= DERIVED =================
+  const notifications = isAllFilter ? allNotifications : unreadNotifications;
+  const isFetchingCurrent = isAllFilter ? isFetchingAll : isFetchingUnread;
+  const isLoadingCurrent = isAllFilter ? isLoadingAll : isLoadingUnread;
+  const currentPage = isAllFilter ? pageAll : pageUnread;
+  const hasMore = isAllFilter
+    ? (allData?.hasMore ?? false)
+    : (unreadData?.hasMore ?? false);
+  const totalUnread = unreadData?.totalCount ?? 0;
+
+  // ================= HANDLERS =================
   const handleFilterChange = (newFilter: 'all' | 'unread') => {
     if (newFilter === filter) return;
     setFilter(newFilter);
-    // Reset the page for the tab being switched to
-    if (newFilter === 'all') setPageAll(1);
-    else setPageUnread(1);
   };
 
   const handleEndReached = () => {
@@ -137,12 +136,12 @@ const Notifications = () => {
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     try {
-      // Reset to page 1 and force refetch
       if (isAllFilter) {
+        setAllNotifications([]);
         setPageAll(1);
-        // Small delay to let page state settle before refetch
         setTimeout(() => refetchAll(), 50);
       } else {
+        setUnreadNotifications([]);
         setPageUnread(1);
         setTimeout(() => refetchUnread(), 50);
       }
@@ -157,16 +156,9 @@ const Notifications = () => {
       setIsMarkingAllRead(true);
       await readAllNotifications().unwrap();
       dispatch(resetUnreadNotifications());
-
-      // Optimistically mark all as read in local state
       setAllNotifications(prev => prev.map(n => ({ ...n, isRead: true })));
       setUnreadNotifications([]);
-
-      // Refetch both from page 1 in background
-      setPageAll(1);
-      setPageUnread(1);
-    } catch (error) {
-      console.log(error);
+    } catch {
       Toast.show({ type: 'error', text1: 'Failed to mark all as read' });
     } finally {
       setIsMarkingAllRead(false);
@@ -179,20 +171,14 @@ const Notifications = () => {
         type: item.type,
         referenceId: String(item.referenceId),
       });
-
       if (item.isRead) return;
-
-      // Optimistically update local state immediately
       setAllNotifications(prev =>
         prev.map(n => (n.id === item.id ? { ...n, isRead: true } : n)),
       );
       setUnreadNotifications(prev => prev.filter(n => n.id !== item.id));
       dispatch(decrementUnreadNotifications());
-
       await readSingleNotification(item.id).unwrap();
-    } catch (error) {
-      console.log(error);
-      // Revert optimistic update on failure
+    } catch {
       setAllNotifications(prev =>
         prev.map(n => (n.id === item.id ? { ...n, isRead: false } : n)),
       );
@@ -203,21 +189,13 @@ const Notifications = () => {
 
   const handleDelete = async (id: string) => {
     const deleted = notifications.find(n => n.id === id);
-
-    // Optimistically remove from local state immediately
     setAllNotifications(prev => prev.filter(n => n.id !== id));
     setUnreadNotifications(prev => prev.filter(n => n.id !== id));
-
-    if (deleted && !deleted.isRead) {
-      dispatch(decrementUnreadNotifications());
-    }
-
+    if (deleted && !deleted.isRead) dispatch(decrementUnreadNotifications());
     try {
       await deleteNotification(id).unwrap();
-    } catch (error) {
-      console.log('Delete failed:', error);
+    } catch {
       Toast.show({ type: 'error', text1: 'Some error occurred' });
-
       if (deleted) {
         setAllNotifications(prev => [deleted, ...prev]);
         if (!deleted.isRead) {
@@ -228,11 +206,13 @@ const Notifications = () => {
     }
   };
 
-  const renderItem = ({ item: notification }: { item: NotificationItem }) => (
+  // ================= RENDER =================
+  const renderItem = ({ item }: { item: NotificationItem }) => (
     <Notification
-      item={notification}
-      onPress={() => handleSingleNotificationRead(notification)}
+      item={item}
+      onPress={() => handleSingleNotificationRead(item)}
       onDelete={handleDelete}
+      openSwipeableRef={openSwipeableRef}
     />
   );
 
@@ -308,16 +288,15 @@ const Notifications = () => {
                 { color: isPressed ? Colors.primary : Colors.textSecondary },
               ]}
             >
-              {'Mark all read'}
+              Mark all read
             </Text>
           </Pressable>
         </View>
       </View>
 
-      {/* Initial load only */}
-      {isLoadingCurrent && (
+      {isLoadingCurrent ? (
         <View style={dynamicStyles.loadingContainer}>
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" color={Colors.primary} />
           <Text
             style={[
               dynamicStyles.heroText,
@@ -327,9 +306,7 @@ const Notifications = () => {
             Loading Notifications...
           </Text>
         </View>
-      )}
-
-      {!isLoadingCurrent && (
+      ) : (
         <FlatList
           data={notifications}
           keyExtractor={item => item.id}
@@ -348,30 +325,30 @@ const Notifications = () => {
                 backgroundColor: Colors.border,
                 height: 1,
               }}
-            ></View>
+            />
           )}
           ListEmptyComponent={
-            <View style={dynamicStyles.emptyContainer}>
-              <Ionicons
-                name="notifications-off-outline"
-                size={100}
-                color={Colors.textMuted}
-                style={{ marginBottom: 12 }}
-              />
-
-              <Text style={dynamicStyles.emptyTitle}>
-                {isAllFilter ? 'No Notifications Yet' : 'All Caught Up'}
-              </Text>
-
-              <Text style={dynamicStyles.emptyDescription}>
-                {isAllFilter
-                  ? 'You will see updates about your activity here.'
-                  : 'You have no unread notifications.'}
-              </Text>
-            </View>
+            isFetchingCurrent ? null : (
+              <View style={dynamicStyles.emptyContainer}>
+                <Ionicons
+                  name="notifications-off-outline"
+                  size={100}
+                  color={Colors.textMuted}
+                  style={{ marginBottom: 12 }}
+                />
+                <Text style={dynamicStyles.emptyTitle}>
+                  {isAllFilter ? 'No Notifications Yet' : 'All Caught Up'}
+                </Text>
+                <Text style={dynamicStyles.emptyDescription}>
+                  {isAllFilter
+                    ? 'You will see updates about your activity here.'
+                    : 'You have no unread notifications.'}
+                </Text>
+              </View>
+            )
           }
           ListFooterComponent={
-            isFetchingCurrent && (isAllFilter ? pageAll : pageUnread) > 1 ? (
+            isFetchingCurrent && currentPage > 1 ? (
               <Text
                 style={{
                   textAlign: 'center',

@@ -22,6 +22,9 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
   const { open } = useAppKit();
   const { address, isConnected } = useAccount();
   const userToken = useAppSelector(state => state.auth.userToken);
+  const userAddress = useAppSelector(
+    state => state.auth.userData?.walletAddress,
+  );
   console.log(userToken);
   const navigation = useAppNavigation();
   const { data, isLoading } = useGetBalanceQuery(undefined, {
@@ -46,7 +49,7 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
 
   const displayBalance = data?.available ?? balance?.availableBalance ?? null;
 
-  if (isConnected) {
+  if (userToken) {
     return (
       <View>
         <Pressable
@@ -64,7 +67,7 @@ function ConnectButton(props: Readonly<ConnectButtonPropsType>) {
             {isLoading && !displayBalance && 'loading...'}
 
             {displayBalance !== null ? `${displayBalance} ETH, ` : '... '}
-            {address ?? ' '}
+            {userAddress ?? ' '}
           </Text>
         </Pressable>
       </View>

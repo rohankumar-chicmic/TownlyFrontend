@@ -16,7 +16,7 @@ interface FormInputType extends TextInputProps {
   label?: string;
   required?: boolean;
   labelStyle?: TextStyle;
-  style?: ViewStyle;
+  style?: TextStyle;
   placeholder?: string;
   hintText?: string;
   error?: string | FieldError | Merge<FieldError, FieldErrorsImpl<any>>;
@@ -35,6 +35,7 @@ export default function FormInput(props: Readonly<FormInputType>) {
         placeholder={props.placeholder}
         maxLength={100}
         textAlignVertical="top"
+        scrollEnabled={props.multiline}
         placeholderTextColor={Colors.textMuted}
         style={[
           dynamicStyles.input,
@@ -43,6 +44,8 @@ export default function FormInput(props: Readonly<FormInputType>) {
             backgroundColor: Colors.background,
             color: props.readOnly ? Colors.textMuted : Colors.textPrimary,
           },
+          props.multiline && { height: 100 },
+
           props.style,
         ]}
         {...props}

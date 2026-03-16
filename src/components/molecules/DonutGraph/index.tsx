@@ -1,9 +1,9 @@
+import React, { memo, useState, useMemo } from 'react';
 import { Text, View, Pressable } from 'react-native';
 import { PieChart } from 'react-native-gifted-charts';
 import styles from './styles';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
-import { useState, useEffect } from 'react';
 
 export interface DonutDataPoint {
   label: string;
@@ -14,84 +14,29 @@ export interface DonutData {
   data: DonutDataPoint[];
 }
 
-export default function DonutGraph({ data }: Readonly<DonutData>) {
+const SLICE_COLORS = ['#9161f3', '#3b82f6', '#f59e0b', '#10b981'];
+const SLICE_LABELS = ['Residential', 'Commercial', 'Land', 'Industrial'];
+
+function DonutGraph({ data }: Readonly<DonutData>) {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
-  const [pieData, setPieData] = useState([
-    {
-      value: data?.[0]?.percentage ?? 0,
-      color: '#9161f3',
-      text: 'Residential',
-      focused: false,
-    },
-    {
-      value: data?.[1]?.percentage ?? 0,
-      color: '#3b82f6',
-      text: 'Commercial',
-      focused: false,
-    },
-    {
-      value: data?.[2]?.percentage ?? 0,
-      color: '#f59e0b',
-      text: 'Land',
-      focused: false,
-    },
-    {
-      value: data?.[3]?.percentage ?? 0,
-      color: '#10b981',
-      text: 'Industrial',
-      focused: false,
-    },
-  ]);
 
-  useEffect(() => {
-    if (!data?.length) return;
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
-    setPieData([
-      {
-        value: data?.[0]?.percentage ?? 0,
-        color: '#9161f3',
-        text: 'Residential',
-        focused: false,
-      },
-      {
-        value: data?.[1]?.percentage ?? 0,
-        color: '#3b82f6',
-        text: 'Commercial',
-        focused: false,
-      },
-      {
-        value: data?.[2]?.percentage ?? 0,
-        color: '#f59e0b',
-        text: 'Land',
-        focused: false,
-      },
-      {
-        value: data?.[3]?.percentage ?? 0,
-        color: '#10b981',
-        text: 'Industrial',
-        focused: false,
-      },
-    ]);
-  }, [data]);
-
-  const handlePress = (index: number) => {
-    setPieData(prev =>
-      prev.map((item, i) => ({
-        ...item,
-        focused: i === index,
+  // ✅ No more useState + useEffect pattern — derived with useMemo
+  const pieData = useMemo(
+    () =>
+      SLICE_LABELS.map((text, i) => ({
+        value: data?.[i]?.percentage ?? 0,
+        color: SLICE_COLORS[i],
+        text,
+        focused: focusedIndex === i,
       })),
-    );
-  };
+    [data, focusedIndex],
+  );
 
-  const clearFocus = () => {
-    setPieData(prev =>
-      prev.map(item => ({
-        ...item,
-        focused: false,
-      })),
-    );
-  };
+  const handlePress = (index: number) => setFocusedIndex(index);
+  const clearFocus = () => setFocusedIndex(null);
 
   return (
     <Pressable onPress={clearFocus}>
@@ -110,13 +55,12 @@ export default function DonutGraph({ data }: Readonly<DonutData>) {
           }}
         >
           <View style={{ paddingVertical: 16, justifyContent: 'space-evenly' }}>
-            {pieData.map(dataPoint => (
+            {pieData.map((dataPoint, i) => (
               <View
                 key={dataPoint.text}
                 style={{ flexDirection: 'row', alignItems: 'center' }}
               >
                 <View
-                  key={dataPoint.text}
                   style={{
                     height: 10,
                     width: 10,
@@ -127,24 +71,18 @@ export default function DonutGraph({ data }: Readonly<DonutData>) {
                 />
                 <Text
                   style={
-                    dataPoint.focused
+                    focusedIndex === i
                       ? [dynamicStyles.smallText, { color: Colors.textPrimary }]
                       : dynamicStyles.smallText
                   }
                 >
-                  {dataPoint.value}
-                  {'% '}
-                  {dataPoint.text}
+                  {dataPoint.value}% {dataPoint.text}
                 </Text>
               </View>
             ))}
           </View>
 
-          <View
-            style={{
-              alignSelf: 'flex-end',
-            }}
-          >
+          <View style={{ alignSelf: 'flex-end' }}>
             <PieChart
               data={pieData}
               donut
@@ -165,3 +103,5 @@ export default function DonutGraph({ data }: Readonly<DonutData>) {
     </Pressable>
   );
 }
+
+export default memo(DonutGraph);

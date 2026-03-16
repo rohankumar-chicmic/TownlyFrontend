@@ -1,5 +1,11 @@
-import React, { Dispatch, SetStateAction } from 'react';
-import { View, Text, Pressable, ActivityIndicator } from 'react-native';
+import React, { Dispatch, SetStateAction, useEffect } from 'react';
+import {
+  View,
+  Text,
+  Pressable,
+  ActivityIndicator,
+  BackHandler,
+} from 'react-native';
 import useTheme from '@hooks/useTheme';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -29,6 +35,7 @@ interface StepProps {
   propertyId?: string;
   isEdit?: boolean;
   isActiveProperty?: boolean;
+  onLoadingChange?: (isLoading: boolean) => void;
 }
 
 export default function Step4(props: Readonly<StepProps>) {
@@ -44,6 +51,34 @@ export default function Step4(props: Readonly<StepProps>) {
   const userToken = useAppSelector(state => state.auth.userToken);
 
   const isLoading = isCreating || isResubmitting || isEditing;
+
+  // Notify parent whenever loading state changes
+  useEffect(() => {
+    props.onLoadingChange?.(isLoading);
+  }, [isLoading]);
+
+  // Block React Navigation back gesture + header back button
+  // Block Android hardware back button
+  useEffect(() => {
+    const unsubscribeNav = navigation.addListener('beforeRemove', e => {
+      if (!isLoading) return;
+      e.preventDefault();
+    });
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      () => {
+        if (isLoading) return true; // consumed — back blocked
+        return false;
+      },
+    );
+
+    return () => {
+      unsubscribeNav();
+      backHandler.remove();
+    };
+  }, [navigation, isLoading]);
+
   const handleSubmitProperty = debounce(async () => {
     if (!userToken) {
       console.error('No token available!');
@@ -105,6 +140,7 @@ export default function Step4(props: Readonly<StepProps>) {
         }).unwrap();
       }
 
+      await new Promise(res => setTimeout(res, 5000));
       console.log('Property submitted successfully!', result);
 
       navigation.navigate(ROUTES.TABS);
@@ -259,7 +295,8 @@ export default function Step4(props: Readonly<StepProps>) {
           field="Total Property Value"
           value={
             <Text style={{ fontSize: 18 }}>
-              {props.formData.totalPropertyValue}
+              {'$'}
+              {props.formData.totalPropertyValue.toLocaleString()}
             </Text>
           }
         />
@@ -268,7 +305,15 @@ export default function Step4(props: Readonly<StepProps>) {
           value={
             <Text style={{ fontSize: 18 }}>
               {'$'}
-              {props.formData.rentalIncome}
+              {props.formData.rentalIncome.toLocaleString()}
+            </Text>
+          }
+        />
+        <InfoRow
+          field="Number of Shares"
+          value={
+            <Text style={{ fontSize: 18 }}>
+              {props.formData.numberOfShares.toLocaleString()}
             </Text>
           }
         />
@@ -301,11 +346,12 @@ export default function Step4(props: Readonly<StepProps>) {
       >
         <Button
           title="Back"
+          disabled={isLoading}
           onPress={() => props.setStep(prev => prev - 1)}
           style={{ alignSelf: 'flex-end', marginTop: 10 }}
           textStyle={{ marginHorizontal: 10, color: Colors.primary }}
           variant="outline"
-        ></Button>
+        />
 
         <Button
           title={isLoading ? 'Submitting' : 'Submit'}
@@ -317,11 +363,7 @@ export default function Step4(props: Readonly<StepProps>) {
           {isLoading ? (
             <ActivityIndicator />
           ) : (
-            <Icons.Arrow
-              height={15}
-              width={15}
-              color={Colors.background}
-            ></Icons.Arrow>
+            <Icons.Arrow height={15} width={15} color={Colors.background} />
           )}
         </Button>
       </View>

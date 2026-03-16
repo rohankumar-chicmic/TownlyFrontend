@@ -143,6 +143,7 @@ export default function Step1(props: Readonly<StepProps>) {
   }, [props.formData, reset]);
 
   return (
+    
     <View style={dynamicStyles.containerSurface}>
       <Text style={[dynamicStyles.heading]}>Property Details</Text>
 
@@ -197,6 +198,7 @@ export default function Step1(props: Readonly<StepProps>) {
             }}
             hintText={`${value?.length ?? 0}/500 characters`}
             error={errors.description?.message}
+            scrollEnabled={true}
           />
         )}
       />

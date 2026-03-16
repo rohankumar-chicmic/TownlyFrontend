@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, Text, Pressable } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/ReanimatedSwipeable';
 import RightAction from './RightAction';
@@ -15,10 +15,17 @@ export interface NotificationProps {
   };
   onPress: () => void;
   onDelete: (id: string) => void;
+  openSwipeableRef: React.MutableRefObject<any>; // shared ref from parent
 }
 
-const Notification = ({ item, onPress, onDelete }: NotificationProps) => {
+const Notification = ({
+  item,
+  onPress,
+  onDelete,
+  openSwipeableRef,
+}: NotificationProps) => {
   const { dynamicStyles } = useStyles(styles);
+  const swipeableRef = useRef<any>(null);
 
   const formatTime = (createdAt: string) => {
     const normalized = createdAt.includes('Z')
@@ -27,7 +34,6 @@ const Notification = ({ item, onPress, onDelete }: NotificationProps) => {
 
     const date = new Date(normalized);
     const now = new Date();
-
     const diff = now.getTime() - date.getTime();
 
     const mins = Math.floor(diff / 60000);
@@ -42,6 +48,18 @@ const Notification = ({ item, onPress, onDelete }: NotificationProps) => {
     return date.toLocaleDateString();
   };
 
+  const handleSwipeOpen = () => {
+    // If another swipeable is open, close it first
+    if (
+      openSwipeableRef.current &&
+      openSwipeableRef.current !== swipeableRef.current
+    ) {
+      openSwipeableRef.current.close();
+    }
+    // Set this one as the currently open swipeable
+    openSwipeableRef.current = swipeableRef.current;
+  };
+
   const renderRightActions = (_progress: any, dragX: any) => {
     return (
       <RightAction
@@ -54,10 +72,12 @@ const Notification = ({ item, onPress, onDelete }: NotificationProps) => {
 
   return (
     <Swipeable
+      ref={swipeableRef}
       renderRightActions={renderRightActions}
       overshootRight={false}
       friction={2}
       rightThreshold={100}
+      onSwipeableOpen={handleSwipeOpen}
     >
       <Pressable
         style={[dynamicStyles.card, { opacity: item.isRead ? 0.85 : 1 }]}
@@ -76,10 +96,8 @@ const Notification = ({ item, onPress, onDelete }: NotificationProps) => {
             >
               {item.title}
             </Text>
-
             <Text style={dynamicStyles.time}>{formatTime(item.createdAt)}</Text>
           </View>
-
           <Text numberOfLines={2} style={dynamicStyles.message}>
             {item.message}
           </Text>

@@ -75,25 +75,6 @@ const propertyApi = api.injectEndpoints({
         params,
       }),
       providesTags: ['MyProperties'],
-
-      serializeQueryArgs: ({ endpointName, queryArgs }) => {
-        return `${endpointName}-${queryArgs.pageSize}-${queryArgs.status}-${queryArgs.search}`;
-      },
-
-      merge: (currentCache, newData, { arg }) => {
-        if (arg.page === 1) return newData;
-        currentCache.items.push(...newData.items);
-        currentCache.hasMore = newData.hasMore;
-      },
-
-      forceRefetch({ currentArg, previousArg }) {
-        return (
-          currentArg?.page !== previousArg?.page ||
-          currentArg?.pageSize !== previousArg?.pageSize ||
-          currentArg?.status !== previousArg?.status ||
-          currentArg?.search !== previousArg?.search
-        );
-      },
     }),
 
     searchProperties: builder.query<
@@ -105,22 +86,7 @@ const propertyApi = api.injectEndpoints({
         method: 'GET',
         params,
       }),
-
       providesTags: ['Properties'],
-
-      serializeQueryArgs: ({ endpointName, queryArgs }) => {
-        return `${endpointName}-${queryArgs.search}-${queryArgs.propertyType}`;
-      },
-
-      merge: (currentCache, newItemData, { arg }) => {
-        if (arg.page === 1) return newItemData;
-        currentCache.items.push(...newItemData.items);
-        currentCache.hasMore = newItemData.hasMore;
-      },
-
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      },
     }),
 
     getMyInvestedProperties: builder.query<
@@ -133,20 +99,6 @@ const propertyApi = api.injectEndpoints({
         params,
       }),
       providesTags: ['MyInvestedProperties'],
-
-      serializeQueryArgs: ({ endpointName, queryArgs }) => {
-        return `${endpointName}-${queryArgs.search}-${queryArgs.propertyType}-${queryArgs.pageSize}`;
-      },
-
-      merge: (currentCache, newData, { arg }) => {
-        if (arg.page === 1) return newData;
-        currentCache.items.push(...newData.items);
-        currentCache.hasMore = newData.hasMore;
-      },
-
-      forceRefetch({ currentArg, previousArg }) {
-        return currentArg !== previousArg;
-      },
     }),
 
     getFeaturedProperties: builder.query<PropertyCardProps[], void>({

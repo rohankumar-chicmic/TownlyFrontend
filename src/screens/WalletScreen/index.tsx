@@ -331,36 +331,57 @@ export default function WalletScreen() {
         </View>
       </KeyboardAwareScrollView>
       <Modal animationType="slide" transparent visible={showDisconnectModal}>
-        <Pressable
-          style={[dynamicStyles.backdrop]}
-          onPress={() => setShowDisconnectModal(false)}
-        />
-        <SafeAreaView style={[dynamicStyles.container]}>
-          <ScrollView
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Pressable
+            style={dynamicStyles.backdrop}
+            onPress={() => setShowDisconnectModal(false)}
+          />
+          <SafeAreaView
+            style={[
+              dynamicStyles.sheet,
+              {
+                backgroundColor: Colors.surface,
+                borderTopLeftRadius: 24,
+                borderTopRightRadius: 24,
+                borderWidth: 1,
+                borderColor: Colors.border,
+                padding: 20,
+              },
+            ]}
           >
-            <View style={dynamicStyles.header}>
-              <Text style={dynamicStyles.title}>Confirm Disconnect</Text>
-              <Text style={dynamicStyles.subtitle}>
-                Your wallet will be disconnected on Confirmation.
-              </Text>
-            </View>
-
-            <View
-              style={{ flexDirection: 'row', justifyContent: 'space-around' }}
+            <ScrollView
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
             >
-              <Button
-                title="Cancel"
-                variant="outline"
-                onPress={() => setShowDisconnectModal(false)}
-                textStyle={{ color: Colors.primary }}
-              ></Button>
-              <Button title="Disconnect" onPress={handleDisconnect}></Button>
-              {/* <Button title="Disconnect" onPress={disconnect}></Button> */}
-            </View>
-          </ScrollView>
-        </SafeAreaView>
+              <View style={dynamicStyles.header}>
+                <Text style={dynamicStyles.title}>Confirm Disconnect</Text>
+
+                <Text style={dynamicStyles.subtitle}>
+                  Your wallet will be disconnected on confirmation.
+                </Text>
+              </View>
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-evenly',
+                }}
+              >
+                <Button
+                  title="Cancel"
+                  variant="outline"
+                  onPress={() => setShowDisconnectModal(false)}
+                  textStyle={{ color: Colors.primary }}
+                />
+
+                <Button
+                  title="Disconnect"
+                  onPress={handleDisconnect}
+                />
+              </View>
+            </ScrollView>
+          </SafeAreaView>
+        </View>
       </Modal>
     </SafeAreaView>
   );

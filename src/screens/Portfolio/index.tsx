@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import styles from './styles';
@@ -13,14 +14,13 @@ import InvestmentSummaryBar from '@components/molecules/InvestmentSummaryBar';
 import ListedPropertiesSection from '@components/molecules/ListedPropertiesSection';
 import PortfolioHeader from '@components/molecules/PortfolioHeader';
 import RecentTransactionsSection from '@components/molecules/RecentTransactionsSection';
-
 import { usePortfolioScreenData } from '@hooks/usePortfolioScreenData';
 import PortfolioSkeleton from '@components/molecules/SkeletonPortfolio';
 import OfflineTasksQueue from '@components/molecules/OfflineTasksQueue';
 import { useGetIncompleteTasks } from 'src/db/hooks/useOfflineQueue';
 import { OfflineTask } from '@utils/types';
 
-export default function Portfolio() {
+function Portfolio() {
   const { dynamicStyles, Colors } = useStyles(styles);
   const navigation = useAppNavigation();
 
@@ -44,7 +44,6 @@ export default function Portfolio() {
   } = usePortfolioScreenData();
 
   if (isLoading) return <PortfolioSkeleton />;
-
   if (!userToken) return <PortfolioWithoutAuth />;
   if (kycStatus !== 2) return <KYCpendingPortfolio />;
 
@@ -53,14 +52,15 @@ export default function Portfolio() {
       showsVerticalScrollIndicator={false}
       style={{ backgroundColor: Colors.background }}
       contentContainerStyle={dynamicStyles.container}
+      removeClippedSubviews
     >
       <PortfolioHeader address={address} />
 
       <InvestmentSummaryBar data={summaryData} />
 
-      <DonutGraph data={donutData} />
+      {donutData && <DonutGraph data={donutData} />}
 
-      <LineGraph data={lineGraphData} />
+      {lineGraphData?.length > 0 && <LineGraph data={lineGraphData} />}
 
       <Button
         title="Create Property"
@@ -84,12 +84,12 @@ export default function Portfolio() {
       />
 
       {tasks && tasks.length > 0 && (
-        <View style={[dynamicStyles.containerStyle]}>
+        <View style={dynamicStyles.containerStyle}>
           <Text style={[dynamicStyles.heading, { fontSize: 15 }]}>
             Offline Tasks
           </Text>
-          <Text style={[dynamicStyles.smallText]}>
-            These tasks will be performed connect is restored.
+          <Text style={dynamicStyles.smallText}>
+            These tasks will be performed once connection is restored.
           </Text>
           <View
             style={{
@@ -109,3 +109,5 @@ export default function Portfolio() {
     </ScrollView>
   );
 }
+
+export default memo(Portfolio);

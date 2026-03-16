@@ -24,95 +24,92 @@ import { useAppNavigation } from '@hooks/useNavigation';
 import { ROUTES } from 'src/navigation/constants';
 import ListEmptyComponent from '@components/molecules/ListEmptyComponent';
 import { PropertyCardProps } from '@utils/types';
+import { useInfiniteList } from '@hooks/useInfiniteList';
 
 const CARD_WIDTH = Dimensions.get('window').width * 0.9;
 const PAGE_SIZE = 10;
 
-const ListedProperiesScreen = () => {
+const ListedPropertiesScreen = () => {
   const { dynamicStyles } = useStyles(styles);
   const { Colors } = useTheme();
   const navigation = useAppNavigation();
+
   const [status, setStatus] = useState('');
   const [text, setText] = useState('');
-  const [params, setParams] = useState({
-    search: '',
-    page: 1,
-  });
+  const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
 
   const { data, isFetching, isLoading } = useGetMyPropertiesQuery({
-    page: params.page,
+    page,
     pageSize: PAGE_SIZE,
     status,
-    search: params.search,
+    search,
   });
 
-  const list = data?.items ?? [];
+  const {
+    allItems: list,
+    handleEndReached,
+    isResetting,
+  } = useInfiniteList(data, isFetching, setPage, [search, status]);
+
   const hasMore = data?.hasMore ?? false;
 
-  // ================= DEBOUNCED SEARCH =================
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
         const clean = sanitizeSearch(value);
-        setParams({ search: clean, page: 1 });
+        setSearch(clean);
       }, 300),
     [],
   );
 
   const handleTextChange = (val: string) => {
     setText(val);
-
     const hasIllegalChars = /[^a-zA-Z0-9\s,-]/.test(val);
     if (hasIllegalChars) {
-      setParams({ search: '___INVALID_SEARCH___', page: 1 });
+      setSearch('___INVALID_SEARCH___');
       return;
     }
-
     debouncedSearch(val);
   };
 
   const handleStatusChange = (newStatus: string | number) => {
-    setStatus(newStatus as any);
-    setParams(prev => ({ ...prev, page: 1 }));
-  };
-
-  const handleEndReached = () => {
-    if (!isFetching && hasMore) {
-      setParams(prev => ({ ...prev, page: prev.page + 1 }));
-    }
+    setStatus(newStatus as string);
   };
 
   const handleClicked = throttle((item: PropertyCardProps) => {
-    console.log(item.status);
-    return navigation.navigate(ROUTES.OWNED_PROPERTY, {
+    navigation.navigate(ROUTES.OWNED_PROPERTY, {
       id: item.id,
       status: item.status ?? undefined,
     });
   }, 500);
 
   const footer = useMemo(() => {
-    if (isFetching && params.page > 1) {
+    if (isFetching && page > 1) {
       return (
         <Text style={{ textAlign: 'center', padding: 10 }}>
           Loading more...
         </Text>
       );
     }
-
     if (!hasMore && list.length > 0) {
       return (
         <Text
-          style={{
-            textAlign: 'center',
-            padding: 10,
-            color: Colors.textMuted,
-          }}
-        ></Text>
+          style={{ textAlign: 'center', padding: 10, color: Colors.textMuted }}
+        >
+          No more properties
+        </Text>
       );
     }
-
     return null;
-  }, [isFetching, params.page, hasMore, list.length, Colors.textMuted]);
+  }, [isFetching, page, hasMore, list.length, Colors.textMuted]);
+
+  const LoadingComponent = () => (
+    <View style={dynamicStyles.loadingContainer}>
+      <ActivityIndicator size="large" color={Colors.primary} />
+      <Text style={dynamicStyles.loadingText}>Loading Properties...</Text>
+    </View>
+  );
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -186,36 +183,35 @@ const ListedProperiesScreen = () => {
         </ScrollView>
       </View>
 
-      {isLoading && params.page === 1 ? (
-        <View style={dynamicStyles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.primary} />
-          <Text style={dynamicStyles.loadingText}>Loading Properties...</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={list}
-          keyExtractor={item => item.id.toString()}
-          renderItem={({ item }) => (
-            <View style={{ width: CARD_WIDTH }}>
-              <CardContainer2 {...item} userOwned onClick={() => handleClicked(item)} />
-            </View>
-          )}
-          contentContainerStyle={{
-            padding: 10,
-            gap: 12,
-            flexGrow: 1,
-            alignItems: 'center',
-          }}
-          showsVerticalScrollIndicator={false}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.5}
-          style={{ backgroundColor: Colors.background, height: '100%' }}
-          ListFooterComponent={footer}
-          ListEmptyComponent={ListEmptyComponent}
-        />
-      )}
+      <FlatList
+        data={list}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={{ width: CARD_WIDTH }}>
+            <CardContainer2
+              {...item}
+              userOwned
+              onClick={() => handleClicked(item)}
+            />
+          </View>
+        )}
+        contentContainerStyle={{
+          padding: 10,
+          gap: 12,
+          flexGrow: 1,
+          alignItems: 'center',
+        }}
+        showsVerticalScrollIndicator={false}
+        onEndReached={handleEndReached}
+        onEndReachedThreshold={0.5}
+        style={{ backgroundColor: Colors.background, height: '100%' }}
+        ListFooterComponent={footer}
+        ListEmptyComponent={
+          isFetching || isLoading || isResetting ? <LoadingComponent/> : <ListEmptyComponent />
+        }
+      />
     </SafeAreaView>
   );
 };
 
-export default ListedProperiesScreen;
+export default ListedPropertiesScreen;

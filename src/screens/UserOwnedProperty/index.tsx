@@ -64,7 +64,6 @@ export default function UserOwnedProperty() {
 
     try {
       await deleteProperty(params?.id).unwrap();
-      setIsDeleted(true);
       setShowDeleteModal(false);
       navigation.goBack();
       Toast.show({

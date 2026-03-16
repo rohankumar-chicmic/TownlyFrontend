@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, Modal } from 'react-native';
 import useStyles from '@hooks/useStyles';
 import useTheme from '@hooks/useTheme';
@@ -50,6 +50,10 @@ export default function CreateNFTScreen() {
 
   const [step, setStep] = useState(0);
   const [isDirty, setIsDirty] = useState(false);
+
+  // Ref to track Step4 submission loading state without causing re-renders
+  const isSubmittingRef = useRef(false);
+
   const isEdit = route.params?.isEdit;
   const isActiveProperty = route.params?.isActiveProperty;
   const initialValues = route.params?.initialValues;
@@ -99,6 +103,9 @@ export default function CreateNFTScreen() {
     : 'If you leave now, all the information you entered will be permanently lost.';
 
   const handleGoBack = () => {
+    // Block back navigation entirely while Step4 is submitting
+    if (isSubmittingRef.current) return;
+
     if (step > 0) {
       setStep(prev => prev - 1);
       return;
@@ -111,7 +118,7 @@ export default function CreateNFTScreen() {
 
     setShowExitModal(true);
   };
-  console.log(isDirty);
+
   return (
     <SafeAreaView style={dynamicStyles.safeArea}>
       <KeyboardAwareScrollView
@@ -210,6 +217,9 @@ export default function CreateNFTScreen() {
               isEdit={isEdit}
               isActiveProperty={isActiveProperty}
               propertyId={route.params?.initialValues?.id}
+              onLoadingChange={loading => {
+                isSubmittingRef.current = loading;
+              }}
             />
           )}
         </View>

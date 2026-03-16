@@ -37,7 +37,7 @@ const styles = (Colors: ThemeColors) =>
       height: 40,
       overflow: 'hidden',
       paddingHorizontal: 10,
-      borderRadius: 20,
+      borderRadius: 10,
       borderWidth: 0.5,
       borderColor: Colors.primary,
     },

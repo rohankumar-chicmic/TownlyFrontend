@@ -103,12 +103,9 @@ export const usePortfolioScreenData = () => {
     skip: !userToken || skipFetch,
   });
 
-  /**
-   * ==============================
-   * Loading State
-   * ==============================
-   */
-
+  // ==============================
+  // Loading State
+  // ==============================
   const isLoading =
     !skipFetch &&
     (summaryLoading ||
@@ -119,25 +116,25 @@ export const usePortfolioScreenData = () => {
       transactionsLoading) &&
     !dbData.summary;
 
-  /**
-   * ==============================
-   * Refetch when screen focused
-   * ==============================
-   */
-
+  // ==============================
+  // Refetch on focus — removed duplicate invalidations,
+  // combined into single dispatch, only runs when connected
+  // ==============================
   useFocusEffect(
     useCallback(() => {
-      dispatch(propertyApi.util.invalidateTags(['MyProperties']));
-      dispatch(propertyApi.util.invalidateTags(['MyInvestedProperties']));
-    }, [dispatch]),
+      if (!isConnected) return;
+      dispatch(
+        propertyApi.util.invalidateTags([
+          'MyProperties',
+          'MyInvestedProperties',
+        ]),
+      );
+    }, [dispatch, isConnected]),
   );
 
-  /**
-   * ==============================
-   * Save API data to SQLite
-   * ==============================
-   */
-
+  // ==============================
+  // Save API data to SQLite
+  // ==============================
   useEffect(() => {
     if (investmentDetails && !investmentDetailsError)
       savePortfolioSummary(investmentDetails);
@@ -166,13 +163,9 @@ export const usePortfolioScreenData = () => {
       saveUserInvestments(investedResult.items);
   }, [investedResult, investedError]);
 
-  /**
-   * ==============================
-   * Derived Data
-   * API first → fallback to SQLite
-   * ==============================
-   */
-
+  // ==============================
+  // Derived Data — API first → fallback to SQLite
+  // ==============================
   const summaryData = useMemo(
     () => investmentDetails ?? dbData.summary,
     [investmentDetails, dbData.summary],
@@ -203,26 +196,18 @@ export const usePortfolioScreenData = () => {
     [transactionsResult, dbData.txHistory],
   );
 
-  /**
-   * ==============================
-   * Return
-   * ==============================
-   */
-
   return {
     userToken,
     address,
     kycStatus,
     isConnected,
     isLoading,
-
     summaryData,
     donutData: donutGraphData,
     lineGraphData,
     investedItems,
     listedItems,
     transactions,
-
     investedHasMore: investedResult?.hasMore ?? false,
     listedHasMore: myPropertiesResult?.hasMore ?? false,
     transactionsHasMore: transactionsResult?.hasMore ?? false,
