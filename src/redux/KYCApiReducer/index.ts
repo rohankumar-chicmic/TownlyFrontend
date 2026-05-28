@@ -20,7 +20,7 @@ export const kycApi = createApi({
   tagTypes: ['KYC'],
 
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.API_BASE_URL || API_BASE_URL,
+    baseUrl: API_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as any)?.auth?.userToken;
 

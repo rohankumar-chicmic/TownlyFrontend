@@ -45,7 +45,7 @@ const authApi = api.injectEndpoints({
 
     getLineGraphData: builder.query<any, void>({
       query: () => ({
-        url: 'analytics/portfolio/me/line?hours=7',
+        url: '/analytics/portfolio/me/line?days=7',
         method: 'GET',
       }),
       providesTags: ['InvestmentDetails'],
@@ -68,7 +68,7 @@ const authApi = api.injectEndpoints({
         method: 'GET',
         params,
       }),
-      providesTags: ['Transactions']
+      providesTags: ['Transactions'],
     }),
   }),
 

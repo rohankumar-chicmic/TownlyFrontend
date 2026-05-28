@@ -24,7 +24,7 @@ const propertyApi = api.injectEndpoints({
           (data.totalPropertyValue ?? 0).toString(),
         );
         formData.append('TotalUnits', (data.numberOfShares ?? 0).toString());
-        formData.append('rentalIncome', (data.rentalIncome ?? 0).toString());
+        formData.append('RentalIncome', (data.rentalIncome ?? 0).toString());
         formData.append(
           'AnnualYieldPercent',
           (data.expectedAnnualYield ?? 0).toString(),
@@ -166,7 +166,7 @@ const propertyApi = api.injectEndpoints({
           (data.totalPropertyValue ?? 0).toString(),
         );
         formData.append('TotalUnits', (data.numberOfShares ?? 0).toString());
-        formData.append('rentalIncome', (data.rentalIncome ?? 0).toString());
+        formData.append('RentalIncome', (data.rentalIncome ?? 0).toString());
         formData.append(
           'AnnualYieldPercent',
           (data.expectedAnnualYield ?? 0).toString(),
@@ -225,7 +225,7 @@ const propertyApi = api.injectEndpoints({
 
     investmentInfo: builder.query<any, string>({
       query: propertyId => ({
-        url: `/properties/${propertyId}/investInfo`,
+        url: `/properties/${propertyId}/investinfo`,
         method: 'GET',
       }),
     }),
